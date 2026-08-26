@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>Escuela Órale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--tinta:#17140F;--hueso:#F5F2EC;--papel:#FFF;--borde:#E2DCD1;--borde2:#D5CDBF;
+--gris:#6E675C;--gris2:#9C948A;--vino:#7B1D3A;--roja:#C1272D;--naranja:#D97A1E;--verde:#4A7C2F;
+--azul:#1B5E9E;--amarillo:#D89B1C;--marron:#7A5230;--morado:#6B4A8C;--teal:#1F6F6B;
+--ok:#3F7A2A;--alerta:#B4531A;--mal:#C1272D;--s:0 1px 2px rgba(23,20,15,.04),0 2px 8px rgba(23,20,15,.03)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--hueso);color:var(--tinta);line-height:1.5;overscroll-behavior:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;text-align:left}
+input,textarea,select{font-family:inherit}
+
+#login{position:fixed;inset:0;background:var(--tinta);z-index:300;overflow-y:auto;padding:26px 18px}
+.lc{text-align:center;margin-bottom:22px}
+.lc .m{font-family:'Archivo';font-variation-settings:'wdth' 112,'wght' 900;font-size:21px;color:var(--hueso);text-transform:uppercase;margin-bottom:4px}
+.lc .m span{color:var(--amarillo)}
+.lc p{color:rgba(245,242,236,.45);font-size:13px}
+.locs{display:flex;gap:7px;overflow-x:auto;margin-bottom:16px;scrollbar-width:none}
+.locs::-webkit-scrollbar{display:none}
+.locb{flex-shrink:0;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:600;background:rgba(255,255,255,.08);color:rgba(245,242,236,.65)}
+.locb[aria-pressed="true"]{background:var(--amarillo);color:var(--tinta)}
+.emps{display:grid;grid-template-columns:1fr 1fr;gap:9px;max-width:460px;margin:0 auto}
+.emp{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.11);border-radius:13px;padding:14px 13px;position:relative}
+.emp .i{width:32px;height:32px;border-radius:9px;background:var(--col);color:var(--tinta);display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:13px;margin-bottom:9px}
+.emp strong{display:block;color:var(--hueso);font-size:14px}
+.emp small{color:rgba(245,242,236,.42);font-size:11.5px;text-transform:capitalize}
+.emp .pend{position:absolute;top:11px;right:11px;background:var(--roja);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px}
+.dir{margin:18px auto 0;max-width:460px;background:rgba(255,255,255,.05);border:1.5px dashed rgba(255,255,255,.18);border-radius:13px;padding:14px;text-align:center;color:rgba(245,242,236,.6);font-size:13px;font-weight:600;display:block;width:100%}
+.pinw{max-width:290px;margin:0 auto;text-align:center}
+.pinw h2{font-family:'Archivo';font-variation-settings:'wdth' 108,'wght' 800;font-size:21px;color:var(--hueso);margin-bottom:3px}
+.pinw .s{color:rgba(245,242,236,.45);font-size:13px;margin-bottom:22px}
+.dots{display:flex;gap:12px;justify-content:center;margin-bottom:26px}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.28)}
+.dot.on{background:var(--amarillo);border-color:var(--amarillo)}
+.dot.err{background:var(--mal);border-color:var(--mal)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pad button{aspect-ratio:1.5;background:rgba(255,255,255,.08);border-radius:13px;color:var(--hueso);font-family:'Archivo';font-variation-settings:'wght' 700;font-size:22px;text-align:center;display:flex;align-items:center;justify-content:center}
+.pad .t{font-family:'Inter';font-size:12.5px;font-weight:600;color:rgba(245,242,236,.55)}
+@keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.shake{animation:sh .3s}
+
+.top{position:sticky;top:0;z-index:50;background:var(--tinta);padding:12px 16px}
+.tr{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.who{display:flex;align-items:center;gap:10px;min-width:0}
+.who .i{width:32px;height:32px;border-radius:9px;background:var(--amarillo);color:var(--tinta);display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:13px;flex-shrink:0}
+.who strong{display:block;color:var(--hueso);font-size:14px;line-height:1.2}
+.who small{color:rgba(245,242,236,.42);font-size:11.5px}
+.salir{background:rgba(255,255,255,.09);color:rgba(245,242,236,.75);padding:7px 12px;border-radius:8px;font-size:12.5px;font-weight:600}
+.tabs{display:flex;gap:6px;margin-top:11px}
+.tab{flex:1;padding:9px;border-radius:9px;font-size:12.5px;font-weight:600;background:rgba(255,255,255,.07);color:rgba(245,242,236,.55);text-align:center}
+.tab[aria-pressed="true"]{background:var(--hueso);color:var(--tinta)}
+
+.wrap{padding:16px 16px 100px;max-width:1000px;margin:0 auto}
+.eye{font-size:10.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gris2);margin:24px 0 11px;display:flex;justify-content:space-between}
+.eye:first-child{margin-top:0}
+.eye b{color:var(--gris)}
+
+/* QUINCENA HERO */
+/* ETIQUETAS DE PLAZO */
+.pl{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.pl-venc{background:#7A1418;color:#fff}
+.pl-urg{background:#FDECEC;color:var(--mal)}
+.pl-med{background:#FEF4E9;color:var(--alerta)}
+.pl-ok{background:#EEF4FA;color:var(--azul)}
+.pl-neu{background:#F0EDE7;color:var(--gris2)}
+.pl-hecho{background:#EAF3E4;color:var(--ok)}
+.pl-marc{background:var(--vino);color:#fff}
+.pl svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round}
+
+.mod-h{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px}
+.mod-h strong{flex:1;min-width:0}
+
+/* MARCADO POR ENCARGADO */
+.marc{background:#FDF4F6;border:1.5px solid #E8C4CF;border-left:5px solid var(--vino);border-radius:12px;padding:13px 14px;margin-bottom:9px}
+.marc .mk{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--vino);margin-bottom:5px}
+.marc strong{display:block;font-size:14.5px;font-weight:600;margin-bottom:4px;line-height:1.3}
+.marc p{font-size:12.5px;color:var(--gris);line-height:1.5;font-style:italic}
+.marc .de{font-size:11.5px;color:var(--gris2);margin-top:6px;font-style:normal}
+
+/* GRUPOS CON % */
+.grp{background:var(--papel);border:1.5px solid var(--borde);border-radius:13px;padding:14px;margin-bottom:9px;box-shadow:var(--s);width:100%;position:relative;overflow:hidden}
+.grp::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--col)}
+.grp .gh{display:flex;align-items:center;gap:11px;margin-bottom:10px;margin-left:4px}
+.grp .ic{width:32px;height:32px;border-radius:9px;background:var(--col);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.grp .ic svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.grp .gb{flex:1;min-width:0}
+.grp .gb strong{display:block;font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 700;font-size:14.5px;line-height:1.2}
+.grp .gb small{font-size:11.5px;color:var(--gris2)}
+.grp .gp{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:19px;flex-shrink:0}
+.grp .gp.a{color:var(--ok)}.grp .gp.m{color:var(--alerta)}.grp .gp.b{color:var(--mal)}
+.grp .gbar{height:6px;background:#EBE5DA;border-radius:100px;overflow:hidden;margin-left:4px}
+.grp .gbar i{display:block;height:100%;border-radius:100px;background:var(--col);transition:width .4s}
+.grp .gpend{font-size:11.5px;color:var(--gris);margin-top:8px;margin-left:4px;line-height:1.4}
+
+/* RESEÑAS */
+.plat{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:12px}
+.pcard{background:var(--papel);border:1.5px solid var(--borde);border-radius:13px;padding:13px 10px;text-align:center;box-shadow:var(--s);position:relative;overflow:hidden}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--col)}
+.pcard .pn{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gris2);margin-bottom:7px}
+.pcard .pv{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:24px;line-height:1;margin-bottom:4px}
+.pcard .pd{font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:3px}
+.pcard .pd.up{color:var(--ok)}.pcard .pd.dn{color:var(--mal)}.pcard .pd.eq{color:var(--gris2)}
+
+.lrow{background:var(--papel);border:1.5px solid var(--borde);border-radius:13px;padding:14px;margin-bottom:9px;box-shadow:var(--s);position:relative;overflow:hidden}
+.lrow::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--col)}
+.lrow .lh{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;margin-left:4px}
+.lrow .lh strong{font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 700;font-size:15.5px}
+.lrow .lh small{font-size:11.5px;color:var(--gris2)}
+.mets{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-left:4px}
+.met{text-align:center;padding:9px 4px;background:var(--hueso);border-radius:9px}
+.met b{display:block;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:15px;line-height:1.1;margin-bottom:2px}
+.met small{font-size:9.5px;color:var(--gris2);line-height:1.15;display:block}
+.met .dl{font-size:9.5px;font-weight:700;margin-top:3px}
+.met .dl.up{color:var(--ok)}.met .dl.dn{color:var(--mal)}.met .dl.eq{color:var(--gris2)}
+.met.bad b{color:var(--mal)}.met.good b{color:var(--ok)}
+
+.hist-r{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--borde);align-items:center}
+.hist-r:last-child{border-bottom:none}
+.hist-r .hf{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:11px;color:var(--gris2);width:60px;flex-shrink:0;letter-spacing:.04em}
+.hist-r .hv{flex:1;display:flex;gap:12px;font-size:12.5px;flex-wrap:wrap}
+.hist-r .hv span{color:var(--gris)}
+.hist-r .hv b{color:var(--tinta);font-weight:600}
+.hbox{background:var(--papel);border:1.5px solid var(--borde);border-radius:13px;padding:4px 14px;box-shadow:var(--s)}
+
+.mej{background:var(--papel);border:1.5px solid var(--borde);border-left:5px solid var(--alerta);border-radius:12px;padding:13px 14px;margin-bottom:8px;box-shadow:var(--s)}
+.mej.cerr{border-left-color:var(--ok);opacity:.62}
+.mej .mh{display:flex;justify-content:space-between;align-items:flex-start;gap:9px;margin-bottom:4px}
+.mej strong{font-size:14px;font-weight:600;line-height:1.3}
+.mej p{font-size:12.5px;color:var(--gris);line-height:1.5}
+.mej .mf{font-size:11px;color:var(--gris2);margin-top:6px;display:flex;gap:10px;align-items:center}
+.mej .mf button{font-size:11px;font-weight:700;color:var(--ok)}
+.mej.cerr .mf button{color:var(--gris2)}
+
+.quin{background:var(--tinta);border-radius:16px;padding:18px;color:var(--hueso);margin-bottom:11px;position:relative;overflow:hidden}
+.quin.urg{background:linear-gradient(135deg,#8C1F24,#C1272D)}
+.quin.hecha{background:linear-gradient(135deg,#2F5E20,#4A7C2F)}
+.quin .qk{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.7;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center}
+.quin .qd{background:rgba(255,255,255,.16);padding:3px 9px;border-radius:100px;font-size:10.5px;letter-spacing:.04em}
+.quin h2{font-family:'Archivo';font-variation-settings:'wdth' 108,'wght' 800;font-size:23px;line-height:1.12;margin-bottom:12px}
+.quin .qrow{display:flex;align-items:center;gap:14px}
+.ring{width:62px;height:62px;flex-shrink:0;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .rt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:15px}
+.quin .qi{flex:1;min-width:0}
+.quin .qi strong{display:block;font-size:15px;font-weight:600;margin-bottom:2px}
+.quin .qi span{font-size:12.5px;opacity:.75;line-height:1.4;display:block}
+
+/* MINI STATS */
+.mini3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:11px}
+.m3{background:var(--papel);border:1.5px solid var(--borde);border-radius:12px;padding:12px 9px;text-align:center;box-shadow:var(--s)}
+.m3 b{display:block;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:20px;line-height:1;margin-bottom:3px}
+.m3 small{font-size:10px;color:var(--gris2);font-weight:500;line-height:1.25;display:block}
+.m3.ok b{color:var(--ok)}.m3.mal b{color:var(--mal)}.m3.am b{color:var(--alerta)}
+
+/* PUNTO DÉBIL */
+.debil{background:var(--papel);border:1.5px solid var(--borde);border-left:5px solid var(--mal);border-radius:12px;padding:14px 15px;margin-bottom:9px;box-shadow:var(--s)}
+.debil .dk{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mal);margin-bottom:6px}
+.debil strong{display:block;font-size:14.5px;font-weight:600;margin-bottom:4px;line-height:1.3}
+.debil p{font-size:12.5px;color:var(--gris);line-height:1.5}
+
+/* EQUIPO ENCARGADO */
+.eq-r{background:var(--papel);border:1.5px solid var(--borde);border-radius:12px;padding:12px 14px;margin-bottom:7px;display:flex;gap:11px;align-items:center;box-shadow:var(--s)}
+.eq-r .i{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:12px;flex-shrink:0;color:#fff}
+.eq-r .i.ok{background:var(--ok)}.eq-r .i.no{background:var(--mal)}.eq-r .i.med{background:var(--alerta)}
+.eq-r .b{flex:1;min-width:0}
+.eq-r .b strong{display:block;font-size:14px;font-weight:600}
+.eq-r .b small{font-size:11.5px;color:var(--gris2)}
+.eq-r .st{font-size:11.5px;font-weight:700;flex-shrink:0}
+.eq-r .st.ok{color:var(--ok)}.eq-r .st.no{color:var(--mal)}.eq-r .st.med{color:var(--alerta)}
+
+.selm{background:var(--papel);border:1.5px solid var(--borde);border-radius:11px;padding:12px 13px;margin-bottom:7px;display:flex;gap:11px;align-items:center;width:100%}
+.selm[aria-pressed="true"]{border-color:var(--tinta);border-width:2px;background:#FFFBF5}
+.selm .cb{width:22px;height:22px;border-radius:6px;border:2px solid var(--borde2);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.selm[aria-pressed="true"] .cb{background:var(--tinta);border-color:var(--tinta)}
+.selm .cb svg{opacity:0;width:12px;height:12px;stroke:#fff;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.selm[aria-pressed="true"] .cb svg{opacity:1}
+.selm .b{flex:1;min-width:0}
+.selm .b strong{display:block;font-size:13.5px;font-weight:600;line-height:1.3}
+.selm .b small{font-size:11.5px;color:var(--gris2)}
+
+.prog-c{background:var(--papel);border:1.5px solid var(--borde);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--s)}
+.prog-c .r{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.prog-c strong{font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 700;font-size:16px}
+.prog-c .pc{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:22px;color:var(--verde)}
+.bar{height:8px;background:#EBE5DA;border-radius:100px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--verde);border-radius:100px;transition:width .5s}
+.prog-c .sub{font-size:12.5px;color:var(--gris);margin-top:9px;line-height:1.45}
+
+.mod{background:var(--papel);border:1.5px solid var(--borde);border-radius:13px;padding:14px;margin-bottom:9px;display:flex;gap:12px;align-items:flex-start;width:100%;box-shadow:var(--s);position:relative;overflow:hidden}
+.mod::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--col)}
+.mod .ic{width:36px;height:36px;border-radius:10px;background:var(--col);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-left:4px}
+.mod .ic svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.mod-b{flex:1;min-width:0}
+.mod-b strong{display:block;font-size:14.5px;font-weight:600;line-height:1.3;margin-bottom:3px}
+.mod-b .mt{font-size:12px;color:var(--gris2);display:flex;gap:9px;flex-wrap:wrap}
+.mod.hecho{background:#F5F9F2;border-color:#CFE2C4}
+.mod.hecho strong{color:var(--gris)}
+.mod .res{font-size:11.5px;font-weight:600;margin-top:4px}
+.mod .res.ok{color:var(--ok)}.mod .res.mal{color:var(--mal)}
+.tg{display:inline-block;padding:2px 7px;border-radius:5px;font-size:9.5px;font-weight:700;text-transform:uppercase;vertical-align:middle;margin-left:4px}
+.tg-n{background:#EEF4FA;color:var(--azul)}
+.tg-r{background:#FDECEC;color:var(--mal)}
+.tg-c{background:#FDECEC;color:var(--mal)}
+
+.aviso-l{background:var(--papel);border:1.5px solid var(--borde);border-left:5px solid var(--amarillo);border-radius:12px;padding:14px 15px;margin-bottom:9px;box-shadow:var(--s)}
+.aviso-l strong{display:block;font-size:14px;margin-bottom:4px}
+.aviso-l p{font-size:12.5px;color:var(--gris);line-height:1.5}
+.aviso-l .de{font-size:11.5px;color:var(--gris2);margin-top:6px}
+
+.play{position:fixed;inset:0;background:var(--tinta);z-index:220;display:none;flex-direction:column}
+.play.on{display:flex}
+.p-top{padding:14px 16px 0;flex-shrink:0}
+.p-bar{display:flex;gap:3px;margin-bottom:12px}
+.p-seg{flex:1;height:4px;border-radius:100px;background:rgba(255,255,255,.16)}
+.p-seg.on{background:var(--amarillo)}
+.p-seg.ok{background:var(--verde)}.p-seg.mal{background:var(--roja)}
+.p-head{display:flex;align-items:center;justify-content:space-between}
+.p-x{color:rgba(245,242,236,.55);font-size:13px;font-weight:600;padding:6px 0}
+.p-n{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:12px;color:rgba(245,242,236,.45);letter-spacing:.08em}
+.p-body{flex:1;overflow-y:auto;padding:8px 18px 18px}
+.p-foot{padding:14px 16px 16px;flex-shrink:0}
+
+.slide-k{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amarillo);margin-bottom:9px}
+.slide-t{font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 700;font-size:26px;line-height:1.18;color:var(--hueso);margin-bottom:14px}
+.slide-p{font-size:16px;line-height:1.6;color:rgba(245,242,236,.78);margin-bottom:13px}
+.slide-p b{color:var(--amarillo)}
+.slide-d{background:rgba(255,255,255,.07);border-radius:13px;padding:16px;margin-bottom:13px}
+.slide-d .big{font-family:'Archivo';font-variation-settings:'wght' 900;font-size:36px;color:var(--amarillo);line-height:1;margin-bottom:6px}
+.slide-d .sm{font-size:13.5px;color:rgba(245,242,236,.7);line-height:1.45}
+.pasos-l{background:rgba(255,255,255,.06);border-radius:13px;padding:6px 16px;margin-bottom:13px}
+.pasos-l .pl{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);align-items:flex-start}
+.pasos-l .pl:last-child{border-bottom:none}
+.pasos-l .pn{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:13px;color:var(--amarillo);flex-shrink:0;width:22px}
+.pasos-l .pt{font-size:15px;color:var(--hueso);line-height:1.4}
+.pasos-l .pt em{font-style:normal;color:var(--amarillo);font-weight:700}
+.frase{border-left:3px solid var(--amarillo);padding:4px 0 4px 14px;margin-bottom:13px}
+.frase p{font-size:16.5px;color:var(--hueso);font-style:italic;line-height:1.5}
+.frase small{font-size:12.5px;color:rgba(245,242,236,.5);display:block;margin-top:6px}
+.cols{display:flex;flex-direction:column;gap:9px;margin-bottom:13px}
+.col-r{border-radius:12px;padding:14px 15px;color:#fff}
+.col-r b{display:block;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:15px;margin-bottom:3px}
+.col-r span{font-size:13.5px;opacity:.92;line-height:1.4;display:block}
+
+.pbtn{width:100%;background:var(--amarillo);color:var(--tinta);padding:18px;border-radius:14px;font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 800;font-size:17px;text-align:center}
+.pbtn.v{background:var(--verde);color:#fff}
+.pbtn:disabled{opacity:.3}
+.pback{width:100%;text-align:center;color:rgba(245,242,236,.4);font-size:13px;font-weight:600;padding:11px 0 0}
+
+.q-t{font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 700;font-size:21px;line-height:1.25;color:var(--hueso);margin-bottom:16px}
+.q-h{font-size:13.5px;color:rgba(245,242,236,.5);margin-bottom:14px;line-height:1.45}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{background:rgba(255,255,255,.08);border:2px solid transparent;border-radius:13px;padding:16px;color:var(--hueso);font-size:15.5px;font-weight:500;line-height:1.35}
+.opt.bien{background:var(--verde);border-color:var(--verde);font-weight:600}
+.opt.mal{background:var(--roja);border-color:var(--roja)}
+.opt.gris{opacity:.4}
+
+.ord-zona{background:rgba(255,255,255,.06);border:2px dashed rgba(255,255,255,.18);border-radius:13px;padding:12px;margin-bottom:14px;min-height:80px}
+.ord-zona.lleno{border-style:solid}
+.ord-i{background:var(--amarillo);color:var(--tinta);border-radius:10px;padding:11px 13px;margin-bottom:6px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:9px}
+.ord-i:last-child{margin-bottom:0}
+.ord-i .n{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:12px;opacity:.6}
+.ord-i .x{margin-left:auto;opacity:.5;font-size:18px}
+.ord-i.bien{background:var(--verde);color:#fff}
+.ord-i.mal{background:var(--roja);color:#fff}
+.ord-vacio{text-align:center;color:rgba(245,242,236,.35);font-size:13.5px;padding:18px 10px}
+.ord-pool{display:flex;flex-wrap:wrap;gap:8px}
+.ord-p{background:rgba(255,255,255,.1);color:var(--hueso);border-radius:10px;padding:11px 13px;font-size:14px;font-weight:600}
+.ord-p.usado{opacity:.22}
+
+.cant-p{background:rgba(255,255,255,.07);border-radius:13px;padding:16px;margin-bottom:14px;text-align:center}
+.cant-p .pr{font-family:'Archivo';font-variation-settings:'wght' 700;font-size:19px;color:var(--hueso);margin-bottom:3px}
+.cant-p .ing{font-size:14.5px;color:rgba(245,242,236,.6)}
+.cant-g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.cant-b{background:rgba(255,255,255,.08);border:2px solid transparent;border-radius:13px;padding:20px 8px;text-align:center;color:var(--hueso);font-family:'Archivo';font-variation-settings:'wght' 800;font-size:18px}
+.cant-b.bien{background:var(--verde);border-color:var(--verde)}
+.cant-b.mal{background:var(--roja);border-color:var(--roja)}
+
+.tick{background:var(--hueso);border-radius:13px;padding:15px;margin-bottom:14px;color:var(--tinta)}
+.tick .th{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gris2);margin-bottom:9px;padding-bottom:8px;border-bottom:1.5px dashed var(--borde2)}
+.tick .li{padding:5px 0;font-size:14.5px;font-weight:500}
+.tick .nt{margin-top:10px;padding-top:10px;border-top:1.5px dashed var(--borde2);font-size:14px;color:var(--vino);font-weight:600;font-style:italic}
+.col-g{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.col-b{border-radius:13px;padding:16px 12px;color:#fff;text-align:center;border:2px solid transparent}
+.col-b b{display:block;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:15px;margin-bottom:2px}
+.col-b span{font-size:12px;opacity:.9}
+.col-b.bien{outline:3px solid #8FD37A;outline-offset:2px}
+.col-b.mal{outline:3px solid #FF9A9A;outline-offset:2px}
+.col-b.gris{opacity:.35}
+
+.fb{background:rgba(255,255,255,.07);border-radius:13px;padding:16px;margin-top:14px}
+.fb .ft{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:17px;margin-bottom:6px}
+.fb.si .ft{color:#8FD37A}.fb.no .ft{color:#FF9A9A}
+.fb p{font-size:14.5px;color:rgba(245,242,236,.72);line-height:1.5}
+
+.fin{text-align:center;padding:26px 16px}
+.fin .big{font-family:'Archivo';font-variation-settings:'wght' 900;font-size:64px;line-height:1;margin-bottom:8px}
+.fin .big.ok{color:#8FD37A}.fin .big.med{color:var(--amarillo)}.fin .big.no{color:#FF9A9A}
+.fin h3{font-family:'Archivo';font-variation-settings:'wght' 700;font-size:21px;color:var(--hueso);margin-bottom:10px}
+.fin p{font-size:14.5px;color:rgba(245,242,236,.6);line-height:1.55;max-width:340px;margin:0 auto 16px}
+.fallos-l{background:rgba(255,255,255,.06);border-radius:13px;padding:14px 16px;text-align:left;max-width:400px;margin:0 auto}
+.fallos-l .fl{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#FF9A9A;margin-bottom:9px}
+.fallos-l li{font-size:14px;color:rgba(245,242,236,.75);margin-bottom:7px;list-style:none;padding-left:16px;position:relative;line-height:1.4}
+.fallos-l li::before{content:'·';position:absolute;left:4px;color:#FF9A9A;font-weight:700}
+
+.kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.kpi{background:var(--papel);border:1.5px solid var(--borde);border-radius:12px;padding:12px;box-shadow:var(--s)}
+.kpi b{display:block;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:22px;line-height:1;margin-bottom:3px}
+.kpi small{font-size:10.5px;color:var(--gris2);font-weight:500;line-height:1.2;display:block}
+.kpi.ok b{color:var(--ok)}.kpi.mal b{color:var(--mal)}
+.per{background:var(--papel);border:1.5px solid var(--borde);border-radius:12px;padding:13px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:center;width:100%;box-shadow:var(--s)}
+.per .i{width:34px;height:34px;border-radius:10px;background:var(--hueso);display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:13px;flex-shrink:0}
+.per-b{flex:1;min-width:0}
+.per-b strong{display:block;font-size:14.5px;font-weight:600}
+.per-b small{font-size:12px;color:var(--gris2)}
+.per .pc{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:19px;flex-shrink:0}
+.per .pc.a{color:var(--ok)}.per .pc.m{color:var(--alerta)}.per .pc.b{color:var(--mal)}
+.det{background:var(--papel);border:1.5px solid var(--borde);border-radius:11px;padding:12px 14px;margin-bottom:7px}
+.det .dr{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.det strong{font-size:13.5px;font-weight:600}
+.det .p{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:15px}
+.det .p.a{color:var(--ok)}.det .p.m{color:var(--alerta)}.det .p.b{color:var(--mal)}
+.det small{font-size:11.5px;color:var(--gris2);display:block;margin-top:3px}
+.kpi-t{background:var(--papel);border:1.5px solid var(--borde);border-radius:12px;padding:13px 14px;margin-bottom:7px;box-shadow:var(--s)}
+.kpi-t .r{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.kpi-t strong{font-size:13.5px;font-weight:600}
+.kpi-t .v{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:15px;color:var(--mal)}
+.kpi-t small{font-size:11.5px;color:var(--gris2)}
+
+.sheet{position:fixed;inset:0;background:var(--hueso);z-index:180;transform:translateY(100%);transition:transform .27s cubic-bezier(.4,0,.2,1);overflow-y:auto;padding-bottom:80px}
+.sheet.on{transform:translateY(0)}
+.sh-top{position:sticky;top:0;z-index:5;background:var(--col);color:#fff;padding:14px 16px 17px}
+.sh-x{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#fff;opacity:.82;margin-bottom:11px}
+.sh-top h2{font-family:'Archivo';font-variation-settings:'wdth' 108,'wght' 800;font-size:23px;margin-bottom:4px;line-height:1.12}
+.sh-top p{font-size:13px;opacity:.88}
+.f-c{margin-bottom:14px}
+.f-c label{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gris2);margin-bottom:7px}
+.f-c input,.f-c textarea,.f-c select{width:100%;padding:12px 13px;border:1.5px solid var(--borde2);border-radius:10px;font-size:15px;background:var(--papel);outline:none}
+.f-c textarea{min-height:70px;resize:vertical}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:9px 14px;border-radius:100px;font-size:13px;font-weight:600;background:var(--hueso);border:1.5px solid var(--borde2);color:var(--gris)}
+.chip[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--hueso)}
+.ed-add{width:100%;background:var(--tinta);color:var(--hueso);padding:14px;border-radius:12px;font-family:'Archivo';font-variation-settings:'wght' 700;font-size:14px;text-align:center;margin-top:4px}
+.pub{position:sticky;bottom:0;background:var(--hueso);padding:14px 16px 16px;border-top:1.5px solid var(--borde);margin-top:18px}
+.pub-b{width:100%;background:var(--verde);color:#fff;padding:16px;border-radius:13px;font-family:'Archivo';font-variation-settings:'wght' 700;font-size:15px;text-align:center}
+.pub small{display:block;text-align:center;font-size:11.5px;color:var(--gris2);margin-top:8px}
+.pie{margin-top:22px;padding:14px;background:rgba(123,29,58,.045);border-radius:11px;font-size:12.5px;color:var(--gris);line-height:1.55}
+.pie strong{color:var(--vino)}
+.toast{position:fixed;left:16px;right:16px;bottom:20px;z-index:400;background:var(--tinta);color:var(--hueso);padding:14px 16px;border-radius:12px;font-size:14px;font-weight:500;transform:translateY(150%);transition:transform .3s;display:flex;align-items:center;gap:10px;max-width:500px;margin:0 auto}
+.toast.on{transform:translateY(0)}
+#loading{position:fixed;inset:0;background:var(--tinta);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
+#loading .m{font-family:'Archivo';font-variation-settings:'wdth' 112,'wght' 900;font-size:21px;color:var(--hueso);text-transform:uppercase}
+#loading .m span{color:var(--amarillo)}
+#loadMsg{color:rgba(245,242,236,.55);font-size:13.5px}
+.spin{width:32px;height:32px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--amarillo);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loadErr{display:none;max-width:340px}
+#loadErr p{color:#FF9A9A;font-size:13.5px;line-height:1.55;margin-bottom:16px}
+#loadErr button{background:var(--amarillo);color:var(--tinta);padding:12px 22px;border-radius:10px;font-weight:700;font-size:14px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2.5px solid var(--amarillo);outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="loading">
+ <div class="m">Escuela <span>Órale</span></div>
+ <div class="spin"></div>
+ <div id="loadMsg">Cargando datos…</div>
+ <div id="loadErr">
+  <p>No se ha podido conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.</p>
+  <button onclick="location.reload()">Reintentar</button>
+ </div>
+</div>
+<div id="login" style="display:none"><div class="lc"><div class="m">Escuela <span>Órale</span></div><p id="lsub">Elige tu local y tu nombre</p></div><div id="lbody"></div></div>
+<header class="top" id="top" style="display:none">
+<div class="tr"><div class="who"><div class="i" id="wi"></div><div><strong id="wn"></strong><small id="wr"></small></div></div>
+<button class="salir" onclick="salir()">Salir</button></div><div class="tabs" id="tabs"></div></header>
+<main class="wrap" id="app" style="display:none"></main>
+<div class="play" id="play"></div>
+<div class="sheet" id="sheet"></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const LOCALES=['San Luis','Los Remedios','Sevilla Este'];
+let EMP=[];
+const DIRPIN='2626';
+
+/* ===== SUPABASE ===== */
+const SUPA_URL='https://pnpmigcbqgcggtkfkqeh.supabase.co';
+const SUPA_KEY='sb_publishable_O52yBoiZ7mtqR4Y1E6JsjQ_L8pK_mUZ';
+const db=supabase.createClient(SUPA_URL,SUPA_KEY);
+function saveConfig(clave,valor){
+ return db.from('escuela_config').upsert({clave,valor,actualizado_en:new Date().toISOString()}).then(({error})=>{
+  if(error){console.error(error);toast('Cambio guardado en el dispositivo, pero no en el servidor')}})}
+
+const CAT={
+ receta:{n:'Recetas y montaje',c:'--naranja',ic:'<path d="M6 2v9a3 3 0 006 0V2M9 11v11M18 2v20M18 2a3 3 0 013 3v6a3 3 0 01-3 3"/>'},
+ pedido:{n:'Pedidos y delivery',c:'--roja',ic:'<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/>'},
+ producto:{n:'Producto y recetas',c:'--marron',ic:'<path d="M3 17a9 9 0 0118 0z"/><path d="M3 17h18M8 13.5c1-1 2-1 3 0M13 13.5c1-1 2-1 3 0"/>'},
+ cliente:{n:'Atención al cliente',c:'--morado',ic:'<path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.5 8.5 0 018 8v.5z"/>'},
+ turno:{n:'Turno y stock',c:'--amarillo',ic:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'},
+ local:{n:'Limpieza y equipos',c:'--verde',ic:'<path d="M12 2.7l5 6.2a6.5 6.5 0 11-10 0z"/>'},
+ personal:{n:'Tú y el equipo',c:'--teal',ic:'<path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.9"/>'},
+ marca:{n:'Marca y cultura',c:'--vino',ic:'<path d="M12 2l2.9 6.3 6.8.8-5 4.7 1.3 6.8L12 17.3 6 20.6l1.3-6.8-5-4.7 6.8-.8z"/>'},
+ lider:{n:'Encargado',c:'--azul',ic:'<path d="M12 2l3 6 6 1-4.5 4.3 1 6.2L12 16.5 6.5 19.5l1-6.2L3 9l6-1z"/>'}
+};
+
+const MOD=[
+/* ===== PEDIDOS ===== */
+{id:'p1',pub:0,cat:'pedido',t:'Los 12 pasos del cierre de bolsa',min:6,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
+ slides:[
+ {k:'Por qué existe',t:'1.500 € tirados en cinco meses',
+  p:['El <b>89%</b> de nuestros errores son artículos que faltan. Cada contracargo cuesta de media <b>9,33 €</b>.',
+  'Y de cada 100 € que vende Uber, al local llegan <b>56,50 €</b>. De un burrito de 10 €, llegan 5,65 €.',
+  'Por eso un pedido incompleto no cuesta 10 €: cuesta el margen de varios pedidos buenos.'],
+  dest:['1.501,65 €','en contracargos entre septiembre y marzo. Un 144% más que el año anterior.']},
+ {k:'La regla de oro',t:'Ninguna bolsa se cierra sin el checklist',
+  frase:['Ni en hora punta. Ni con prisa. NUNCA.','Son 30-45 segundos por pedido.'],
+  p:['Y una segunda regla: <b>ningún pedido sale sin ser revisado por dos personas</b> — quien prepara y quien empaqueta. O en su defecto, dos veces.']},
+ {k:'Los 12 pasos',t:'De leer a cerrar',pasos:[
+  '<em>LEER</em> el ticket completo: artículos, notas y personalizaciones',
+  '<em>MARCAR</em> el ticket con rotulador según el sistema de colores',
+  '<em>PREPARAR</em> según receta estándar',
+  '<em>AGRUPAR</em> en zona de staging y contar contra el ticket',
+  '<em>BURRITOS</em> en aluminio individual + contenedor cerrado',
+  '<em>NACHOS</em> con los toppings en recipiente separado',
+  '<em>BEBIDA</em> en bolsa o compartimento aparte',
+  '<em>SALSAS</em> en recipientes cerrados, cantidad correcta',
+  '<em>POSTRE</em> verificado (Kinder no es Lotus)',
+  '<em>EXTRAS</em>: servilletas y cubiertos',
+  '<em>CONTAR</em>: artículos en bolsa = artículos en ticket. Si no cuadra, no se cierra',
+  '<em>CERRAR</em> con precinto y el ticket pegado por fuera']},
+ {k:'El que más se salta',t:'El paso 11 no es opcional',
+  p:['El recuento final es el que evita el 89% de nuestros errores. Y es justo el que se salta cuando hay prisa.',
+  'Si el número no cuadra, <b>no se cierra la bolsa</b>. Se busca lo que falta.'],
+  frase:['Ya no hay que revisar pagos en efectivo de Glovo.','Ese tiempo va íntegro a revisar el pedido. No hay excusa.']}],
+ test:[
+ {tipo:'orden',q:'Ordena los 6 primeros pasos del checklist',h:'Toca en el orden correcto',
+  items:['Leer el ticket','Marcar con color','Preparar','Agrupar y contar','Burritos en aluminio','Nachos con toppings aparte'],
+  ex:'Leer y marcar van antes de cocinar. Si preparas antes de leer las notas, ya has fallado.'},
+ {tipo:'opt',q:'Cuentas los artículos y no cuadra con el ticket. Estáis en hora punta. ¿Qué haces?',
+  op:[['Cerrar y avisar al rider',0],['No cerrar hasta que cuadre',1],['Cerrar y anotarlo como incidencia',0]],
+  ex:'No se cierra. La regla es literal: si no cuadra, no se cierra. Da igual la hora punta.'},
+ {tipo:'opt',q:'¿Cuántas personas deben revisar un pedido antes de que salga?',
+  op:[['Una, quien lo prepara',0],['Dos: quien prepara y quien empaqueta',1],['El encargado siempre',0]],
+  ex:'Dos personas. O en su defecto, dos veces. La última justo antes de entregar al rider.'},
+ {tipo:'opt',q:'¿Dónde va el ticket al cerrar la bolsa?',
+  op:[['Dentro, con el pedido',0],['Pegado por fuera',1],['No hace falta',0]],
+  ex:'Pegado por fuera, con el precinto puesto.'}]},
+
+{id:'p2',pub:0,cat:'pedido',t:'Sistema de colores del ticket',min:5,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
+ slides:[
+ {k:'Lo más grave que tenemos',t:'Dos alérgenos servidos a quien los declaró',
+  p:['<b>13/10/25</b>: cilantro en un Burro Don Juárez.<br><b>24/01/26</b>: aguacate en un Combo Duo Guadalupe.',
+  'Los dos clientes lo habían declarado en el pedido.',
+  'En España los alérgenos se rigen por el Reglamento UE 1169/2011. Ignorar una alergia puede suponer hospitalización, cierre temporal, multas y responsabilidad penal.'],
+  dest:['2','alergias ignoradas. Es lo único de toda la operación que puede cerrar el negocio.']},
+ {k:'Los cuatro colores',t:'Se marca al entrar el pedido',
+  cols:[['--roja','ROJO o NARANJA','ALERGIA. Ticket aparte y marcado en grande. Avisar al encargado de voz. Utensilios limpios. El encargado FIRMA el ticket antes de cerrar la bolsa.'],
+  ['--amarillo','AMARILLO','MODIFICACIÓN. Sin cebolla, sin arroz, carne separada, extra de salsa. Se marca la modificación concreta.'],
+  ['--azul','AZUL','ATENCIÓN. Pedido grande o complejo, cliente con historial de incidencias, instrucciones especiales de entrega.'],
+  ['--gris2','SIN MARCAR','ESTÁNDAR. Checklist normal de 12 pasos.']]},
+ {k:'La duda',t:'Si dudas, preguntas',
+  frase:['Si tienes CUALQUIER duda sobre si un ingrediente puede causar alergia, pregunta al encargado. Siempre.','Nunca asumas.'],
+  p:['Y ojo con los combos: el aguacate del Duo Guadalupe no aparece en el nombre del producto. Eso fue exactamente el fallo del 24/01.']},
+ {k:'El flujo',t:'Quién hace qué',pasos:[
+  '<em>Recepción</em>: se lee el ticket completo y se marca con color',
+  '<em>Preparación</em>: si tiene color, se lee la nota EN VOZ ALTA antes de preparar',
+  '<em>Revisión</em>: los 6 puntos — extras, postre, bebida, salsas, notas, temperatura',
+  '<em>Conteo</em>: artículos en bolsa = artículos en ticket',
+  '<em>Cierre</em>: si es rojo, firma del encargado. Precinto y ticket fuera',
+  '<em>Entrega</em>: zona caliente hasta el rider. Más de 10 min: recalentar o rehacer']}],
+ test:[
+ {tipo:'color',nt:'Soy alérgico al cilantro, por favor',r:'roja',
+  ex:'ROJO. Menciona alergia, aunque sea en las notas y no en el campo de alérgenos.'},
+ {tipo:'color',nt:'Sin cebolla y con extra de salsa',r:'amarillo',
+  ex:'AMARILLO. Es una modificación, no una alergia. Se marca la modificación concreta.'},
+ {tipo:'color',nt:'',r:'sin',
+  ex:'SIN MARCAR. Sin notas ni personalizaciones: checklist normal de 12 pasos.'},
+ {tipo:'color',nt:'Pedido para 12 personas, entregar en recepción del edificio',r:'azul',
+  ex:'AZUL. Pedido grande con instrucción especial de entrega. Se marca y se comunica al equipo.'},
+ {tipo:'opt',q:'Pedido ROJO por alergia. ¿Quién firma antes de cerrar la bolsa?',
+  op:[['Quien lo prepara',0],['El encargado',1],['Nadie, basta con marcarlo',0]],
+  ex:'El encargado firma personalmente el ticket. Sin excepciones.'}]},
+
+{id:'p3',pub:0,cat:'pedido',t:'Temperatura: la queja número 1',min:5,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
+ slides:[
+ {k:'El dato',t:'37 quejas por temperatura',
+  p:['Es el problema <b>más mencionado</b> en las reseñas de Uber y Glovo. Por encima de los artículos que faltan.',
+  'Y no es un problema de receta: es de tiempos.'],
+  dest:['37','quejas de temperatura entre octubre y febrero']},
+ {k:'Los cuatro tiempos',t:'Las reglas que lo arreglan',pasos:[
+  'Planchas y hornos encendidos <em>30 minutos antes</em> de aceptar pedidos',
+  'Nunca preparar un burrito con más de <em>5 minutos</em> de antelación al cierre de bolsa',
+  'Caliente separado de frío: bebidas y postres en compartimento aparte',
+  'Si el rider no llega en <em>10 minutos</em>: recalentar o rehacer']},
+ {k:'Nachos',t:'El caso especial',
+  p:['Los Nachos Guadalupe acumulan <b>13 incidencias</b>, casi todas por llegar fríos y blandos.',
+  'Se montan <b>en el último momento</b>. Toppings y salsas van SEPARADOS, con nota "Montar al recibir".',
+  'Nunca se dejan reposar con salsas encima: el queso humedece el totopo en minutos.']},
+ {k:'El check final',t:'Caliente al tacto',
+  frase:['Todo producto debe estar caliente al tacto antes de entrar en la bolsa.','Si no lo está, se calienta. Quien despacha hace el check.']}],
+ test:[
+ {tipo:'opt',q:'¿Cuánto antes de aceptar pedidos se encienden planchas y hornos?',
+  op:[['10 minutos',0],['30 minutos',1],['Al abrir el local',0]],
+  ex:'30 minutos. Con plancha fría el primer pedido del turno sale tibio.'},
+ {tipo:'opt',q:'El rider lleva 12 minutos de retraso y el pedido está montado. ¿Qué haces?',
+  op:[['Entregarlo, ya está hecho',0],['Recalentar o rehacer',1],['Meterlo en zona caliente y esperar',0]],
+  ex:'Pasados 10 minutos, se recalienta o se rehace. Cuesta menos que un contracargo.'},
+ {tipo:'opt',q:'Nachos para delivery. ¿Cómo van los toppings?',
+  op:[['Montados encima, como en sala',0],['Separados, con nota "Montar al recibir"',1],['Mezclados con el queso',0]],
+  ex:'Separados y con la nota. Es lo que evita las 13 incidencias de este producto.'},
+ {tipo:'opt',q:'¿Con cuánta antelación máxima se prepara un burrito?',
+  op:[['5 minutos',1],['15 minutos',0],['Lo que haga falta si hay cola',0]],
+  ex:'5 minutos antes del cierre de bolsa. Ni uno más.'}]},
+
+{id:'p4',pub:0,cat:'pedido',t:'Packaging producto a producto',min:4,fr:'Mensual',roles:['empleado','encargado'],
+ slides:[
+ {k:'Por qué importa',t:'El envase decide cómo llega',
+  p:['Un burrito bien hecho en bolsa blanda llega aplastado. Unos nachos con salsa encima llegan blandos.',
+  'El packaging no es un detalle: es la mitad de la experiencia en delivery.']},
+ {k:'Producto a producto',t:'Cada uno tiene el suyo',pasos:[
+  '<em>Burritos</em>: aluminio individual + contenedor cerrado + bolsa térmica',
+  '<em>Nachos</em>: toppings y salsas en recipientes separados + nota "Montar al recibir"',
+  '<em>Quesadillas</em>: contenedor hermético + aluminio. Cortar justo antes de cerrar',
+  '<em>Alitas</em>: contenedor ventilado para que no se ablanden. Salsa SIEMPRE aparte',
+  '<em>Bebidas</em>: bolsa o compartimento separado del caliente. Siempre lo ÚLTIMO en añadir',
+  '<em>Postres</em>: Kinder Bueno pegatina AZUL, Lotus pegatina ROJA. Verificar visualmente']},
+ {k:'El que más se olvida',t:'Coca-Cola Zero',
+  p:['Es el artículo que <b>más veces se ha olvidado</b> en la bolsa: 9 incidencias registradas.',
+  'Por eso las bebidas son lo último que se añade, justo antes de contar. Así no se quedan fuera.']}],
+ test:[
+ {tipo:'opt',q:'¿Cómo va un burrito para delivery?',
+  op:[['En bolsa de papel',0],['Aluminio individual + contenedor cerrado',1],['Envuelto en papel film',0]],
+  ex:'Aluminio individual y contenedor cerrado. En bolsa blanda llega aplastado.'},
+ {tipo:'opt',q:'Sale un postre Lotus. ¿Qué pegatina lleva?',
+  op:[['Azul',0],['Roja',1],['Ninguna, se distingue solo',0]],
+  ex:'Lotus lleva roja, Kinder Bueno azul. Se confunden y por eso hay código de color.'},
+ {tipo:'opt',q:'¿Cuándo se añade la bebida a la bolsa?',
+  op:[['Lo primero, para no olvidarla',0],['Lo último, antes de contar',1],['Da igual el orden',0]],
+  ex:'Lo último y en compartimento separado del caliente. Así entra en el conteo final.'}]},
+
+/* ===== PRODUCTO ===== */
+{id:'r1',pub:0,cat:'producto',t:'Estándares no negociables',min:5,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
+ slides:[
+ {k:'El quinto fallo',t:'"Ha bajado la calidad"',
+  p:['Es lo que dicen los clientes fieles antes de irse. Y es el fallo más silencioso: no genera contracargo, genera pérdida de cliente.',
+  'La consistencia no es cocinar bien un día. Es cocinar <b>igual todos los días y en los tres locales</b>.']},
+ {k:'Los no negociables',t:'Si no cumple, no sale',pasos:[
+  '<em>Cochinita</em>: SIEMPRE desmenuzada, nunca en trozos. Si sale entera, no sale',
+  '<em>Quesadillas</em>: masa completamente cocinada, sin puntos crudos',
+  '<em>Burritos</em>: gramaje estándar del jefe de cocina. No reducir porciones',
+  '<em>Patatas</em>: crujientes, calientes, peladas y bien sazonadas. Blandas o frías no salen',
+  '<em>Nachos</em>: montaje en el último momento']},
+ {k:'Nada de atajos',t:'Recetas oficiales, siempre',
+  p:['Nada de inventos ni atajos. Cantidades marcadas, ni más ni menos. Porciones con la cuchara asignada a cada ingrediente.',
+  'Si una salsa se acaba, <b>se hace o se avisa</b>. Si un burrito se rompe, se rehace. Si hay duda con una orden, se pregunta. Si el guacamole tiene mala pinta, se hace otro.'],
+  frase:['Si no te lo comerías tú, no lo sirvas.','']},
+ {k:'Los que más fallan',t:'Atención extra a estos',pasos:[
+  '<em>Burro Don Juárez</em> — 15 incidencias: sabor, temperatura, alergia al cilantro',
+  '<em>Nachos Guadalupe</em> — 13: llegan fríos y blandos',
+  '<em>Burro Doña Dolores</em> — 12+: excesivamente especiado',
+  '<em>Combo Nomás Pa\' Mí</em> — 12: faltan personalizaciones',
+  '<em>Burro Lady Cochinita</em> — 9+: cochinita sin desmenuzar',
+  '<em>Coca-Cola Zero</em> — 9: se olvida en la bolsa']}],
+ test:[
+ {tipo:'opt',q:'Sale un Burro Lady Cochinita y la cochinita está en trozos, no desmenuzada. ¿Qué haces?',
+  op:[['Sale igual, el sabor es el mismo',0],['No sale: se desmenuza o se rehace',1],['Sale y se avisa al encargado',0]],
+  ex:'No sale. Es un estándar no negociable y acumula 9 incidencias justo por esto.'},
+ {tipo:'opt',q:'Se ha acabado una salsa en mitad del servicio. ¿Qué haces?',
+  op:[['Sustituirla por otra parecida',0],['Hacerla o avisar al encargado',1],['Servir el plato sin ella',0]],
+  ex:'Se hace o se avisa. Nunca se sustituye por otra sin decir nada.'},
+ {tipo:'opt',q:'Las patatas han salido un poco blandas pero calientes. ¿Salen?',
+  op:[['Sí, están calientes',0],['No, tienen que estar crujientes',1],['Sí, si el pedido va con prisa',0]],
+  ex:'No salen. Crujientes y calientes, siempre. Es un no negociable.'}]},
+
+{id:'r2',pub:0,cat:'receta',t:'Cantidades: guacamole, proteína y queso',min:4,fr:'Cada 3 semanas',roles:['empleado','encargado'],
+ slides:[
+ {k:'El coste invisible',t:'20 g de más no los ve nadie',
+  p:['Si te pasas 20 g de proteína en cada burrito y vendes 2.000 al año, son <b>40 kg de carne regalada</b>.',
+  'No lo nota el cliente ni el equipo. Solo lo nota el food cost a final de mes.',
+  'Y quedarse corto tampoco vale: los clientes lo notan y lo dicen en reseñas.'],
+  dest:['3','ingredientes concentran casi toda la desviación: guacamole, proteína y queso']},
+ {k:'La herramienta',t:'Cucharas medidoras, no el ojo',
+  p:['Cada ingrediente tiene <b>su cuchara asignada</b>. Se usa esa, no otra, y se siguen las indicaciones del encargado y la receta original.',
+  'Es lo que hace que el mismo producto salga igual en San Luis, Los Remedios y Sevilla Este.'],
+  frase:['Respetar el gramaje estándar del jefe de cocina. No reducir porciones.','Los clientes lo notan y lo dicen en reseñas.']},
+ {k:'Pendiente',t:'Los gramajes exactos',
+  p:['Los gramajes concretos de cada producto salen de las <b>fichas técnicas del jefe de cocina</b>.',
+  'Este módulo se completará con esos números en cuanto estén cargados en la herramienta. Mientras tanto: cuchara medidora y ficha delante.']}],
+ test:[
+ {tipo:'opt',q:'¿Cómo se sirven las porciones?',
+  op:[['A ojo, con práctica se acierta',0],['Con la cuchara asignada y siguiendo la receta',1],['Según lo que pida el cliente',0]],
+  ex:'La cuchara asignada a ese ingrediente, siguiendo la receta original y lo que indique el encargado.'},
+ {tipo:'opt',q:'Un cliente habitual pide "un poco más de guacamole". ¿Qué haces?',
+  op:[['Se lo pongo, es habitual',0],['Se lo cobro como extra',1],['Le pongo el doble sin cobrar',0]],
+  ex:'Extra cobrado. Regalar producto a habituales descuadra el escandallo y crea expectativa para la próxima.'},
+ {tipo:'opt',q:'¿Por qué no se reducen porciones aunque haya poco producto?',
+  op:[['Porque lo notan los clientes y lo dicen en reseñas',1],['Porque está prohibido por ley',0],['Porque tarda más',0]],
+  ex:'Lo notan y lo escriben. Es mejor marcar el producto como no disponible que servirlo escaso.'}]},
+
+/* ===== CLIENTE ===== */
+{id:'c1',pub:0,cat:'cliente',t:'Atención en sala',min:5,fr:'Mensual',roles:['empleado','encargado'],
+ slides:[
+ {k:'Lo que vale',t:'Un punto en Uber son un 7% más de facturación',
+  p:['Subir 1 punto la nota de Uber o el porcentaje de Glovo equivale aproximadamente a un <b>+7% de facturación</b>.',
+  'Y tres fallos por semana pueden costar entre un 10 y un 15% de visibilidad en la plataforma.'],
+  dest:['+7%','de facturación por cada punto que sube la nota']},
+ {k:'Cómo se atiende',t:'La secuencia',pasos:[
+  'Saluda siempre: <em>"¡Buenas! ¿Qué tal? ¿Qué va a tomar?"</em>',
+  'Contacto visual y sonrisa, aunque haya cola',
+  'Repite el pedido con seguridad: <em>"Vale, burrito de pollo, sin cebolla, extra guacamole, ¿verdad?"</em>',
+  'Limpia entre cliente y cliente',
+  'Despedida: <em>"¡Gracias! ¡Nos vemos pronto!"</em>']},
+ {k:'Lo que no se dice',t:'Las tres frases prohibidas',
+  p:['<b>"No sé"</b> → "Déjame comprobarlo"<br><b>"No puedo"</b> → "Ahora te lo preparo"<br><b>"No hay"</b> → "Se nos ha acabado, ¿te va bien...?"',
+  'Y nunca un <b>"¿Qué más?"</b> a secas. Suena a prisa y a que estorbas.']},
+ {k:'Subir el ticket',t:'Una cosa concreta, una vez',
+  p:['Ofrecer no es presionar. Se ofrece <b>una cosa concreta y nombrada</b>, no una lista.',
+  '"¿Te pongo salsa de la casa?" funciona. "¿Algo más?" invita a decir que no.',
+  'Si dice que no, se acabó. No se insiste.']}],
+ test:[
+ {tipo:'opt',q:'Un cliente pregunta si tenéis algo que no sabes. ¿Qué dices?',
+  op:[['"No sé"',0],['"Déjame comprobarlo"',1],['"Creo que no"',0]],
+  ex:'"Déjame comprobarlo". Las expresiones negativas están prohibidas: siempre hay una versión en positivo.'},
+ {tipo:'opt',q:'Hay cola y entra un cliente nuevo. ¿Qué haces?',
+  op:[['Atenderle cuando acabe la cola',0],['Contacto visual y saludo aunque no pueda atenderle',1],['Pedirle que espere sin mirarle',0]],
+  ex:'Contacto visual y sonrisa aunque haya cola. Nadie quiere sentirse invisible.'},
+ {tipo:'opt',q:'Terminas de tomar un pedido. ¿Qué haces antes del siguiente cliente?',
+  op:[['Llamar al siguiente directamente',0],['Limpiar entre cliente y cliente',1],['Revisar el móvil un segundo',0]],
+  ex:'Se limpia entre cliente y cliente. Y el móvil está prohibido en zona visible.'}]},
+
+{id:'c2',pub:0,cat:'cliente',t:'Delivery y take away',min:4,fr:'Mensual',roles:['empleado','encargado'],
+ slides:[
+ {k:'La idea',t:'El delivery es la cara invisible de la marca',
+  frase:['En muchos pedidos, la bolsa es la única experiencia que tiene el cliente con nosotros.','No nos ve, no nos oye. Solo ve lo que llega.'],
+  p:['Por eso: pegatinas limpias, rectas y centradas. Nada de bolsas manchadas o con grasa. Cierres de envases revisados.']},
+ {k:'Con el rider',t:'Trato cordial y sin discusiones',
+  p:['Se entrega con trato cordial: <b>"¡Gracias, máquina! Que vaya bien el reparto"</b>.',
+  'Se revisa el nombre del pedido antes de entregar.',
+  'Y no se discute de tiempos con el rider. Si hay un problema, lo gestiona el encargado.']},
+ {k:'Take away',t:'Igual que en sala',pasos:[
+  'Entrega en mano, con contacto visual y agradecimiento',
+  'Confirmar nombre y número de pedido',
+  'Si hay espera: <em>"Va saliendo en 2-3 minutitos, gracias por la paciencia"</em>',
+  'Nunca entregar una bolsa sin revisar o sin decir nada']}],
+ test:[
+ {tipo:'opt',q:'Un rider se queja de que lleva esperando. ¿Qué haces?',
+  op:[['Explicarle que vamos hasta arriba',0],['Trato cordial y que lo gestione el encargado',1],['Discutirlo para que entienda',0]],
+  ex:'No se discute de tiempos con el rider. Trato cordial y lo gestiona el encargado.'},
+ {tipo:'opt',q:'Sale un take away y el cliente está esperando. ¿Cómo se entrega?',
+  op:[['Dejarla en el mostrador y avisar',0],['En mano, con contacto visual y confirmando el nombre',1],['Llamar el número en voz alta y ya',0]],
+  ex:'En mano, mirando y confirmando nombre y número. Nunca una bolsa sin revisar ni sin decir nada.'}]},
+
+{id:'c3',pub:0,cat:'cliente',t:'Cuando hay una queja',min:4,fr:'Mensual',roles:['empleado','encargado'],
+ slides:[
+ {k:'Los cuatro pasos',t:'Siempre en este orden',pasos:[
+  '<em>Escuchar</em> sin interrumpir',
+  '<em>Disculparse</em> de verdad, no de forma',
+  '<em>Solucionar</em> rápido: rehacer, sustituir o informar al encargado',
+  '<em>Tono</em> tranquilo y positivo en todo momento']},
+ {k:'Lo que de verdad importa',t:'Cómo se resuelve, no que ocurriera',
+  frase:['Resolver con respeto vale más que cualquier descuento.',''],
+  p:['El cliente no recuerda que hubo un fallo. Recuerda cómo reaccionasteis.',
+  'Un fallo bien resuelto genera más fidelidad que un servicio perfecto que pasa desapercibido.']},
+ {k:'Nunca',t:'Lo que no se hace',
+  p:['No se discute con el cliente. No se contesta mal. No se ignora.',
+  'Y no se discute nunca delante de otros clientes: se lleva a un lado o lo gestiona el encargado.']}],
+ test:[
+ {tipo:'orden',q:'Ordena los cuatro pasos ante una queja',h:'Toca en orden',
+  items:['Escuchar sin interrumpir','Disculparse','Solucionar rápido','Mantener el tono'],
+  ex:'Escuchar va primero. Si te disculpas antes de escuchar, suena a fórmula vacía.'},
+ {tipo:'opt',q:'Un cliente se queja en voz alta delante de otros. ¿Qué haces?',
+  op:[['Explicarle allí mismo que no es culpa nuestra',0],['Escucharle, disculparte y llevarlo a un lado o avisar al encargado',1],['Ofrecerle un descuento para que pare',0]],
+  ex:'Nunca se discute delante de otros clientes. Y el descuento no sustituye a resolver bien.'}]},
+
+/* ===== TURNO Y STOCK ===== */
+{id:'t1',pub:0,cat:'turno',t:'Etiquetado, caducidades y FIFO',min:5,fr:'Mensual',roles:['empleado','encargado'],crit:1,
+ slides:[
+ {k:'El riesgo real',t:'Tres clientes enfermos',
+  p:['Hay <b>3 casos documentados</b> de clientes con diarrea y vómitos en Sevilla Este y Los Remedios.',
+  'La cadena de frío y el control de caducidades es lo primero que se revisa cuando pasa algo así. Y lo único que se puede demostrar con registro.'],
+  dest:['3','casos de clientes enfermos documentados desde marzo']},
+ {k:'La etiqueta',t:'Fecha, hora e iniciales',
+  frase:['GUAC 06/10 – 13:30 – AC','Producto sin etiqueta = producto que no se usa.'],
+  p:['Todo producto abierto o preparado lleva etiqueta visible con <b>fecha de apertura, hora si aplica e iniciales</b> de quien lo preparó.']},
+ {k:'Las caducidades',t:'Lo que dura cada cosa',pasos:[
+  '<em>Salsas preparadas</em>: 48 horas máximo',
+  '<em>Guacamole y pico de gallo</em>: 24 horas',
+  '<em>Proteínas</em>: según ficha técnica',
+  '<em>Quesos y toppings</em>: revisar textura, olor y color cada turno']},
+ {k:'FIFO',t:'Lo más antiguo, delante',
+  p:['Lo más antiguo se usa primero y va <b>delante</b> en las neveras. Lo nuevo, detrás.',
+  'Poner lo nuevo delante porque es más cómodo es la causa número uno de merma evitable.'],
+  frase:['Si algo se acaba, caduca o falla: se comunica de inmediato.','"Nos queda poco pollo, no llega al cierre." No se oculta, no se ignora.']}],
+ test:[
+ {tipo:'opt',q:'Encuentras un bote de guacamole abierto sin etiqueta. ¿Qué haces?',
+  op:[['Usarlo, tiene buen aspecto',0],['No usarlo',1],['Etiquetarlo con la fecha de hoy',0]],
+  ex:'No se usa. Producto sin etiqueta es producto de fecha desconocida. Y etiquetarlo con hoy sería falsear el registro.'},
+ {tipo:'opt',q:'¿Cuánto dura el guacamole preparado?',
+  op:[['48 horas',0],['24 horas',1],['Una semana en nevera',0]],
+  ex:'24 horas, igual que el pico de gallo. Las salsas preparadas, 48.'},
+ {tipo:'opt',q:'Llega producto nuevo a la nevera. ¿Dónde lo colocas?',
+  op:[['Delante, es más cómodo',0],['Detrás de lo que ya hay',1],['Donde quede sitio',0]],
+  ex:'Detrás. Lo antiguo delante y se gasta primero. Es la causa nº1 de merma evitable.'},
+ {tipo:'opt',q:'Ves que queda poco pollo y no llega al cierre. ¿Qué haces?',
+  op:[['Estirar lo que hay',0],['Avisar de inmediato al encargado',1],['Esperar a ver si llegan pocos pedidos',0]],
+  ex:'Se comunica de inmediato. No se oculta ni se estira reduciendo porciones.'}]},
+
+{id:'t2',pub:0,cat:'turno',t:'Inicio y cierre de turno',min:5,fr:'Mensual',roles:['empleado','encargado'],
+ slides:[
+ {k:'Al empezar',t:'Antes de aceptar pedidos',pasos:[
+  'Verificar temperatura correcta de todos los productos',
+  'Confirmar stock de todos los artículos activos en plataformas',
+  'Briefing de 5 minutos: recordar notas y temperatura al equipo',
+  'Checklist de apertura: tortillas, proteínas, salsas, guacamole, pico, toppings y bebidas',
+  'Etiquetar los abiertos con fecha y revisar caducidades',
+  'Comprobar plancha, neveras y utensilios. Papel, envases y bolsas listos']},
+ {k:'Durante',t:'Lo que no se deja pasar',
+  p:['Un pedido con más de <b>20 minutos</b> en preparación: interviene el encargado.',
+  'Una incidencia reportada en plataforma: se anota en el registro de incidencias.',
+  'Revisión visual constante del producto. Si algo se ve mal, no se sirve.']},
+ {k:'Al cerrar',t:'Cuatro cosas',pasos:[
+  'Guardar, tapar y etiquetar todo. Desechar lo caducado',
+  'Limpiar mesas frías, neveras y superficies',
+  'Revisar las reseñas del día y anotar las negativas en el registro',
+  'Reportar incidencias al encargado']},
+ {k:'El cambio de turno',t:'Explicar la situación al que entra',
+  frase:['"Está casi todo limpio, falta repasar el suelo. Hay salsa chipotle hecha y pollo para dos horas."',''],
+  p:['El que sale deja todo listo <b>y explica cómo está la cosa</b> al que entra. No basta con irse.']}],
+ test:[
+ {tipo:'opt',q:'Un pedido lleva 22 minutos en preparación. ¿Qué pasa?',
+  op:[['Se espera, a veces tardan',0],['Interviene el encargado',1],['Se cancela',0]],
+  ex:'Pasados 20 minutos el encargado interviene. Es el umbral marcado.'},
+ {tipo:'opt',q:'Terminas tu turno y entra el siguiente. ¿Qué haces?',
+  op:[['Irme, ya está todo hecho',0],['Explicarle cómo está todo antes de irme',1],['Dejar una nota escrita',0]],
+  ex:'Se explica en persona: qué falta, qué hay preparado y para cuánto da.'},
+ {tipo:'opt',q:'Al cerrar ves una reseña negativa del día. ¿Qué se hace?',
+  op:[['Nada, ya la verá dirección',0],['Anotarla en el registro',1],['Responderla tú mismo',0]],
+  ex:'Se anota en el registro. Responderla es responsabilidad del encargado, que nunca las deja sin respuesta.'}]},
+
+/* ===== LIMPIEZA ===== */
+{id:'l1',pub:0,cat:'local',t:'Limpieza 5S Órale',min:4,fr:'Mensual',roles:['empleado','encargado'],
+ slides:[
+ {k:'La regla',t:'Deja todo mejor de como lo encontraste',
+  frase:['El siguiente turno debería poder empezar como si fuera una inauguración.',''],
+  p:['El turno no termina cuando acaba el servicio. Termina cuando todo está limpio, ordenado y preparado para el siguiente.']},
+ {k:'Las 5S',t:'Cinco pasos que se repiten',pasos:[
+  '<em>Clasificar</em>: elimina lo que no sirve',
+  '<em>Ordenar</em>: cada cosa tiene su sitio',
+  '<em>Limpiar</em>: mientras trabajas, no solo al final',
+  '<em>Estandarizar</em>: deja todo igual siempre',
+  '<em>Disciplina</em>: mantenerlo día tras día']},
+ {k:'Durante el turno',t:'Limpieza constante, no puntual',
+  p:['Si ensucias, limpias. Revisa suelos, papeleras y mostradores cada <b>30-40 minutos</b>. Vacía basuras antes de que rebosen.',
+  'Un cliente a las 23:25 ve el local igual de limpio que a las 20:00. No existe el "ya estamos cerrando".']},
+ {k:'Tu local',t:'Cada uno tiene sus puntos críticos',pasos:[
+  '<em>Sevilla Este</em>: cristales, terraza, vitrinas de burritos, baños y barandillas cada 2 h',
+  '<em>San Luis</em>: mostrador y plancha, zona de empaquetado sin grasa, neveras pequeñas sin charcos',
+  '<em>Los Remedios</em>: cocina y delivery en orden constante, vitrinas, cierre de planchas y suelos impecables']}],
+ test:[
+ {tipo:'opt',q:'Son las 23:25, cierras a las 23:30 y entra un cliente. ¿Cómo está el local?',
+  op:[['En modo cierre, es normal',0],['Igual de limpio que a las 20:00',1],['Con las sillas ya subidas',0]],
+  ex:'Igual que a las 20:00. No existe el "ya estamos cerrando" para el cliente que acaba de entrar.'},
+ {tipo:'opt',q:'Llegas a tu turno y la zona está sucia. ¿Qué haces?',
+  op:[['Limpiarla y no decir nada',0],['Informar al encargado',1],['Empezar igual, ya se limpiará',0]],
+  ex:'Se informa al encargado. Nunca se empieza en zona sucia sin decirlo: si no se dice, se repite.'}]},
+
+/* ===== PERSONAL ===== */
+{id:'e1',pub:0,cat:'personal',t:'Imagen, uniforme y puntualidad',min:4,fr:'Mensual',roles:['empleado','encargado'],
+ slides:[
+ {k:'La hora de entrada',t:'No es la hora de llegar',
+  frase:['Si tu turno empieza a las 20:00, a esa hora ya estás listo para trabajar.','No entrando por la puerta.'],
+  p:['Se llega <b>5-10 minutos antes</b> para colocarse, lavarse las manos y revisar la zona.']},
+ {k:'Uniforme',t:'Completo y en buen estado',pasos:[
+  'Camiseta oficial y delantal limpio',
+  'Gorro o gorra de marca bien colocada',
+  'Calzado cerrado y limpio, sin modificaciones personales',
+  'Manos limpias, uñas cortas, cabello recogido',
+  'Sin perfumes fuertes, joyas colgantes ni piercings visibles cerca de la comida']},
+ {k:'Actitud corporal',t:'También comunica',
+  p:['Sonríe. Buena postura. No te apoyes en mostradores ni cruces los brazos.',
+  'No comas ni bebas en zona visible. <b>Móvil guardado</b>.']},
+ {k:'Lo que afecta al equipo',t:'Faltas que no son tuyas solas',
+  p:['Llegar tarde o sin uniforme. Avisar con poca antelación. No cumplir el cierre de tu zona. Pedir cambios constantemente. Dejar trabajo a medias. Desconectarse antes del cierre.',
+  'Todas esas se las come otra persona del equipo.']}],
+ test:[
+ {tipo:'opt',q:'Tu turno empieza a las 20:00. ¿A qué hora llegas?',
+  op:[['A las 20:00',0],['5-10 minutos antes',1],['A las 20:05, no pasa nada',0]],
+  ex:'5-10 minutos antes. A las 20:00 ya tienes que estar listo, no entrando.'},
+ {tipo:'opt',q:'No vas a poder ir a tu turno de mañana. ¿Cuándo avisas?',
+  op:[['En cuanto lo sepas',1],['La mañana del turno',0],['Cuando encuentres a alguien que te cubra',0]],
+  ex:'En cuanto lo sepas. Avisar al último minuto se lo come el equipo.'},
+ {tipo:'opt',q:'¿Dónde está tu móvil durante el turno?',
+  op:[['En el bolsillo, por si acaso',0],['Guardado y fuera de la zona de trabajo',1],['A la vista pero sin usarlo',0]],
+  ex:'Guardado. El móvil visible en zona de trabajo es una línea roja, salvo el encargado por gestión.'}]},
+
+{id:'e2',pub:0,cat:'personal',t:'Comunicación en el equipo',min:4,fr:'Mensual',roles:['empleado','encargado'],
+ slides:[
+ {k:'La base',t:'Respeto por igual',
+  p:['Da igual el puesto o la antigüedad. Se puede corregir a cualquiera, pero <b>nunca gritando ni faltando al respeto</b>.',
+  'Si terminas tu tarea, ayudas a quien va más justo: "¿te echo una mano?"']},
+ {k:'Cómo se habla',t:'Claro, corto y en positivo',pasos:[
+  'Frases simples: <em>"Falta guacamole en el 24"</em>, <em>"¿Ya está listo el 32?"</em>',
+  'Sin sarcasmo ni gritos de cocina',
+  'Habla en positivo: <em>"prueba mejor de esta forma"</em>',
+  'Controla el tono: <em>"¡venga, que lo sacamos ya!"</em> mejor que <em>"¡rápido!"</em>',
+  'En momentos de estrés, <em>baja</em> el volumen, no lo subas']},
+ {k:'Confirmar antes de cerrar',t:'Lo más importante',
+  p:['Confirmar los pedidos entre zonas antes de cerrar bolsas. Bebidas, postres y salsas, en voz alta.',
+  'Es lo que evita el 89% de nuestros errores, y es una cuestión de comunicación, no de memoria.']},
+ {k:'Si algo falla',t:'Primero se soluciona',
+  p:['Si hay un error, se soluciona primero y se analiza después. <b>No vale "no era mi zona"</b>.',
+  'Y en el cierre, si falta algo o hubo un fallo, se anota en el registro de turno. No se esconde.']}],
+ test:[
+ {tipo:'opt',q:'Hay estrés en cocina y un pedido va tarde. ¿Cómo hablas?',
+  op:[['Subiendo la voz para que se enteren',0],['Bajando el volumen y con frases cortas',1],['En silencio, para no molestar',0]],
+  ex:'En estrés se baja el volumen, no se sube. Gritar añade tensión y no acelera nada.'},
+ {tipo:'opt',q:'Detectas un error en un pedido que no es de tu zona. ¿Qué haces?',
+  op:[['Avisar a quien le toca',0],['Solucionarlo y luego comentarlo',1],['Nada, no es mi zona',0]],
+  ex:'Se soluciona primero y se analiza después. "No era mi zona" no vale.'}]},
+
+{id:'e3',pub:0,cat:'personal',t:'Líneas rojas',min:4,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
+ slides:[
+ {k:'Qué son',t:'No negociables, sin matices',
+  p:['Hay cosas que no dependen del criterio de nadie ni del día que sea. Estas son las líneas rojas de Órale Padre.']},
+ {k:'Seguridad e higiene',t:'Lo que nunca ocurre',pasos:[
+  'Manipular alimentos sin lavarse las manos',
+  'Ignorar caducidades, temperaturas o etiquetas',
+  'Fumar o vapear en zonas de trabajo o terraza en servicio',
+  'Alcohol o drogas',
+  'Comer en zona visible',
+  'Uniforme sucio o incompleto']},
+ {k:'Servicio y recursos',t:'Lo que tampoco',pasos:[
+  'Móvil en zona de trabajo o visible al cliente',
+  'Ignorar, contestar mal o discutir con clientes',
+  'Entregar pedidos sin revisar o con envases manchados',
+  'Descuentos, invitaciones o cortesías sin autorización',
+  'Sacar producto sin pagar o llevarse material',
+  'No emitir ticket, manipular caja o no reportar descuadres']},
+ {k:'Qué pasa',t:'Las consecuencias',
+  p:['<b>Leve</b>: advertencia y refuerzo formativo.<br><b>Grave</b>: retirada de incentivos, amonestación formal o suspensión.<br><b>Muy grave</b>: medidas disciplinarias hasta el fin de la relación laboral.',
+  'El procedimiento siempre es el mismo: se reporta y registra, el empleado puede explicar su versión, y si procede hay plan de corrección con revisión a 15 días.']}],
+ test:[
+ {tipo:'opt',q:'Un amigo tuyo viene al local y le quieres invitar a un refresco. ¿Puedes?',
+  op:[['Sí, es un refresco',0],['No, sin autorización no hay cortesías',1],['Sí, si lo apunto luego',0]],
+  ex:'Descuentos, invitaciones y cortesías requieren autorización. Es una línea roja de recursos.'},
+ {tipo:'opt',q:'¿Quién puede tener el móvil accesible en zona de trabajo?',
+  op:[['Cualquiera, si no lo usa',0],['Solo el encargado, por gestión operativa o emergencia',1],['Nadie en ningún caso',0]],
+  ex:'Solo el encargado y solo por gestión operativa o emergencia. Es la única excepción.'}]},
+
+/* ===== MARCA ===== */
+{id:'m1',pub:0,cat:'marca',t:'Qué es Órale Padre',min:5,fr:'Una vez',roles:['empleado','encargado'],
+ slides:[
+ {k:'Lo primero',t:'No somos un mexicano',
+  frase:['Somos una marca con alma mexicana y espíritu propio.',''],
+  p:['Cada cliente tiene que sentir tres cosas: <b>buena energía</b> (ritmo, actitud, ambiente), <b>producto cuidado</b> (sabor real, presentación impecable) y <b>autenticidad</b>.']},
+ {k:'La misión',t:'Hacer feliz a la gente',
+  p:['Con comida con alma y actitud.',
+  'La felicidad no solo se cocina: se transmite, se prepara y se sirve con energía.']},
+ {k:'La energía',t:'El equilibrio de la casa',pasos:[
+  'Alegre pero <em>respetuosa</em>',
+  'Rápida pero <em>sin perder el control</em>',
+  'Cálida pero <em>profesional</em>',
+  'Cercana pero <em>sin exceso de confianza</em>']},
+ {k:'La mentalidad',t:'Cómo se piensa aquí',
+  p:['Cada cliente cuenta, el de 10 € y el de 50 €. El pedido de las 23:30 se prepara igual que el de las 20:00.',
+  '<b>Hazlo bien siempre, aunque nadie te mire.</b> Hazlo como si fuera tu negocio.',
+  'El cliente no ve la cocina, pero sí nota el resultado.'],
+  frase:['Las normas no quitan rollo: lo protegen.','']}],
+ test:[
+ {tipo:'opt',q:'Entra un pedido a las 23:30, casi al cierre. ¿Cómo se prepara?',
+  op:[['Rápido, que estamos cerrando',0],['Igual que el de las 20:00',1],['Con lo que quede',0]],
+  ex:'Igual que el de las 20:00. Es una de las frases de la casa y no admite matices.'},
+ {tipo:'opt',q:'¿Qué tres cosas debe sentir cada cliente?',
+  op:[['Rapidez, precio y cantidad',0],['Buena energía, producto cuidado y autenticidad',1],['Amabilidad, limpieza y música',0]],
+  ex:'Buena energía, producto cuidado y autenticidad. Son las tres de la guía de marca.'}]},
+
+/* ===== ENCARGADO ===== */
+{id:'j1',pub:0,cat:'lider',t:'El rol del encargado',min:6,fr:'Mensual',roles:['encargado'],
+ slides:[
+ {k:'La idea',t:'Un encargado no manda',
+  frase:['Guía, cuida y mantiene el ritmo.',''],
+  p:['Eres el punto medio entre socios y equipo. Líder, no jefe: guías con el ejemplo, corriges con respeto, enseñas con paciencia.',
+  'Y eres la referencia cuando hay caos.']},
+ {k:'Lo que firmas tú',t:'Obligaciones que no se delegan',pasos:[
+  'Supervisar que el sistema de colores y los 6 puntos se cumplen en <em>cada</em> pedido',
+  '<em>Firmar personalmente</em> los pedidos ROJOS de alergia',
+  'Verificar temperaturas de cámaras al abrir y al cerrar, con registro escrito',
+  'Revisar y responder las reseñas negativas del día anterior, cada mañana',
+  'Si un pedido lleva +20 min en cocina, intervenir',
+  'Decidir desactivar plataformas si la cocina está saturada']},
+ {k:'Mejor no vender',t:'Que vender mal',
+  p:['Si la cocina está saturada, tienes autoridad para <b>desactivar las plataformas</b>.',
+  'Un pedido tarde y frío cuesta más que un pedido no vendido: contracargo, reseña mala y cliente perdido.']},
+ {k:'Cómo se corrige',t:'En privado, siempre',
+  frase:['Si un empleado falla, se corrige en privado. Nunca delante de todos.','Un equipo motivado trabaja por ti. Uno humillado trabaja contra ti.'],
+  p:['Escucha antes de corregir. Agradece antes de exigir. Da ejemplo antes de pedir. Habla con calma incluso en tensión.']},
+ {k:'Las 8 reglas de oro',t:'Del encargado Órale',pasos:[
+  'Sé el primero en llegar y el último en irte bien',
+  'Da ejemplo con tu trabajo y tu actitud',
+  'Cuida el ambiente antes que el volumen',
+  'Habla con claridad, no con gritos',
+  'Mantén la calma incluso con prisa',
+  'Agradece al equipo al final del turno',
+  'Representa la marca dentro y fuera',
+  'No esperes a que te digan lo que hay que hacer: anticípate']}],
+ test:[
+ {tipo:'opt',q:'La cocina está saturada y los tiempos se disparan. ¿Qué puedes hacer?',
+  op:[['Aguantar, hay que vender',0],['Desactivar plataformas temporalmente',1],['Aceptar y avisar a los clientes',0]],
+  ex:'Tienes autoridad para desactivar. Mejor no vender que vender mal: un pedido frío cuesta más que uno no vendido.'},
+ {tipo:'opt',q:'Un empleado ha cometido un error delante del equipo. ¿Cómo lo corriges?',
+  op:[['En el momento, para que todos aprendan',0],['En privado, después',1],['Por el grupo de WhatsApp',0]],
+  ex:'Siempre en privado. Un equipo humillado trabaja contra ti.'},
+ {tipo:'opt',q:'Entra un pedido ROJO por alergia. ¿Qué haces tú personalmente?',
+  op:[['Supervisar que lo preparan bien',0],['Firmar el ticket antes de cerrar la bolsa',1],['Avisar a quien lo prepare',0]],
+  ex:'Firmas personalmente el ticket. Sin excepciones. Es tu obligación, no la de quien prepara.'},
+ {tipo:'opt',q:'¿Cada cuánto revisas las reseñas negativas?',
+  op:[['Semanalmente',0],['Cada mañana, las del día anterior',1],['Cuando dirección lo pida',0]],
+  ex:'Cada mañana, y se responden. Nunca se dejan sin responder.'}]},
+
+/* ===== RECETAS ===== */
+{id:'rc1',pub:1,cat:'receta',t:'Ranking de cantidades',min:5,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
+ slides:[
+ {k:'La idea',t:'Saber qué lleva más y qué lleva menos',
+  p:['No hace falta memorizar gramos. Lo que hay que tener claro es <b>el orden</b>: qué ingrediente va más y cuál va menos en cada producto.',
+  'Si tienes el orden claro, no te pasas con lo caro ni te quedas corto con la base.'],
+  frase:['Cada ingrediente tiene su cuchara asignada.','Se usa esa, se sigue la receta original y lo que indique el encargado.']},
+ {k:'La regla general',t:'De más a menos',pasos:[
+  '<em>Bases</em> — arroz, frijol, totopos. Son lo que da volumen',
+  '<em>Proteína</em> — el centro del producto',
+  '<em>Queso</em> — generoso pero medido',
+  '<em>Frescos</em> — pico de gallo, cebolla',
+  '<em>Guacamole</em> — el más caro por gramo, va el último y el que menos'],
+  p:['Esta es la lógica general. El orden exacto de cada producto está en su receta, y aquí lo vas a practicar.']},
+ {k:'Lo que más cuidado pide',t:'Guacamole, proteína y queso',
+  p:['Son los tres donde más se desvía la gente, y los tres que más pesan en el coste.',
+  'Con el guacamole el error habitual es <b>pasarse</b>: es el más caro y el que más se nota en el margen.',
+  'Con la proteína el error va en los dos sentidos: pasarse regala carne, quedarse corto genera reseña de "poca cantidad".']},
+ {k:'Si dudas',t:'Pregunta, no improvises',
+  p:['Si no tienes claro cuánto lleva algo, <b>preguntas al encargado</b>. No lo calculas a ojo.',
+  'Y si un producto es nuevo, se sigue la receta tal cual hasta que la tengas interiorizada.']}],
+ test:[
+ {tipo:'rank',q:'Burro Don Juárez',h:'Ordena de MAYOR a MENOR cantidad',
+  items:['Proteína','Arroz','Frijol','Queso','Pico de gallo','Guacamole'],
+  ex:'La proteína es el centro y va la primera. El guacamole cierra: es el más caro por gramo.'},
+ {tipo:'rank',q:'Nachos Guadalupe',h:'Ordena de MAYOR a MENOR cantidad',
+  items:['Totopos','Carne','Queso fundido','Guacamole','Jalapeño'],
+  ex:'Los totopos son la base y dan el volumen. El jalapeño es el toque final, va el que menos.'},
+ {tipo:'opt',q:'No tienes claro cuánto lleva un producto. ¿Qué haces?',
+  op:[['Calcularlo a ojo, más o menos se acierta',0],['Preguntar al encargado',1],['Poner de más, mejor que se quede corto',0]],
+  ex:'Se pregunta. Poner de más regala margen y poner de menos genera reseña. Ninguna de las dos vale.'},
+ {tipo:'opt',q:'¿Cuál es el ingrediente donde más cuidado hay que tener por coste?',
+  op:[['El arroz',0],['El guacamole',1],['La tortilla',0]],
+  ex:'El guacamole. Es el más caro por gramo y el más volátil de precio de toda la carta.'}]},
+
+{id:'rc2',pub:1,cat:'receta',t:'Burro Don Juárez · montaje',min:5,fr:'Cada 3 semanas',roles:['empleado','encargado'],
+ slides:[
+ {k:'El que más vende',t:'25.414 € al año y 15 incidencias',
+  p:['Es nuestro producto estrella y también el que más quejas acumula. Las dos causas: <b>sabor irregular y temperatura</b>.',
+  'Sabor irregular significa que cada uno lo monta a su manera. Este módulo es para que salga igual en los tres locales.'],
+  dest:['15','incidencias en el producto que más factura']},
+ {k:'El orden',t:'Por qué se monta así',pasos:[
+  'Tortilla atemperada en plancha',
+  'Arroz — hace de base y absorbe',
+  'Frijol — sobre el arroz, nunca tocando la tortilla',
+  'Proteína — el centro del burrito',
+  'Queso — sobre la proteína caliente para que funda',
+  'Pico de gallo',
+  'Guacamole — el último, no se calienta'],
+  p:['Si el guacamole va antes que el queso caliente, se oxida y pierde color. Si el frijol toca la tortilla directamente, la humedece y se rompe al enrollar.']},
+ {k:'El cierre',t:'Sellado y empaquetado',
+  p:['Enrollado cerrado por ambos extremos y sellado en plancha.',
+  'Para delivery: papel antivaho y <b>caja rígida</b>. En bolsa blanda llega aplastado.',
+  'Para sala: cesta con papel.']},
+ {k:'Ojo',t:'Lleva cilantro',
+  p:['El incidente del <b>13/10/25</b> fue con este producto: cilantro servido a un cliente alérgico que lo había declarado.',
+  'Si el ticket menciona alergia al cilantro: protocolo ROJO completo.']}],
+ test:[
+ {tipo:'orden',q:'Ordena el montaje del Burro Don Juárez',h:'Toca en el orden correcto de montaje',
+  items:['Arroz','Frijol','Proteína','Queso','Pico de gallo','Guacamole'],
+  ex:'El guacamole siempre al final: si va antes del queso caliente, se oxida.'},
+ {tipo:'rank',q:'Burro Don Juárez',h:'Ahora ordena de MAYOR a MENOR cantidad',
+  items:['Proteína','Arroz','Frijol','Queso','Pico de gallo','Guacamole'],
+  ex:'Ojo: el orden de montaje y el de cantidad no son el mismo. El arroz se pone antes pero la proteína lleva más.'},
+ {tipo:'opt',q:'¿Por qué el frijol no toca la tortilla directamente?',
+  op:[['Por sabor',0],['Porque la humedece y se rompe al enrollar',1],['Por costumbre',0]],
+  ex:'La humedece. Por eso va sobre el arroz, que hace de barrera.'}]},
+
+{id:'rc3',pub:1,cat:'receta',t:'Nachos Guadalupe · montaje',min:4,fr:'Cada 3 semanas',roles:['empleado','encargado'],
+ slides:[
+ {k:'El problema',t:'13 incidencias por lo mismo',
+  p:['Facturan <b>18.530 €</b> y acumulan 13 incidencias. Casi todas dicen lo mismo: llegan fríos y blandos.',
+  'No es un problema de receta. Es de momento.'],
+  dest:['18.530 €','de venta anual en el producto que más se queja de temperatura']},
+ {k:'La causa',t:'El queso humedece el totopo',
+  p:['Cuando se montan para adelantar, el queso fundido empieza a humedecer el totopo desde el primer minuto.',
+  'En diez minutos ya no cruje.'],
+  frase:['Se montan cuando el rider está asignado. Nunca antes, ni aunque haya hueco.','']},
+ {k:'Delivery',t:'Todo separado',
+  p:['Toppings y salsas van <b>en recipientes separados</b>, con la nota "Montar al recibir".',
+  'Nunca se dejan reposar con salsas encima.']}],
+ test:[
+ {tipo:'rank',q:'Nachos Guadalupe',h:'Ordena de MAYOR a MENOR cantidad',
+  items:['Totopos','Carne','Queso fundido','Guacamole','Jalapeño'],
+  ex:'Los totopos son la base. El jalapeño es el toque final y va el que menos.'},
+ {tipo:'opt',q:'Hay un rato tranquilo y prevés pedidos de nachos. ¿Los adelantas?',
+  op:[['Sí, para ir preparado',0],['No, solo con rider asignado',1],['Solo el queso aparte',0]],
+  ex:'Solo con rider asignado. Adelantarlos es exactamente lo que provoca las 13 incidencias.'},
+ {tipo:'opt',q:'Nachos para delivery. ¿Dónde va el guacamole?',
+  op:[['Encima, como en sala',0],['En recipiente separado',1],['Mezclado con el queso',0]],
+  ex:'Separado. Encima durante el viaje los ablanda todavía más.'}]},
+
+{id:'n1',pub:1,cat:'producto',t:'Cantidades y productos a vigilar',min:5,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
+ slides:[
+ {k:'Por qué este módulo',t:'Lo que no se ve en el plato',
+  p:['Pasarse de cantidad no lo nota el cliente ni el equipo. Lo nota el food cost a final de mes.',
+  'Y quedarse corto sí lo nota el cliente: aparece en reseñas como "las porciones han bajado".',
+  'Por eso cada ingrediente tiene <b>su cuchara asignada</b>. No es desconfianza: es que a ojo nadie acierta dos veces igual.']},
+ {k:'Los que más se desvían',t:'Vigilar estos tres',pasos:[
+  '<em>Guacamole</em> — el ingrediente más caro por gramo y el más volátil de precio',
+  '<em>Proteína</em> — el que más peso tiene en el escandallo de cualquier burrito',
+  '<em>Queso</em> — se pone "a puñados" y ahí se va el margen'],
+  p:['Estos tres concentran casi toda la desviación de coste. Si estos tres están bien, el resto casi da igual.']},
+ {k:'Los gramajes',t:'Pendiente de cargar',
+  p:['La referencia son las <b>recetas originales</b> y las indicaciones del encargado.',
+  'En cuanto estén cargados aparecerán aquí y en el test.',
+  'Mientras tanto la regla es: <b>cuchara asignada, receta original y lo que indique el encargado</b>. Nunca a ojo.']},
+ {k:'Cuando falta producto',t:'No se estira, se marca',
+  p:['Si queda poco de algo, <b>no se reducen las porciones para que llegue</b>.',
+  'Se marca el producto como no disponible en plataformas y se avisa al encargado.',
+  'Servirlo escaso genera reseña mala y cliente perdido. Marcarlo como no disponible solo genera un pedido menos.'],
+  frase:['"Nos queda poco pollo, no llega al cierre."','Se dice en el momento, no cuando ya se ha acabado.']}],
+ test:[
+ {tipo:'opt',q:'¿Cuáles son los tres ingredientes que más se desvían?',
+  op:[['Tortilla, arroz y frijol',0],['Guacamole, proteína y queso',1],['Salsas, jalapeño y cebolla',0]],
+  ex:'Guacamole, proteína y queso. Concentran casi toda la desviación de coste.'},
+ {tipo:'opt',q:'Queda poco pollo y no llega al cierre. ¿Qué haces?',
+  op:[['Reducir un poco las porciones para que llegue',0],['Marcarlo como no disponible y avisar',1],['Servir hasta que se acabe',0]],
+  ex:'Se marca y se avisa. Reducir porciones lo notan los clientes y acaba en reseña.'},
+ {tipo:'opt',q:'¿Cómo se sirven las porciones?',
+  op:[['A ojo, con práctica se acierta',0],['Con la cuchara asignada y la receta delante',1],['Según lo que pida el cliente',0]],
+  ex:'La cuchara asignada a cada ingrediente. Y ante la duda, lo que diga el encargado.'}]},
+
+{id:'n2',pub:1,nuevo:1,cat:'receta',t:'NUEVO · Combo Coca-Cola + Chips',min:4,fr:'Una vez',roles:['empleado','encargado'],
+ slides:[
+ {k:'Producto nuevo',t:'Combo Coca-Cola + Chips',
+  p:['Lanzamos un combo nuevo: <b>Coca-Cola + chips con crema agria, pico de gallo y guacamole</b>.',
+  'Un producto nuevo se monta igual desde el primer día en los tres locales. Si cada uno lo monta a su manera, en dos semanas tenemos tres productos distintos con el mismo nombre.']},
+ {k:'Qué lleva',t:'Los cuatro elementos',pasos:[
+  '<em>Chips</em> — base del producto',
+  '<em>Crema agria</em>',
+  '<em>Pico de gallo</em>',
+  '<em>Guacamole</em>',
+  '<em>Coca-Cola</em> — la bebida va SIEMPRE aparte'],
+  p:['Los gramajes exactos se cargarán cuando estén las fichas del jefe de cocina.']},
+ {k:'Cuidado con esto',t:'Es un producto que se ablanda',
+  p:['Igual que los nachos, los chips con salsas encima <b>se ablandan en minutos</b>.',
+  'En delivery: <b>toppings separados</b> y nota "Montar al recibir". No se monta esperando al rider.',
+  'La Coca-Cola va en compartimento aparte del caliente, y es <b>lo último</b> en entrar en la bolsa.'],
+  frase:['Es el artículo que más veces se ha olvidado: 9 incidencias registradas.','Por eso las bebidas entran las últimas, justo antes de contar.']},
+ {k:'Alérgenos',t:'Ojo con la crema agria',
+  p:['La crema agria lleva <b>lácteos</b>. El guacamole lleva <b>aguacate</b>.',
+  'Si el ticket menciona alergia a cualquiera de los dos: protocolo ROJO completo.',
+  'Recuerda el caso del 24/01/26: el aguacate iba dentro de un combo y no aparecía en el nombre.']}],
+ test:[
+ {tipo:'opt',q:'Sale el combo para delivery. ¿Cómo van los toppings?',
+  op:[['Montados encima de los chips',0],['Separados, con nota "Montar al recibir"',1],['Solo el guacamole aparte',0]],
+  ex:'Todos separados. Los chips con salsa encima se ablandan en minutos, igual que los nachos.'},
+ {tipo:'opt',q:'¿Cuándo se añade la Coca-Cola a la bolsa?',
+  op:[['Lo primero, para no olvidarla',0],['Lo último, antes del conteo final',1],['Con los toppings',0]],
+  ex:'Lo último y en compartimento aparte. Así entra en el conteo y no se queda fuera.'},
+ {tipo:'opt',q:'Un cliente pide este combo y dice que es alérgico a los lácteos. ¿Qué haces?',
+  op:[['Quitar la crema agria y montar normal',0],['Protocolo ROJO completo',1],['Avisar de que lleva lácteos y que decida',0]],
+  ex:'Protocolo ROJO: ticket aparte, utensilios limpios y firma del encargado. La crema agria lleva lácteos.'}]},
+
+{id:'n3',pub:1,nuevo:1,cat:'receta',t:'NUEVO · Quesadilla cochinita + salsa verde',min:4,fr:'Una vez',roles:['empleado','encargado'],
+ slides:[
+ {k:'Producto nuevo',t:'Quesadilla de cochinita con salsa verde',
+  p:['Producto nuevo en carta. Combina dos cosas que ya tenemos y que ya sabemos que dan problemas si se hacen mal.']},
+ {k:'La cochinita',t:'Siempre desmenuzada',
+  frase:['SIEMPRE desmenuzada, nunca en trozos. Si sale entera, no sale.',''],
+  p:['El Burro Lady Cochinita acumula <b>9 incidencias</b> justo por esto: cochinita sin desmenuzar.',
+  'No lo repitamos con un producto nuevo. Se desmenuza antes de montar, no en el plato.']},
+ {k:'La quesadilla',t:'Sin puntos crudos',
+  p:['La masa tiene que estar <b>completamente cocinada</b>. Ni un punto crudo.',
+  'El 13/02/26 salió una quesadilla con masa cruda y huesos. Llegó al cliente.',
+  'Se corta <b>justo antes de cerrar</b>, no antes. Cortada y esperando pierde calor y se reseca.']},
+ {k:'La salsa verde',t:'Siempre aparte en delivery',
+  p:['La salsa verde va en <b>tarrina cerrada, aparte</b>. Nunca encima de la quesadilla.',
+  'Encima la humedece durante el viaje y llega blanda.',
+  'Gramajes pendientes de la ficha técnica del jefe de cocina.']},
+ {k:'Packaging',t:'Como todas las quesadillas',
+  p:['Contenedor hermético + aluminio. Cortar justo antes de cerrar la bolsa.']}],
+ test:[
+ {tipo:'opt',q:'La cochinita ha salido en trozos, no desmenuzada. ¿Sale el producto?',
+  op:[['Sí, el sabor es el mismo',0],['No: se desmenuza o se rehace',1],['Sí, avisando al encargado',0]],
+  ex:'No sale. Es un estándar no negociable y ya acumula 9 incidencias en otro producto.'},
+ {tipo:'opt',q:'¿Cuándo se corta la quesadilla?',
+  op:[['Nada más salir de la plancha',0],['Justo antes de cerrar la bolsa',1],['No se corta en delivery',0]],
+  ex:'Justo antes de cerrar. Cortada y esperando pierde calor y se reseca.'},
+ {tipo:'opt',q:'¿Dónde va la salsa verde en un pedido de delivery?',
+  op:[['Por encima de la quesadilla',0],['En tarrina cerrada, aparte',1],['Mezclada con el queso',0]],
+  ex:'Tarrina aparte. Encima la humedece durante el viaje y llega blanda.'}]},
+
+{id:'n4',pub:1,cat:'turno',t:'Qué hacer cuando hay poco trabajo',min:4,fr:'Mensual',roles:['empleado','encargado'],
+ slides:[
+ {k:'La idea',t:'El tiempo flojo no es tiempo muerto',
+  p:['En hostelería siempre hay ratos tranquilos. Lo que se hace en esos ratos decide cómo va el resto del turno.',
+  'Un local que aprovecha los tiempos bajos entra al pico preparado. Uno que no, entra corriendo.'],
+  frase:['Deja todo mejor de como lo encontraste.','El siguiente turno debería poder empezar como si fuera una inauguración.']},
+ {k:'Las seis cosas',t:'Por este orden',pasos:[
+  '<em>Revisión de stock</em> — qué falta, qué se acaba hoy, qué caduca',
+  '<em>Formación</em> — hacer los módulos pendientes de la quincena',
+  '<em>Limpieza</em> — la zona que toque, sin esperar al cierre',
+  '<em>Ordenar</em> — cada cosa en su sitio, reponer sin desordenar',
+  '<em>Reporte de productos</em> — avisar de lo que se acaba o va justo',
+  '<em>Envasado</em> — preparar packaging y revisar que hay de todo']},
+ {k:'La formación',t:'Aquí es donde se hace',
+  p:['Los módulos de la quincena se hacen <b>en horario de trabajo</b>, en turno flojo o media jornada.',
+  'No es algo para hacer en casa ni fuera de turno. Si un rato tranquilo lo permite, es el momento.',
+  'Son 4-6 minutos por módulo. Cabe de sobra en un rato tranquilo.']},
+ {k:'El reporte',t:'Lo que se avisa en el momento',
+  p:['Si ves que algo se acaba, <b>se dice ya</b>. No al cierre, no cuando se ha acabado.',
+  '"Nos queda poco pollo, no llega al cierre" es un aviso útil. "Se acabó el pollo" ya es un problema.',
+  'Y lo que caduca mañana se reporta hoy: se puede promocionar y recuperar parte de ese dinero en vez de tirarlo.']}],
+ test:[
+ {tipo:'orden',q:'Ordena qué hacer en un rato tranquilo',h:'Toca en orden',
+  items:['Revisión de stock','Formación pendiente','Limpieza','Ordenar y reponer','Reporte de productos','Revisar envasado'],
+  ex:'El stock va primero: si falta algo, hay que saberlo antes de que entre el pico.'},
+ {tipo:'opt',q:'Ves que queda poco de un producto pero aún da para hoy. ¿Qué haces?',
+  op:[['Avisar cuando se acabe',0],['Avisar ahora',1],['Anotarlo para el cierre',0]],
+  ex:'Ahora. "Queda poco" es un aviso útil; "se acabó" ya es un problema que no se puede resolver.'},
+ {tipo:'opt',q:'¿Cuándo se hacen los módulos de formación?',
+  op:[['En casa, tranquilo',0],['En horario de trabajo, en rato flojo',1],['Antes de empezar el turno',0]],
+  ex:'En horario de trabajo. Son 4-6 minutos por módulo: cabe en cualquier rato tranquilo.'},
+ {tipo:'opt',q:'Encuentras producto que caduca mañana. ¿Qué haces?',
+  op:[['Tirarlo, ya no da tiempo',0],['Reportarlo hoy para promocionarlo',1],['Guardarlo por si acaso',0]],
+  ex:'Reportarlo. En promoción se recupera parte del coste; tirado es pérdida completa.'}]},
+
+{id:'j2',pub:0,cat:'lider',t:'Formar a alguien nuevo',min:5,fr:'Mensual',roles:['encargado'],
+ slides:[
+ {k:'Por qué importa',t:'El primer contacto marca todo',
+  frase:['El primer contacto con la marca marca todo lo que viene después.',''],
+  p:['Si a alguien nuevo se le enseña con prisa y sin explicar el porqué, va a trabajar con prisa y sin entender el porqué durante meses.']},
+ {k:'Los primeros turnos',t:'Qué hacer',pasos:[
+  'Enseñar procesos básicos: zonas, productos, limpieza, atención',
+  'Explicar la <em>filosofía de la marca</em>, no solo las tareas',
+  'Acompañar los primeros <em>2-3 turnos</em>',
+  'Supervisar tiempos, presentación y orden',
+  'Corregir con paciencia, no con presión']},
+ {k:'El porqué',t:'Explica siempre la razón',
+  p:['"Cuenta dos veces" se olvida. "Cuenta dos veces porque el 89% de nuestros errores son artículos que faltan y cada uno cuesta 9,33 €" se recuerda.',
+  'La gente cumple lo que entiende, no lo que se le ordena.']}],
+ test:[
+ {tipo:'opt',q:'Entra alguien nuevo. ¿Cuántos turnos le acompañas?',
+  op:[['El primero',0],['Los primeros 2-3',1],['Hasta que se defienda solo',0]],
+  ex:'2-3 turnos acompañados. Es lo que marca la guía.'},
+ {tipo:'opt',q:'¿Qué se le explica además de las tareas?',
+  op:[['Los horarios y el sueldo',0],['La filosofía de la marca',1],['Nada más, con las tareas basta',0]],
+  ex:'La filosofía de la marca. El primer contacto marca todo lo que viene después.'}]}
+];
+
+let RECO=[
+ {loc:'Los Remedios',t:'Prioridad: verificación de pedidos',d:'Los Remedios concentra el 59% de los pedidos incorrectos de la marca y 749,90 € de contracargos. Y los clientes nuevos nos puntúan 3,1★: la primera impresión está rota. Este mes, foco en checklist de bolsa y sistema de colores.',de:'Dirección'},
+ {loc:'Sevilla Este',t:'Mantener el nivel y recuperar sala',d:'Sois el local que mejor ejecuta el delivery: 0,85% de error y 161 € de contracargos. Pero la sala ha caído un 26% y los comensales por cuenta han bajado de 3,68 a 2,20. Foco en atención y ticket medio.',de:'Dirección'},
+ {loc:'San Luis',t:'Satisfacción de artículos al 64%',d:'Es la más baja de los tres locales junto con Remedios. Foco en estándares de producto y temperatura: son las dos causas que aparecen en las reseñas.',de:'Dirección'}
+];
+
+const KPI=[
+ {n:'Errores Uber Eats',a:'1,96%',o3:'<1,2%',o6:'<0,8%'},
+ {n:'Contracargos al mes',a:'~250 €',o3:'<150 €',o6:'<80 €'},
+ {n:'Nota Uber Los Remedios',a:'4,2★',o3:'4,4★',o6:'4,6★'},
+ {n:'Nota Uber Centro',a:'4,1★',o3:'4,3★',o6:'4,5★'},
+ {n:'Satisfacción artículos Remedios',a:'61%',o3:'72%',o6:'80%'},
+ {n:'Quejas de temperatura',a:'frecuente',o3:'−50%',o6:'−80%'}
+];
+
+/* QUINCENA ACTIVA — dirección la define */
+let QUIN={
+ n:'Quincena 1 · Productos nuevos y cantidades',
+ desc:'Dos productos nuevos en carta y el repaso de cantidades. Que salgan igual en los tres locales desde el primer día.',
+ mods:['n1','n2','n3'],
+ fin:new Date(Date.now()+5*864e5),
+ roles:['empleado','encargado']
+};
+const QHIST=[
+ {n:'Quincena 0 · Bienvenida',mods:['m1'],cerrada:1}
+];
+
+let locSel=null,empSel=null,pin='',user=null,esDir=false,tab='ti',P=null,hechos={},asign={},selMods=[];
+
+function diasRest(){return Math.ceil((QUIN.fin-new Date())/864e5)}
+function enQuin(m){return QUIN.mods.includes(m.id)&&QUIN.roles.includes(user.rol)}
+
+/* ===== RESEÑAS: histórico por fecha y local ===== */
+let RESE=[
+ {f:'2026-02',l:'San Luis',uber:4.0,sat:62,glovo:98,google:4.3},
+ {f:'2026-02',l:'Los Remedios',uber:4.1,sat:58,glovo:97,google:4.2},
+ {f:'2026-02',l:'Sevilla Este',uber:4.2,sat:71,glovo:98,google:4.4},
+ {f:'2026-05',l:'San Luis',uber:4.1,sat:63,glovo:99,google:4.4},
+ {f:'2026-05',l:'Los Remedios',uber:4.1,sat:59,glovo:98,google:4.2},
+ {f:'2026-05',l:'Sevilla Este',uber:4.2,sat:73,glovo:98,google:4.5},
+ {f:'2026-08',l:'San Luis',uber:4.1,sat:64,glovo:99,google:4.4},
+ {f:'2026-08',l:'Los Remedios',uber:4.2,sat:61,glovo:98,google:4.3},
+ {f:'2026-08',l:'Sevilla Este',uber:4.2,sat:74,glovo:98,google:4.5}
+];
+let MEJ=[
+ {l:'Los Remedios',t:'Clientes nuevos puntúan 3,1★',d:'La primera impresión está rota. Cada cliente nuevo que falla no vuelve. Foco en checklist de bolsa y temperatura.',f:'ago 2026',ab:1},
+ {l:'San Luis',t:'Satisfacción de artículos al 64%',d:'La más baja junto con Remedios. Las reseñas apuntan a temperatura y a consistencia de producto.',f:'ago 2026',ab:1},
+ {l:'General',t:'Temperatura: 37 quejas',d:'Es el problema más mencionado en reseñas de las tres plataformas. Planchas 30 min antes y nunca montar con más de 5 min de antelación.',f:'ago 2026',ab:1},
+ {l:'Sevilla Este',t:'Sala cayó un 26%',d:'De 75.597 € a 55.950 €. Comensales por cuenta de 3,68 a 2,20: hemos perdido los grupos.',f:'ago 2026',ab:1},
+ {l:'General',t:'Artículos que faltan',d:'89% de los contracargos. La Coca-Cola Zero es lo que más se olvida: 9 incidencias.',f:'may 2026',ab:0}
+];
+function fechas(){return [...new Set(RESE.map(r=>r.f))].sort()}
+function dato(f,l){return RESE.find(r=>r.f===f&&r.l===l)}
+function delta(act,ant,dec){if(ant===undefined||act===undefined)return null;
+ const d=+(act-ant).toFixed(dec||1);
+ return {v:d,cls:d>0?'up':d<0?'dn':'eq',txt:d>0?`+${d}`:d<0?`${d}`:'='}}
+function mesTxt(f){const [a,m]=f.split('-');
+ return ['','ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][+m]+' '+a.slice(2)}
+
+/* Módulos marcados por encargado o dirección */
+let marcados={pablo:[{mod:'n1',quien:'Jesús',nota:'Ayer se pasaron las porciones de guacamole en varios pedidos. Repásalo antes del viernes.'}],andy:[{area:'producto',quien:'Nando',nota:'Los dos productos nuevos hay que tenerlos claros antes del finde. Dale un repaso al área entera.'}]};
+
+/* Días de plazo según frecuencia */
+const FREQ_D={'Cada 3 semanas':21,'Mensual':30,'Una vez':0};
+
+/* Devuelve {orden, dias, txt, cls} para un módulo y el usuario actual */
+function plazo(m,e){
+ e=e||user;
+ const h=(hechos[e.id]||{})[m.id];
+ const mk=(marcados[e.id]||[]).find(x=>x.mod===m.id);
+ if(mk)return {orden:1,txt:'Marcado',cls:'pl-marc'};
+ if(h!==undefined&&h<60)return {orden:2,txt:'A repetir',cls:'pl-urg'};
+ if(QUIN.mods.includes(m.id)&&QUIN.roles.includes(e.rol)&&(h===undefined||h<60)){
+  const d=diasRest();
+  if(d<0)return {orden:0,dias:d,txt:'Vencido',cls:'pl-venc'};
+  if(d===0)return {orden:3,dias:0,txt:'Hoy',cls:'pl-urg'};
+  if(d<=2)return {orden:3,dias:d,txt:`${d} día${d>1?'s':''}`,cls:'pl-urg'};
+  if(d<=7)return {orden:4,dias:d,txt:`${d} días`,cls:'pl-med'};
+  return {orden:5,dias:d,txt:`${d} días`,cls:'pl-ok'};
+ }
+ if(h!==undefined)return {orden:9,txt:h>=80?'Al día':'Repasa',cls:h>=80?'pl-hecho':'pl-med'};
+ if(m.crit)return {orden:6,txt:'Crítico',cls:'pl-med'};
+ const d=FREQ_D[m.fr]||30;
+ return {orden:7,txt:d?m.fr:'Sin plazo',cls:'pl-neu'};
+}
+function ordenar(ms,e){return ms.slice().sort((a,b)=>plazo(a,e).orden-plazo(b,e).orden)}
+
+function pLogin(){const b=document.getElementById('lbody');
+ if(empSel==='DIR'){
+  b.innerHTML=`<div class="pinw" id="pw"><h2>Dirección</h2><p class="s">Acceso de Rafa y Ale</p>
+  <div class="dots">${[0,1,2,3].map(i=>`<div class="dot ${pin.length>i?'on':''}"></div>`).join('')}</div>
+  <div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="tec('${n}')">${n}</button>`).join('')}
+  <button class="t" onclick="volver()">Atrás</button><button onclick="tec('0')">0</button><button class="t" onclick="bor()">Borrar</button></div></div>`;
+  document.getElementById('lsub').textContent='Acceso de dirección';return}
+ if(!empSel){
+  b.innerHTML=`<div class="locs">${LOCALES.map(l=>`<button class="locb" aria-pressed="${l===locSel}" onclick="sLoc('${l}')">${l}</button>`).join('')}</div>
+  <div class="emps">${EMP.filter(e=>!locSel||e.loc===locSel).map(e=>{
+   const h=hechos[e.id]||{},mios=MOD.filter(m=>m.roles.includes(e.rol));
+   const p=mios.filter(m=>h[m.id]===undefined||h[m.id]<60).length;
+   return `<button class="emp" onclick="pEmp('${e.id}')">${p?`<span class="pend">${p}</span>`:''}
+   <div class="i" style="--col:var(${e.rol==='encargado'?'--amarillo':'--roja'})">${e.n.slice(0,2).toUpperCase()}</div>
+   <strong>${e.n}</strong><small>${e.rol}</small></button>`}).join('')}</div>
+  <button class="dir" onclick="irDir()">Acceso dirección</button>`;
+  document.getElementById('lsub').textContent='Elige tu local y tu nombre';
+ }else{const e=EMP.find(x=>x.id===empSel);
+  b.innerHTML=`<div class="pinw" id="pw"><h2>Hola, ${e.n}</h2><p class="s">Tu PIN de 4 dígitos</p>
+  <div class="dots">${[0,1,2,3].map(i=>`<div class="dot ${pin.length>i?'on':''}"></div>`).join('')}</div>
+  <div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="tec('${n}')">${n}</button>`).join('')}
+  <button class="t" onclick="volver()">Atrás</button><button onclick="tec('0')">0</button><button class="t" onclick="bor()">Borrar</button></div></div>`;
+  document.getElementById('lsub').textContent=e.loc}}
+function sLoc(l){locSel=locSel===l?null:l;pLogin()}
+function pEmp(i){empSel=i;pin='';pLogin()}
+function irDir(){empSel='DIR';pin='';pLogin()}
+function volver(){empSel=null;pin='';pLogin()}
+function bor(){pin=pin.slice(0,-1);pLogin()}
+function tec(n){if(pin.length>=4)return;pin+=n;pLogin();
+ if(pin.length===4){const ok=empSel==='DIR'?pin===DIRPIN:pin===EMP.find(x=>x.id===empSel).pin;
+ setTimeout(()=>{if(ok){empSel==='DIR'?entrarDir():entrar(EMP.find(x=>x.id===empSel))}
+ else{document.getElementById('pw').classList.add('shake');
+ document.querySelectorAll('.dot').forEach(d=>d.classList.add('err'));setTimeout(()=>{pin='';pLogin()},550)}},160)}}
+
+function entrar(e){user=e;esDir=false;
+ document.getElementById('login').style.display='none';document.getElementById('top').style.display='block';
+ document.getElementById('app').style.display='block';
+ document.getElementById('wi').textContent=e.n.slice(0,2).toUpperCase();
+ document.getElementById('wn').textContent=e.n;document.getElementById('wr').textContent=`${e.rol} · ${e.loc}`;
+ if(!hechos[e.id])hechos[e.id]={};
+ document.getElementById('tabs').innerHTML=`<button class="tab" data-t="ti" aria-pressed="true" onclick="sTab('ti')">Para ti</button>
+ ${e.rol==='encargado'?`<button class="tab" data-t="eqp" aria-pressed="false" onclick="sTab('eqp')">Equipo</button>
+ <button class="tab" data-t="mds" aria-pressed="false" onclick="sTab('mds')">Módulos</button>`:''}
+ <button class="tab" data-t="todo" aria-pressed="false" onclick="sTab('todo')">Áreas</button>`;
+ tab='ti';pintar()}
+function entrarDir(){esDir=true;user={n:'Dirección',rol:'dirección',loc:'Los tres locales'};
+ document.getElementById('login').style.display='none';document.getElementById('top').style.display='block';
+ document.getElementById('app').style.display='block';
+ document.getElementById('wi').textContent='RA';
+ document.getElementById('wn').textContent='Dirección';document.getElementById('wr').textContent='Rafa y Ale';
+ EMP.forEach(e=>{if(!hechos[e.id])hechos[e.id]={}});
+ document.getElementById('tabs').innerHTML=`<button class="tab" data-t="quin" aria-pressed="true" onclick="sTab('quin')">Quincena</button>
+ <button class="tab" data-t="eq" aria-pressed="false" onclick="sTab('eq')">Equipo</button>
+ <button class="tab" data-t="mods" aria-pressed="false" onclick="sTab('mods')">Módulos</button>
+ <button class="tab" data-t="env" aria-pressed="false" onclick="sTab('env')">Reseñas</button>`;
+ tab='quin';pintar()}
+function salir(){user=null;empSel=null;pin='';locSel=null;esDir=false;
+ document.getElementById('login').style.display='block';document.getElementById('top').style.display='none';
+ document.getElementById('app').style.display='none';pLogin()}
+function sTab(t){tab=t;document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===t));pintar()}
+
+function pintar(){
+ if(esDir){if(tab==='quin')return dirQuin();if(tab==='eq')return dirEquipo();
+  if(tab==='mods')return dirMods();return dirEnviar()}
+ if(tab==='eqp')return vMiEquipo();
+ if(tab==='mds')return dirMods();
+ if(tab==='todo')return vTodo();vParaTi()}
+
+function estadoMod(m,e){const h=(hechos[e.id]||{})[m.id];
+ if(h===undefined)return asign[e.id]&&asign[e.id].includes(m.id)?'nuevo':'pendiente';
+ if(h<60)return 'repetir';return 'hecho'}
+
+function tarjeta(m){const st=estadoMod(m,user),c=CAT[m.cat],h=(hechos[user.id]||{})[m.id];
+ const pl=plazo(m);
+ return `<button class="mod ${st==='hecho'?'hecho':''}" style="--col:var(${c.c})" onclick="abrirMod('${m.id}')">
+ <div class="ic"><svg viewBox="0 0 24 24">${c.ic}</svg></div>
+ <div class="mod-b"><div class="mod-h"><strong>${m.t}</strong>
+ <span class="pl ${pl.cls}">${pl.txt}</span></div>
+ <div class="mt"><em>${m.min} min</em><em>${m.test.length} preguntas</em><em>${m.fr}</em></div>
+ ${h!==undefined?`<div class="res ${h<60?'mal':'ok'}">${h}% de acierto${h<60?' · conviene repetirlo':''}</div>`:''}</div>
+ <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:.28;flex-shrink:0;align-self:center"><path d="M9 18l6-6-6-6"/></svg></button>`}
+
+function vParaTi(){const mios=MOD.filter(m=>m.pub&&m.roles.includes(user.rol));
+ const h=hechos[user.id]||{};
+ const qm=mios.filter(enQuin);
+ const qHechos=qm.filter(m=>h[m.id]!==undefined&&h[m.id]>=60);
+ const qPend=qm.filter(m=>(h[m.id]===undefined||h[m.id]<60)&&!m.nuevo);
+ const qpct=qm.length?Math.round(qHechos.length/qm.length*100):0;
+ const dias=diasRest();
+ const rep=mios.filter(m=>estadoMod(m,user)==='repetir'&&!enQuin(m));
+ const nue=mios.filter(m=>estadoMod(m,user)==='nuevo'&&!enQuin(m));
+ const pen=mios.filter(m=>estadoMod(m,user)==='pendiente'&&!enQuin(m)&&!m.nuevo);
+ const hec=mios.filter(m=>estadoMod(m,user)==='hecho'&&!enQuin(m));
+ const ks=Object.keys(h);
+ const media=ks.length?Math.round(ks.reduce((s,k)=>s+h[k],0)/ks.length):null;
+ const crit=mios.filter(m=>m.crit&&(h[m.id]===undefined||h[m.id]<60)).length;
+ const peor=ks.length?ks.map(k=>({m:MOD.find(x=>x.id===k),v:h[k]})).filter(x=>x.m&&x.v<80).sort((a,b)=>a.v-b.v)[0]:null;
+ const nuevos=mios.filter(m=>m.nuevo&&(h[m.id]===undefined||h[m.id]<60));
+ const mk=(marcados[user.id]||[]).filter(x=>x.mod&&MOD.find(m=>m.id===x.mod&&m.pub&&!QUIN.mods.includes(x.mod)));
+ const mkA=(marcados[user.id]||[]).filter(x=>x.area&&CAT[x.area]);
+ const reco=RECO.find(r=>r.loc===user.loc);
+ const est=qpct===100?'hecha':dias<=2?'urg':'';
+ const circ=2*Math.PI*26;
+ document.getElementById('app').innerHTML=`
+ <div class="quin ${est}">
+  <div class="qk"><span>Esta quincena</span>
+   <span class="qd">${qpct===100?'Completada':dias>0?`${dias} día${dias!==1?'s':''} para acabar`:'Fuera de plazo'}</span></div>
+  <h2>${QUIN.n}</h2>
+  <div class="qrow">
+   <div class="ring"><svg width="62" height="62">
+    <circle cx="31" cy="31" r="26" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="6"/>
+    <circle cx="31" cy="31" r="26" fill="none" stroke="${qpct===100?'#8FD37A':'#D89B1C'}" stroke-width="6"
+     stroke-dasharray="${circ}" stroke-dashoffset="${circ*(1-qpct/100)}" stroke-linecap="round"/></svg>
+    <div class="rt">${qHechos.length}/${qm.length}</div></div>
+   <div class="qi"><strong>${qpct===100?'Ya la tienes hecha':qPend.length===1?'Te queda uno':`Te quedan ${qPend.length}`}</strong>
+   <span>${QUIN.desc}</span></div></div>
+ </div>
+ <div class="mini3">
+  <div class="m3 ${media===null?'':media>=80?'ok':media>=60?'am':'mal'}"><b>${media===null?'—':media+'%'}</b><small>tu media</small></div>
+  <div class="m3 ${crit?'mal':'ok'}"><b>${crit}</b><small>críticos pendientes</small></div>
+  <div class="m3"><b>${ks.length}/${mios.length}</b><small>módulos hechos</small></div>
+ </div>
+ ${nuevos.length?`<p class="eye">Productos nuevos <b>protocolo recién publicado</b></p>
+  ${nuevos.map(m=>`<div class="marc" style="border-left-color:var(--naranja);background:#FEF6EE;border-color:#F0D9BE">
+   <div class="mk" style="color:var(--naranja)">Nuevo en carta</div>
+   <strong>${m.t.replace('NUEVO · ','')}</strong>
+   <p>Léelo antes de montarlo por primera vez. Un producto nuevo se hace igual desde el primer día en los tres locales.</p></div>`+tarjeta(m)).join('')}`:''}
+ ${qPend.length?`<p class="eye">Haz esto ahora <b>${dias>0?'antes del '+QUIN.fin.toLocaleDateString('es-ES',{day:'numeric',month:'short'}):'plazo vencido'}</b></p>
+  ${ordenar(qPend).map(tarjeta).join('')}`:''}
+ ${mkA.length?`<p class="eye">Área a reforzar</p>
+  ${mkA.map(x=>{const c=CAT[x.area];const h2=hechos[user.id]||{};
+   const ms=MOD.filter(m=>m.pub&&m.cat===x.area&&m.roles.includes(user.rol));
+   const ok=ms.filter(m=>h2[m.id]!==undefined&&h2[m.id]>=60).length;
+   return `<div class="marc"><div class="mk">${x.quien} · área completa</div>
+   <strong>${c.n}</strong><p>"${x.nota}"</p>
+   <div class="de">${ok} de ${ms.length} módulos superados</div></div>
+   ${ordenar(ms.filter(m=>h2[m.id]===undefined||h2[m.id]<60)).map(tarjeta).join('')}`}).join('')}`:''}
+ ${mk.length?`<p class="eye">Te lo han marcado</p>
+  ${mk.map(x=>{const m=MOD.find(z=>z.id===x.mod);if(!m)return '';
+   return `<div class="marc"><div class="mk">Revisar con atención · ${x.quien}</div>
+   <strong>${m.t}</strong><p>"${x.nota}"</p></div>`+tarjeta(m)}).join('')}`:''}
+ ${peor?`<div class="debil"><div class="dk">Tu punto flojo</div>
+  <strong>${peor.m.t}</strong><p>Sacaste un ${peor.v}%. ${peor.v<60?'Conviene repetirlo entero.':'Un repaso rápido y lo tienes.'}</p></div>`:''}
+ ${reco?`<div class="aviso-l"><strong>${reco.t}</strong><p>${reco.d}</p><div class="de">${reco.de}</div></div>`:''}
+ ${rep.length?`<p class="eye">A repetir <b>fallaste más de la mitad</b></p>${ordenar(rep).map(tarjeta).join('')}`:''}
+ ${nue.length?`<p class="eye">Nuevos <b>enviados por dirección</b></p>${ordenar(nue).map(tarjeta).join('')}`:''}
+ ${pen.length?`<p class="eye">Cuando puedas</p>${ordenar(pen).map(tarjeta).join('')}`:''}
+ ${hec.length?`<p class="eye">Al día</p>${hec.map(tarjeta).join('')}`:''}
+ <div class="pie"><strong>Se hace en horario de trabajo</strong>, en turno flojo o media jornada. No es para hacer en casa.</div>`}
+
+/* ENCARGADO: mi equipo */
+function vMiEquipo(){
+ const mios=EMP.filter(e=>e.id!==user.id);
+ const fil=mios.map(e=>{const h=hechos[e.id]||{};
+  const qm=MOD.filter(m=>m.pub&&QUIN.mods.includes(m.id)&&m.roles.includes(e.rol));
+  const ok=qm.filter(m=>h[m.id]!==undefined&&h[m.id]>=60).length;
+  const nm=(marcados[e.id]||[]).length;
+  return {e,ok,tot:qm.length,nm,pct:qm.length?Math.round(ok/qm.length*100):0}});
+ fil.sort((a,b)=>a.pct-b.pct);
+ const alDia=fil.filter(f=>f.pct===100).length;
+ const dias=diasRest();
+ document.getElementById('app').innerHTML=`
+ <div class="quin ${alDia===fil.length?'hecha':dias<=2?'urg':''}">
+  <div class="qk"><span>Equipo · los tres locales</span>
+   <span class="qd">${dias>0?`${dias} día${dias!==1?'s':''}`:'Fuera de plazo'}</span></div>
+  <h2>${alDia} de ${fil.length} al día</h2>
+  <div class="qrow"><div class="qi"><strong>${QUIN.n}</strong>
+  <span>${alDia===fil.length?'Todo el equipo la ha completado.':'Habla en privado con quien falta, como marca la guía.'}</span></div></div></div>
+ ${LOCALES.map(l=>{const es=fil.filter(f=>f.e.loc===l);
+  if(!es.length)return '';
+  return `<p class="eye">${l} <b>${es.filter(f=>f.pct===100).length} de ${es.length} al día</b></p>
+  ${es.map(f=>`<button class="eq-r" onclick="marcarA('${f.e.id}')">
+   <div class="i ${f.pct===100?'ok':f.pct>0?'med':'no'}">${f.e.n.slice(0,2).toUpperCase()}</div>
+   <div class="b"><strong>${f.e.n}</strong><small>${f.e.rol} · ${f.ok} de ${f.tot} de la quincena${f.nm?` · ${f.nm} marcado${f.nm>1?'s':''}`:''}</small></div>
+   <span class="st ${f.pct===100?'ok':f.pct>0?'med':'no'}">${f.pct===100?'Al día':f.pct>0?'A medias':'Sin empezar'}</span></button>`).join('')}`}).join('')}
+ <div class="pie"><strong>Toca a alguien para marcarle módulos o un área entera.</strong> Le aparecerá destacado con tu nota. Y recuerda: si alguien falla, se corrige en privado, nunca delante de todos.</div>`}
+
+/* Marcar módulos o áreas, con nota */
+let marcSel=[],marcArea=null,marcQuien=null;
+function marcarA(id){marcSel=[];marcArea=null;marcQuien=id;
+ const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
+ const ms=MOD.filter(m=>m.pub&&m.roles.includes(e.rol));
+ const areas=Object.keys(CAT).filter(k=>ms.some(m=>m.cat===k));
+ abrirSheet(`<div class="sh-top" style="background:var(--vino)">
+ <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Volver</button>
+ <h2>${e.n}</h2><p>${e.rol} · ${e.loc}</p></div>
+ ${(marcados[id]||[]).length?`<div style="padding:16px 16px 0"><p class="eye">Ya marcados</p>
+  ${(marcados[id]).map((x,i)=>{const m=x.mod?MOD.find(z=>z.id===x.mod):null;
+   return `<div class="marc"><div class="mk">${x.quien}${x.area?' · área completa':''}</div>
+   <strong>${x.area?CAT[x.area].n:(m?m.t:x.mod)}</strong>
+   <p>"${x.nota}"</p><div class="de"><button style="color:var(--mal);font-weight:600;font-size:12px" onclick="quitarMarca('${id}',${i})">Quitar</button></div></div>`}).join('')}</div>`:''}
+ <div style="padding:16px 16px 0">
+ <p class="eye">Reforzar un área entera</p>
+ <div class="chips">${areas.map(k=>`<button class="chip" data-a="${k}" aria-pressed="false" onclick="togArea('${k}')">${CAT[k].n}</button>`).join('')}</div>
+ <p class="eye">O módulos sueltos</p>
+ ${ms.map(m=>{const v=h[m.id];
+  return `<button class="selm" data-m="${m.id}" aria-pressed="false" onclick="togMarc('${m.id}')">
+  <div class="cb"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+  <div class="b"><strong>${m.t}</strong><small>${CAT[m.cat].n} · ${v===undefined?'sin hacer':v+'%'}</small></div></button>`}).join('')}
+ <div class="f-c" style="margin-top:16px"><label>Por qué se lo marcas</label>
+ <textarea id="mk-n" placeholder="Ej: ayer faltó una bebida en dos pedidos. Repásalo antes del viernes."></textarea></div>
+ <button class="ed-add" onclick="reenviar('${id}')">Reenviar los seleccionados desde cero</button>
+ <div class="pie" style="margin-top:12px"><strong>Marcar</strong> lo destaca con tu nota.
+ <strong>Reenviar</strong> borra su resultado para que lo vuelva a hacer entero.</div>
+ </div><div class="pub"><button class="pub-b" onclick="guardarMarca()">Marcar y avisar</button>
+ <small>Lo verá destacado en su pantalla de inicio</small></div>`,'--vino')}
+function togArea(k){marcArea=marcArea===k?null:k;
+ document.querySelectorAll('.chips .chip[data-a]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.a===marcArea))}
+function togMarc(id){const i=marcSel.indexOf(id);
+ if(i>=0)marcSel.splice(i,1);else marcSel.push(id);
+ document.querySelector(`.selm[data-m="${id}"]`).setAttribute('aria-pressed',i<0)}
+function quitarMarca(id,i){marcados[id].splice(i,1);saveConfig('marcados',marcados);cerrarSheet();toast('Marca quitada');setTimeout(pintar,300)}
+function reenviar(id){if(!marcSel.length&&!marcArea)return toast('Selecciona módulos o un área');
+ const e=EMP.find(x=>x.id===id);
+ let lista=marcSel.slice();
+ if(marcArea)lista=lista.concat(MOD.filter(m=>m.pub&&m.cat===marcArea&&m.roles.includes(e.rol)).map(m=>m.id));
+ lista=[...new Set(lista)];
+ if(!asign[id])asign[id]=[];
+ lista.forEach(m=>{if(!asign[id].includes(m))asign[id].push(m);if(hechos[id])delete hechos[id][m]});
+ cerrarSheet();toast(`${lista.length} módulo${lista.length>1?'s':''} reenviado${lista.length>1?'s':''} a ${e.n}`);setTimeout(pintar,300)}
+function guardarMarca(){if(!marcSel.length&&!marcArea)return toast('Selecciona módulos o un área');
+ const nota=document.getElementById('mk-n').value.trim();
+ if(!nota)return toast('Escribe por qué se lo marcas. Sin motivo no sirve de nada');
+ if(!marcados[marcQuien])marcados[marcQuien]=[];
+ if(marcArea){const ex=marcados[marcQuien].findIndex(x=>x.area===marcArea);
+  const nuevo={area:marcArea,quien:user.n,nota};
+  if(ex>=0)marcados[marcQuien][ex]=nuevo;else marcados[marcQuien].push(nuevo)}
+ marcSel.forEach(m=>{const ex=marcados[marcQuien].findIndex(x=>x.mod===m);
+  const nuevo={mod:m,quien:user.n,nota};
+  if(ex>=0)marcados[marcQuien][ex]=nuevo;else marcados[marcQuien].push(nuevo)});
+ const e=EMP.find(x=>x.id===marcQuien),n=marcSel.length+(marcArea?1:0);
+ saveConfig('marcados',marcados);
+ cerrarSheet();toast(`Marcado a ${e.n}`);setTimeout(pintar,300)}
+
+function vTodo(){const h=hechos[user.id]||{};
+ const grupos=Object.keys(CAT).map(k=>{
+  const ms=MOD.filter(m=>m.pub&&m.cat===k&&m.roles.includes(user.rol));
+  if(!ms.length)return null;
+  const ok=ms.filter(m=>h[m.id]!==undefined&&h[m.id]>=60);
+  const pend=ms.filter(m=>h[m.id]===undefined||h[m.id]<60);
+  return {k,c:CAT[k],ms,ok:ok.length,tot:ms.length,pend,pct:Math.round(ok.length/ms.length*100)}
+ }).filter(Boolean).sort((a,b)=>a.pct-b.pct);
+ const tOk=grupos.reduce((s,g)=>s+g.ok,0),tTot=grupos.reduce((s,g)=>s+g.tot,0);
+ document.getElementById('app').innerHTML=`
+ <div class="prog-c"><div class="r"><strong>Todas tus áreas</strong>
+ <span class="pc">${Math.round(tOk/tTot*100)}%</span></div>
+ <div class="bar"><i style="width:${Math.round(tOk/tTot*100)}%"></i></div>
+ <div class="sub">${tOk} de ${tTot} módulos superados en las ${grupos.length} áreas de tu puesto</div></div>
+ <p class="eye">Por área <b>de menos a más completada</b></p>
+ ${grupos.map(g=>`<button class="grp" style="--col:var(${g.c.c})" onclick="verGrupo('${g.k}')">
+  <div class="gh"><div class="ic"><svg viewBox="0 0 24 24">${g.c.ic}</svg></div>
+  <div class="gb"><strong>${g.c.n}</strong><small>${g.ok} de ${g.tot} módulos</small></div>
+  <span class="gp ${g.pct>=80?'a':g.pct>=50?'m':'b'}">${g.pct}%</span></div>
+  <div class="gbar"><i style="width:${g.pct}%"></i></div>
+  ${g.pend.length?`<div class="gpend">Te faltan: ${g.pend.map(m=>m.t).join(' · ')}</div>`:''}</button>`).join('')}
+ <div class="pie"><strong>El área con menos porcentaje es por donde empezar.</strong> Aparece la primera.</div>`}
+
+function verGrupo(k){const c=CAT[k],h=hechos[user.id]||{};
+ const ms=ordenar(MOD.filter(m=>m.pub&&m.cat===k&&m.roles.includes(user.rol)));
+ abrirSheet(`<div class="sh-top" style="background:var(${c.c})">
+ <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Áreas</button>
+ <h2>${c.n}</h2><p>${ms.length} módulo${ms.length!==1?'s':''} en tu puesto</p></div>
+ <div style="padding:16px 16px 0">${ms.map(tarjeta).join('')}</div>`,c.c)}
+
+function abrirMod(id){const m=MOD.find(x=>x.id===id);
+ P={m,fase:'s',i:0,q:0,ac:0,marks:[],ord:[],res:null,fallos:[]};
+ pPlay();document.getElementById('play').classList.add('on')}
+function cerrarPlay(){document.getElementById('play').classList.remove('on');P=null;pintar()}
+
+function pPlay(){const m=P.m,tot=m.slides.length+m.test.length;
+ const idx=P.fase==='s'?P.i:m.slides.length+P.q;
+ let body='',foot='';
+ if(P.fase==='s'){const s=m.slides[P.i];
+  body=`<div class="slide-k">${s.k}</div><div class="slide-t">${s.t}</div>
+  ${s.dest?`<div class="slide-d"><div class="big">${s.dest[0]}</div><div class="sm">${s.dest[1]}</div></div>`:''}
+  ${s.cols?`<div class="cols">${s.cols.map(c=>`<div class="col-r" style="background:var(${c[0]})"><b>${c[1]}</b><span>${c[2]}</span></div>`).join('')}</div>`:''}
+  ${s.pasos?`<div class="pasos-l">${s.pasos.map((p,i)=>`<div class="pl"><span class="pn">${i+1}</span><span class="pt">${p}</span></div>`).join('')}</div>`:''}
+  ${s.frase?`<div class="frase"><p>${s.frase[0]}</p>${s.frase[1]?`<small>${s.frase[1]}</small>`:''}</div>`:''}
+  ${s.p?s.p.map(p=>`<div class="slide-p">${p}</div>`).join(''):''}`;
+  foot=`<button class="pbtn" onclick="sigSlide()">${P.i<m.slides.length-1?'Siguiente':'Empezar el test'}</button>
+  ${P.i>0?`<button class="pback" onclick="P.i--;pPlay()">Atrás</button>`:''}`;
+ }
+ else if(P.fase==='t'){const t=m.test[P.q];
+  if(P.res===null){
+   if(t.tipo==='orden'||t.tipo==='rank'){
+    body=`<div class="q-t">${t.q}</div><div class="q-h">${t.h}</div>
+    <div class="ord-zona ${P.ord.length?'lleno':''}">
+    ${P.ord.length?P.ord.map((x,i)=>`<div class="ord-i"><span class="n">${i+1}</span>${x}
+     <span class="x" onclick="P.ord.splice(${i},1);pPlay()">×</span></div>`).join(''):'<div class="ord-vacio">Toca abajo en el orden correcto</div>'}</div>
+    <div class="ord-pool">${t.items.map(x=>`<button class="ord-p ${P.ord.includes(x)?'usado':''}" 
+     ${P.ord.includes(x)?'disabled':`onclick="P.ord.push('${x.replace(/'/g,"\\'")}');pPlay()"`}>${x}</button>`).join('')}</div>`;
+    foot=`<button class="pbtn" onclick="corrOrden()" ${P.ord.length===t.items.length?'':'disabled'}>Comprobar</button>`;
+   }else if(t.tipo==='color'){
+    body=`<div class="q-t">¿Qué color lleva este ticket?</div>
+    <div class="tick"><div class="th">Pedido entrante</div>
+    <div class="li">1× Burro Don Juárez</div><div class="li">1× Nachos Guadalupe</div><div class="li">2× Coca-Cola Zero</div>
+    <div class="nt">${t.nt?'Nota del cliente: '+t.nt:'(sin notas)'}</div></div>
+    <div class="col-g">
+    <button class="col-b" style="background:var(--roja)" onclick="corrColor('roja')"><b>ROJO/NARANJA</b><span>Alergia</span></button>
+    <button class="col-b" style="background:var(--amarillo)" onclick="corrColor('amarillo')"><b>AMARILLO</b><span>Modificación</span></button>
+    <button class="col-b" style="background:var(--azul)" onclick="corrColor('azul')"><b>AZUL</b><span>Atención</span></button>
+    <button class="col-b" style="background:var(--gris2)" onclick="corrColor('sin')"><b>SIN MARCAR</b><span>Estándar</span></button></div>`;
+   }else if(t.tipo==='cant'){
+    body=`<div class="q-t">¿Cuánto lleva?</div>
+    <div class="cant-p"><div class="pr">${t.p}</div><div class="ing">${t.i}</div></div>
+    <div class="cant-g">${t.op.map(o=>`<button class="cant-b" onclick="corrCant('${o}')">${o}</button>`).join('')}</div>`;
+   }else{
+    body=`<div class="q-t">${t.q}</div><div class="opts">
+    ${t.op.map((o,i)=>`<button class="opt" onclick="corrOpt(${i})">${o[0]}</button>`).join('')}</div>`;
+   }
+  }else{const ok=P.res.ok;let vis='';
+   if(t.tipo==='orden'||t.tipo==='rank'){
+    vis=`<div class="ord-zona lleno">${P.ord.map((x,i)=>`<div class="ord-i ${t.items[i]===x?'bien':'mal'}">
+     <span class="n">${i+1}</span>${x}</div>`).join('')}</div>
+     ${!ok?`<div class="q-h">${t.tipo==='rank'?'De mayor a menor: ':'Correcto: '}${t.items.join(' → ')}</div>`:''}`;
+   }else if(t.tipo==='color'){
+    const cs=[['roja','--roja','ROJO/NARANJA','Alergia'],['amarillo','--amarillo','AMARILLO','Modificación'],
+     ['azul','--azul','AZUL','Atención'],['sin','--gris2','SIN MARCAR','Estándar']];
+    vis=`<div class="tick"><div class="th">Pedido entrante</div>
+     <div class="nt">${t.nt?'Nota: '+t.nt:'(sin notas)'}</div></div>
+     <div class="col-g">${cs.map(c=>`<div class="col-b ${c[0]===t.r?'bien':c[0]===P.res.dado?'mal':'gris'}" style="background:var(${c[1]})">
+     <b>${c[2]}</b><span>${c[3]}</span></div>`).join('')}</div>`;
+   }else if(t.tipo==='cant'){
+    vis=`<div class="cant-p"><div class="pr">${t.p}</div><div class="ing">${t.i}</div></div>
+     <div class="cant-g">${t.op.map(o=>`<div class="cant-b ${o===t.r?'bien':o===P.res.dado&&!ok?'mal':''}">${o}</div>`).join('')}</div>`;
+   }else{
+    vis=`<div class="q-t">${t.q}</div><div class="opts">${t.op.map((o,i)=>
+     `<div class="opt ${o[1]?'bien':i===P.res.dado?'mal':'gris'}">${o[0]}</div>`).join('')}</div>`;
+   }
+   body=`${vis}<div class="fb ${ok?'si':'no'}"><div class="ft">${ok?'Correcto':'No es eso'}</div><p>${t.ex}</p></div>`;
+   foot=`<button class="pbtn v" onclick="sigTest()">${P.q<m.test.length-1?'Siguiente':'Ver resultado'}</button>`;
+  }
+ }
+ else{const pct=Math.round(P.ac/m.test.length*100);
+  const cl=pct>=80?'ok':pct>=60?'med':'no';
+  body=`<div class="fin"><div class="big ${cl}">${pct}%</div>
+  <h3>${P.ac} de ${m.test.length} correctas</h3>
+  <p>${pct>=80?'Perfecto. Este módulo lo tienes.':pct>=60?'Aprobado, pero repasa lo que fallaste.':'Conviene repetirlo. Te queda marcado como "a repetir".'}</p>
+  ${P.fallos.length?`<div class="fallos-l"><div class="fl">Repasa esto</div>${P.fallos.map(f=>`<li>${f}</li>`).join('')}</div>`:''}</div>`;
+  foot=`<button class="pbtn v" onclick="guardarMod()">Guardar y salir</button>
+  ${pct<80?`<button class="pback" onclick="abrirMod('${m.id}')">Repetir ahora</button>`:''}`;
+ }
+ document.getElementById('play').innerHTML=`
+ <div class="p-top"><div class="p-bar">${Array.from({length:tot},(_,i)=>{
+  const im=i-m.slides.length;const cls=im>=0&&P.marks[im]?P.marks[im]:(i<=idx?'on':'');
+  return `<div class="p-seg ${cls}"></div>`}).join('')}</div>
+ <div class="p-head"><button class="p-x" onclick="cerrarPlay()">Cerrar</button>
+ <span class="p-n">${CAT[m.cat].n}</span></div></div>
+ <div class="p-body">${body}</div><div class="p-foot">${foot}</div>`}
+
+function sigSlide(){if(P.i<P.m.slides.length-1){P.i++}else{P.fase='t';P.q=0;P.res=null;P.ord=[]}pPlay()}
+function corrOrden(){const t=P.m.test[P.q],ok=P.ord.every((x,i)=>x===t.items[i]);
+ P.res={ok};P.marks[P.q]=ok?'ok':'mal';if(ok)P.ac++;else P.fallos.push(t.q);pPlay()}
+function corrColor(c){const t=P.m.test[P.q],ok=c===t.r;
+ P.res={ok,dado:c};P.marks[P.q]=ok?'ok':'mal';if(ok)P.ac++;else P.fallos.push('Color del ticket');pPlay()}
+function corrCant(o){const t=P.m.test[P.q],ok=o===t.r;
+ P.res={ok,dado:o};P.marks[P.q]=ok?'ok':'mal';if(ok)P.ac++;else P.fallos.push(`${t.p} · ${t.i}`);pPlay()}
+function corrOpt(i){const t=P.m.test[P.q],ok=!!t.op[i][1];
+ P.res={ok,dado:i};P.marks[P.q]=ok?'ok':'mal';if(ok)P.ac++;else P.fallos.push(t.q);pPlay()}
+function sigTest(){if(P.q<P.m.test.length-1){P.q++;P.res=null;P.ord=[]}else P.fase='f';pPlay()}
+async function guardarMod(){const pct=Math.round(P.ac/P.m.test.length*100);
+ if(!hechos[user.id])hechos[user.id]={};hechos[user.id][P.m.id]=pct;
+ if(asign[user.id]){const i=asign[user.id].indexOf(P.m.id);if(i>=0)asign[user.id].splice(i,1)}
+ const t=P.m.t,tot=P.m.test.length,ac=P.ac,fallos=P.fallos;
+ const {error}=await db.from('escuela_resultados').insert({
+  empleado_id:user.id,modulo_id:P.m.id,porcentaje:pct,aciertos:ac,total:tot,fallos,
+  creado_en:new Date().toISOString()});
+ cerrarPlay();
+ if(error){console.error(error);toast('Resultado guardado en el dispositivo, pero no en el servidor')}
+ else toast(pct>=80?`${t} completado · ${pct}%`:pct>=60?`Guardado con ${pct}%. Repasa lo fallado`:`${pct}%. Queda marcado para repetir`)}
+
+function dirEquipo(){
+ const filas=EMP.map(e=>{const h=hechos[e.id]||{},ks=Object.keys(h);
+  const mios=MOD.filter(m=>m.pub&&m.roles.includes(e.rol));
+  const media=ks.length?Math.round(ks.reduce((s,k)=>s+h[k],0)/ks.length):null;
+  const rep=ks.filter(k=>h[k]<60).length;
+  const crit=mios.filter(m=>m.crit&&(h[m.id]===undefined||h[m.id]<60)).length;
+  return {e,media,hechos:ks.length,tot:mios.length,rep,crit}});
+ filas.sort((a,b)=>(a.media===null?-1:a.media)-(b.media===null?-1:b.media));
+ const media=filas.filter(f=>f.media!==null);
+ const mg=media.length?Math.round(media.reduce((s,f)=>s+f.media,0)/media.length):0;
+ const critTot=filas.reduce((s,f)=>s+f.crit,0);
+ document.getElementById('app').innerHTML=`
+ <div class="kpis"><div class="kpi ${mg>=80?'ok':mg>=60?'':'mal'}"><b>${mg}%</b><small>media del equipo</small></div>
+ <div class="kpi ${critTot?'mal':'ok'}"><b>${critTot}</b><small>críticos sin superar</small></div>
+ <div class="kpi"><b>${MOD.length}</b><small>módulos publicados</small></div></div>
+ <p class="eye">Por persona <b>de menor a mayor</b></p>
+ ${filas.map(f=>`<button class="per" onclick="verPersona('${f.e.id}')">
+ <div class="i">${f.e.n.slice(0,2).toUpperCase()}</div>
+ <div class="per-b"><strong>${f.e.n}</strong><small>${f.e.rol} · ${f.e.loc} · ${f.hechos}/${f.tot}${f.crit?` · ${f.crit} crítico${f.crit>1?'s':''} pendiente${f.crit>1?'s':''}`:''}</small></div>
+ <span class="pc ${f.media===null?'b':f.media>=80?'a':f.media>=60?'m':'b'}">${f.media===null?'—':f.media+'%'}</span></button>`).join('')}
+ <p class="eye">Dónde cojea el equipo</p>
+ ${MOD.map(m=>{const notas=EMP.filter(e=>hechos[e.id]&&hechos[e.id][m.id]!==undefined).map(e=>hechos[e.id][m.id]);
+  if(!notas.length)return null;
+  return {m,md:Math.round(notas.reduce((a,b)=>a+b,0)/notas.length),n:notas.length}}).filter(Boolean)
+  .sort((a,b)=>a.md-b.md).slice(0,5).map(x=>
+ `<div class="det"><div class="dr"><strong>${x.m.t}</strong>
+ <span class="p ${x.md>=80?'a':x.md>=60?'m':'b'}">${x.md}%</span></div>
+ <small>${CAT[x.m.cat].n} · ${x.n} persona${x.n!==1?'s':''}</small></div>`).join('')}
+ <p class="eye">KPIs que esto debe mover</p>
+ ${KPI.map(k=>`<div class="kpi-t"><div class="r"><strong>${k.n}</strong><span class="v">${k.a}</span></div>
+ <small>Objetivo 3 meses: ${k.o3} · 6 meses: ${k.o6}</small></div>`).join('')}
+ <div class="pie"><strong>El dato útil no es quién saca mejor nota.</strong> Es qué módulo saca mala nota en todo el equipo: eso no es un problema de la persona, es que el contenido o el proceso están mal explicados.</div>`}
+
+function verPersona(id){const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
+ const mios=MOD.filter(m=>m.pub&&m.roles.includes(e.rol));
+ abrirSheet(`<div class="sh-top" style="background:var(--tinta)">
+ <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Equipo</button>
+ <h2>${e.n}</h2><p>${e.rol} · ${e.loc}</p></div>
+ <div style="padding:16px 16px 0">
+ <p class="eye">Resultados</p>
+ ${mios.map(m=>{const v=h[m.id];
+  return `<div class="det"><div class="dr"><strong>${m.t}${m.crit?' ·':''}</strong>
+  <span class="p ${v===undefined?'b':v>=80?'a':v>=60?'m':'b'}">${v===undefined?'sin hacer':v+'%'}</span></div>
+  <small>${CAT[m.cat].n}${m.crit?' · crítico':''}${v!==undefined&&v<60?' · conviene repetirlo':''}</small></div>`}).join('')}
+ <p class="eye">Enviarle módulos</p>
+ <div class="chips">${mios.map(m=>
+  `<button class="chip" data-m="${m.id}" aria-pressed="false" onclick="this.setAttribute('aria-pressed',this.getAttribute('aria-pressed')==='true'?'false':'true')">${m.t}</button>`).join('')}</div>
+ <button class="ed-add" style="margin-top:14px;background:var(--vino)" onclick="cerrarSheet();setTimeout(()=>marcarA('${id}'),300)">Marcar con nota</button>
+ </div><div class="pub"><button class="pub-b" onclick="enviarA('${id}')">Enviar seleccionados</button>
+ <small>Le aparecerán como nuevos la próxima vez que entre</small></div>`,'--tinta')}
+
+function enviarA(id){const sel=[...document.querySelectorAll('.chips .chip[aria-pressed="true"]')].map(c=>c.dataset.m);
+ if(!sel.length)return toast('No has seleccionado ninguno');
+ if(!asign[id])asign[id]=[];
+ sel.forEach(m=>{if(!asign[id].includes(m))asign[id].push(m);if(hechos[id])delete hechos[id][m]});
+ const e=EMP.find(x=>x.id===id);
+ cerrarSheet();toast(`${sel.length} módulo${sel.length>1?'s':''} enviado${sel.length>1?'s':''} a ${e.n}`);setTimeout(pintar,300)}
+
+function dirMods(){
+ const pubs=MOD.filter(m=>m.pub).length;
+ document.getElementById('app').innerHTML=`
+ <div class="mini3">
+  <div class="m3 ${pubs?'ok':'mal'}"><b>${pubs}</b><small>publicados</small></div>
+  <div class="m3"><b>${MOD.length-pubs}</b><small>ocultos</small></div>
+  <div class="m3"><b>${MOD.length}</b><small>en total</small></div></div>
+ <div class="pie" style="margin-top:0;margin-bottom:16px"><strong>Los ocultos no existen para el equipo.</strong>
+ Publica solo lo que quieres que hagan ahora. Ir soltando de poco en poco funciona mucho mejor que abrir los 22 de golpe.</div>
+ ${Object.keys(CAT).map(k=>{const ms=MOD.filter(m=>m.cat===k);
+  if(!ms.length)return '';
+  const np=ms.filter(m=>m.pub).length;
+  return `<p class="eye">${CAT[k].n} <b>${np} de ${ms.length} visibles</b></p>
+  ${ms.map(m=>{const notas=EMP.filter(e=>hechos[e.id]&&hechos[e.id][m.id]!==undefined).map(e=>hechos[e.id][m.id]);
+   const md=notas.length?Math.round(notas.reduce((a,b)=>a+b,0)/notas.length):null;
+   return `<button class="selm" aria-pressed="${!!m.pub}" onclick="togPub('${m.id}')">
+   <div class="cb"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+   <div class="b"><strong>${m.t}</strong>
+   <small>${m.slides.length} pantallas · ${m.test.length} preguntas · ${m.fr}${m.crit?' · crítico':''}${md!==null?` · media ${md}%`:''}</small></div>
+   <span class="pl ${m.pub?'pl-hecho':'pl-neu'}">${m.pub?'Visible':'Oculto'}</span></button>`}).join('')}`}).join('')}
+ <div class="pie"><strong>Cómo empezar.</strong> Publica 3 o 4 para la primera quincena, los más críticos.
+ Cuando el equipo los tenga, publicas los siguientes. Un módulo publicado y no hecho pesa más que uno oculto.</div>`}
+function togPub(id){const m=MOD.find(x=>x.id===id);
+ m.pub=m.pub?0:1;
+ let quinCambio=false;
+ if(!m.pub){const i=QUIN.mods.indexOf(id);if(i>=0){QUIN.mods.splice(i,1);quinCambio=true}}
+ saveConfig('publicados',MOD.filter(m=>m.pub).map(m=>m.id));
+ if(quinCambio)saveConfig('quincena',{...QUIN,fin:QUIN.fin.toISOString()});
+ toast(m.pub?`"${m.t}" ya lo ve el equipo`:`"${m.t}" oculto`);
+ pintar()}
+
+function dirQuin(){
+ const dias=diasRest();
+ const cumpl=EMP.map(e=>{const h=hechos[e.id]||{};
+  const qm=MOD.filter(m=>m.pub&&QUIN.mods.includes(m.id)&&m.roles.includes(e.rol));
+  const ok=qm.filter(m=>h[m.id]!==undefined&&h[m.id]>=60).length;
+  return {e,ok,tot:qm.length,pct:qm.length?Math.round(ok/qm.length*100):0}});
+ const alDia=cumpl.filter(c=>c.pct===100).length;
+ const porLocal=LOCALES.map(l=>{const es=cumpl.filter(c=>c.e.loc===l);
+  return {l,ok:es.filter(c=>c.pct===100).length,tot:es.length}});
+ if(!selMods.length)selMods=[...QUIN.mods];
+ document.getElementById('app').innerHTML=`
+ <div class="quin ${alDia===cumpl.length?'hecha':dias<=2?'urg':''}">
+  <div class="qk"><span>Quincena en curso</span><span class="qd">${dias>0?`${dias} día${dias!==1?'s':''}`:'Vencida'}</span></div>
+  <h2>${QUIN.n}</h2>
+  <div class="qrow"><div class="qi"><strong>${alDia} de ${cumpl.length} al día</strong>
+  <span>Cierra el ${QUIN.fin.toLocaleDateString('es-ES',{day:'numeric',month:'long'})} · ${QUIN.mods.length} módulos</span></div></div></div>
+ <div class="mini3">${porLocal.map(p=>`<div class="m3 ${p.ok===p.tot?'ok':p.ok?'am':'mal'}">
+  <b>${p.ok}/${p.tot}</b><small>${p.l}</small></div>`).join('')}</div>
+ <p class="eye">Quién falta</p>
+ ${cumpl.sort((a,b)=>a.pct-b.pct).map(c=>`<div class="eq-r">
+  <div class="i ${c.pct===100?'ok':c.pct>0?'med':'no'}">${c.e.n.slice(0,2).toUpperCase()}</div>
+  <div class="b"><strong>${c.e.n}</strong><small>${c.e.loc} · ${c.ok} de ${c.tot}</small></div>
+  <span class="st ${c.pct===100?'ok':c.pct>0?'med':'no'}">${c.pct===100?'Al día':c.pct>0?'A medias':'Sin empezar'}</span></div>`).join('')}
+ <p class="eye">Lanzar la siguiente quincena</p>
+ <div class="f-c"><label>Nombre</label><input id="q-n" value="${QUIN.n}"></div>
+ <div class="f-c"><label>Por qué esta quincena</label><textarea id="q-d">${QUIN.desc}</textarea></div>
+ <div class="f-c"><label>Días de plazo</label><input type="number" id="q-p" value="${Math.max(dias,14)}"></div>
+ <div class="f-c"><label>Módulos de esta quincena <span style="text-transform:none;letter-spacing:0;font-weight:400">— solo los publicados</span></label>
+ ${MOD.filter(m=>m.pub).map(m=>`<button class="selm" data-m="${m.id}" aria-pressed="${selMods.includes(m.id)}" onclick="togSel('${m.id}')">
+  <div class="cb"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+  <div class="b"><strong>${m.t}</strong><small>${CAT[m.cat].n} · ${m.fr}${m.crit?' · crítico':''}</small></div></button>`).join('')}</div>
+ <button class="ed-add" onclick="lanzarQuin()">Lanzar quincena</button>
+ <div class="pie"><strong>Se hace en horario de trabajo.</strong> Elegid un turno flojo o media jornada. Y que el encargado revise quién falta antes de que cierre el plazo, no después.</div>`}
+function togSel(id){const i=selMods.indexOf(id);
+ if(i>=0)selMods.splice(i,1);else selMods.push(id);
+ document.querySelector(`.selm[data-m="${id}"]`).setAttribute('aria-pressed',i<0)}
+function lanzarQuin(){const n=document.getElementById('q-n').value.trim(),
+ d=document.getElementById('q-d').value.trim(),p=parseInt(document.getElementById('q-p').value)||14;
+ if(!n)return toast('Ponle nombre a la quincena');
+ if(!selMods.length)return toast('Selecciona al menos un módulo');
+ if(selMods.length>4)return toast('Máximo 4 módulos por quincena. Más de eso no se completa');
+ QUIN={n,desc:d,mods:[...selMods],fin:new Date(Date.now()+p*864e5),roles:['empleado','encargado']};
+ saveConfig('quincena',{...QUIN,fin:QUIN.fin.toISOString()});
+ toast(`Quincena lanzada · ${selMods.length} módulos · ${p} días`);setTimeout(pintar,300)}
+
+function dirEnviar(){
+ const fs=fechas(),act=fs[fs.length-1],ant=fs[fs.length-2];
+ const med=(f,k)=>{const rs=RESE.filter(r=>r.f===f);
+  return rs.length?+(rs.reduce((s,r)=>s+r[k],0)/rs.length).toFixed(k==='sat'?0:1):undefined};
+ const plats=[['uber','Uber Eats','--verde',1],['glovo','Glovo','--amarillo',0],['google','Google','--azul',1]];
+ document.getElementById('app').innerHTML=`
+ <p class="eye">Media de los tres locales <b>${mesTxt(act)}</b></p>
+ <div class="plat">${plats.map(p=>{const a=med(act,p[0]),b=med(ant,p[0]);
+  const d=delta(a,b,p[3]);
+  return `<div class="pcard" style="--col:var(${p[2]})"><div class="pn">${p[1]}</div>
+  <div class="pv">${a}${p[0]==='glovo'?'%':'★'}</div>
+  ${d?`<div class="pd ${d.cls}">${d.cls==='up'?'▲':d.cls==='dn'?'▼':'—'} ${d.txt}</div>`:''}</div>`}).join('')}</div>
+ <div class="pcard" style="--col:var(--marron);margin-bottom:14px;padding:14px">
+  <div class="pn">Satisfacción de artículos · media</div>
+  <div class="pv" style="color:${med(act,'sat')>=75?'var(--ok)':med(act,'sat')>=68?'var(--alerta)':'var(--mal)'}">${med(act,'sat')}%</div>
+  ${(()=>{const d=delta(med(act,'sat'),med(ant,'sat'),0);
+   return d?`<div class="pd ${d.cls}">${d.cls==='up'?'▲':d.cls==='dn'?'▼':'—'} ${d.txt} puntos · benchmark del sector 80-85%</div>`:''})()}</div>
+
+ <p class="eye">Por local <b>vs ${mesTxt(ant)}</b></p>
+ ${LOCALES.map(l=>{const a=dato(act,l),b=dato(ant,l);
+  if(!a)return '';
+  const ms=[['uber','Uber','★',1,4.3],['sat','Satisf.','%',0,72],['glovo','Glovo','%',0,98],['google','Google','★',1,4.5]];
+  return `<div class="lrow" style="--col:var(${l==='Los Remedios'?'--mal':l==='Sevilla Este'?'--ok':'--alerta'})">
+  <div class="lh"><strong>${l}</strong><small>${MEJ.filter(m=>m.l===l&&m.ab).length} punto${MEJ.filter(m=>m.l===l&&m.ab).length!==1?'s':''} a mejorar</small></div>
+  <div class="mets">${ms.map(k=>{const d=b?delta(a[k[0]],b[k[0]],k[3]):null;
+   const bad=a[k[0]]<k[4];
+   return `<div class="met ${bad?'bad':'good'}"><b>${a[k[0]]}${k[2]}</b><small>${k[1]}</small>
+   ${d?`<div class="dl ${d.cls}">${d.cls==='up'?'▲':d.cls==='dn'?'▼':'—'}${d.v!==0?Math.abs(d.v):''}</div>`:''}</div>`}).join('')}</div></div>`}).join('')}
+
+ <p class="eye">Histórico</p>
+ <div class="hbox">${fs.slice().reverse().map(f=>`<div class="hist-r">
+  <span class="hf">${mesTxt(f).toUpperCase()}</span>
+  <div class="hv">${LOCALES.map(l=>{const r=dato(f,l);
+   return r?`<span>${l.split(' ')[l.split(' ').length-1]} <b>${r.uber}★ · ${r.sat}%</b></span>`:''}).join('')}</div></div>`).join('')}</div>
+
+ <p class="eye">Registrar nueva medición</p>
+ <div class="f-c"><label>Mes</label><input id="rs-f" placeholder="2026-09" value="${new Date().toISOString().slice(0,7)}"></div>
+ <div class="f-c"><label>Local</label><select id="rs-l">${LOCALES.map(l=>`<option>${l}</option>`).join('')}</select></div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+  <div class="f-c"><label>Uber ★</label><input type="number" step="0.1" id="rs-u" placeholder="4.2"></div>
+  <div class="f-c"><label>Satisfacción %</label><input type="number" id="rs-s" placeholder="65"></div>
+  <div class="f-c"><label>Glovo %</label><input type="number" id="rs-g" placeholder="98"></div>
+  <div class="f-c"><label>Google ★</label><input type="number" step="0.1" id="rs-o" placeholder="4.4"></div></div>
+ <button class="ed-add" onclick="addRese()">Guardar medición</button>
+
+ <p class="eye">Cosas a mejorar <b>${MEJ.filter(m=>m.ab).length} abiertas</b></p>
+ ${MEJ.filter(m=>m.ab).map((m,i)=>`<div class="mej">
+  <div class="mh"><strong>${m.t}</strong><span class="pl pl-neu">${m.l}</span></div>
+  <p>${m.d}</p><div class="mf"><span>${m.f}</span>
+  <button onclick="cerrarMej('${m.t.replace(/'/g,"")}')">Marcar resuelta</button></div></div>`).join('')}
+ ${MEJ.filter(m=>!m.ab).length?`<p class="eye">Resueltas</p>
+  ${MEJ.filter(m=>!m.ab).map(m=>`<div class="mej cerr"><div class="mh"><strong>${m.t}</strong>
+  <span class="pl pl-hecho">Resuelta</span></div><p>${m.d}</p><div class="mf"><span>${m.f}</span></div></div>`).join('')}`:''}
+
+ <p class="eye">Añadir punto a mejorar</p>
+ <div class="f-c"><label>Local</label><select id="mj-l"><option>General</option>${LOCALES.map(l=>`<option>${l}</option>`).join('')}</select></div>
+ <div class="f-c"><label>Qué</label><input id="mj-t" placeholder="Ej: quejas de temperatura al alza"></div>
+ <div class="f-c"><label>Detalle y qué hacer</label><textarea id="mj-d" placeholder="Con el dato que lo justifica"></textarea></div>
+ <button class="ed-add" onclick="addMej()">Guardar</button>
+
+ <p class="eye">Recomendación visible para el equipo</p>
+ <div class="pie" style="margin-top:0;margin-bottom:12px">Esto sí lo ve el equipo en su pantalla de inicio. Lo de arriba es solo para vosotros.</div>
+ ${RECO.map(r=>`<div class="aviso-l"><strong>${r.loc} · ${r.t}</strong><p>${r.d}</p><div class="de">${r.de}</div></div>`).join('')}
+ <div class="f-c"><label>Local</label><select id="r-l">${LOCALES.map(l=>`<option>${l}</option>`).join('')}</select></div>
+ <div class="f-c"><label>Titular</label><input id="r-t" placeholder="Ej: Prioridad: verificación de pedidos"></div>
+ <div class="f-c"><label>Qué mejorar y por qué</label><textarea id="r-d" placeholder="Con el dato que lo justifica"></textarea></div>
+ <button class="ed-add" onclick="pubReco()">Publicar al local</button>
+ <div class="pie"><strong>Actualizad esto cada mes en la reunión.</strong> El valor no está en el número de un mes, está en ver la variación: si la satisfacción de artículos sube dos puntos tras publicar una quincena de formación, eso es la prueba de que funciona.</div>`}
+
+function addRese(){const f=document.getElementById('rs-f').value.trim(),l=document.getElementById('rs-l').value;
+ const u=parseFloat(document.getElementById('rs-u').value),s=parseInt(document.getElementById('rs-s').value),
+  g=parseInt(document.getElementById('rs-g').value),o=parseFloat(document.getElementById('rs-o').value);
+ if(!f||!/^\d{4}-\d{2}$/.test(f))return toast('Formato de mes: 2026-09');
+ if(isNaN(u)||isNaN(s))return toast('Uber y satisfacción son obligatorios');
+ const i=RESE.findIndex(r=>r.f===f&&r.l===l);
+ const nuevo={f,l,uber:u,sat:s,glovo:isNaN(g)?98:g,google:isNaN(o)?4.4:o};
+ if(i>=0)RESE[i]=nuevo;else RESE.push(nuevo);
+ saveConfig('resenas',RESE);
+ toast(`${l} · ${mesTxt(f)} guardado`);setTimeout(pintar,300)}
+function addMej(){const l=document.getElementById('mj-l').value,t=document.getElementById('mj-t').value.trim(),
+ d=document.getElementById('mj-d').value.trim();
+ if(!t||!d)return toast('Rellena el qué y el detalle');
+ MEJ.unshift({l,t,d,f:new Date().toLocaleDateString('es-ES',{month:'short',year:'numeric'}),ab:1});
+ saveConfig('mejoras',MEJ);
+ toast('Punto añadido');setTimeout(pintar,300)}
+function cerrarMej(t){const m=MEJ.find(x=>x.t.replace(/'/g,"")===t);
+ if(m){m.ab=0;saveConfig('mejoras',MEJ);toast('Marcada como resuelta');setTimeout(pintar,300)}}
+function pubReco(){const l=document.getElementById('r-l').value,
+ t=document.getElementById('r-t').value.trim(),d=document.getElementById('r-d').value.trim();
+ if(!t||!d)return toast('Rellena titular y texto');
+ const i=RECO.findIndex(r=>r.loc===l);
+ const nueva={loc:l,t,d,de:'Dirección · '+new Date().toLocaleDateString('es-ES',{day:'numeric',month:'long'})};
+ if(i>=0)RECO[i]=nueva;else RECO.push(nueva);
+ saveConfig('recomendaciones',RECO);
+ toast(`Publicada para ${l}`);setTimeout(pintar,300)}
+
+function cerrarSheet(){document.getElementById('sheet').classList.remove('on')}
+function abrirSheet(h,c){const s=document.getElementById('sheet');s.style.setProperty('--col',`var(${c})`);s.innerHTML=h;s.classList.add('on')}
+function toast(m){const t=document.getElementById('toast');
+ t.innerHTML=`<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:#7DD37D;flex-shrink:0"><path d="M20 6L9 17l-5-5"/></svg><span>${m}</span>`;
+ t.classList.add('on');clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove('on'),2600)}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){cerrarPlay();cerrarSheet()}});
+
+async function init(){
+ try{
+  const [empRes,cfgRes,resRes]=await Promise.all([
+   db.from('escuela_empleados').select('*').eq('activo',true),
+   db.from('escuela_config').select('*'),
+   db.from('escuela_resultados').select('*')
+  ]);
+  if(empRes.error)throw empRes.error;
+  if(cfgRes.error)throw cfgRes.error;
+  if(resRes.error)throw resRes.error;
+
+  EMP=empRes.data.map(e=>({id:e.id,n:e.nombre,rol:e.rol,pin:e.pin,loc:e.local}));
+
+  resRes.data.slice().sort((a,b)=>new Date(a.creado_en)-new Date(b.creado_en)).forEach(r=>{
+   if(!hechos[r.empleado_id])hechos[r.empleado_id]={};
+   hechos[r.empleado_id][r.modulo_id]=r.porcentaje});
+
+  const cfg={};(cfgRes.data||[]).forEach(c=>cfg[c.clave]=c.valor);
+  const faltantes=[];
+
+  if(cfg.quincena){QUIN={...cfg.quincena,fin:new Date(cfg.quincena.fin)}}
+  else faltantes.push(saveConfig('quincena',{...QUIN,fin:QUIN.fin.toISOString()}));
+
+  if(cfg.publicados){const pubs=cfg.publicados;MOD.forEach(m=>m.pub=pubs.includes(m.id)?1:0)}
+  else faltantes.push(saveConfig('publicados',MOD.filter(m=>m.pub).map(m=>m.id)));
+
+  if(cfg.marcados)marcados=cfg.marcados;
+  else faltantes.push(saveConfig('marcados',marcados));
+
+  if(cfg.resenas)RESE=cfg.resenas;
+  else faltantes.push(saveConfig('resenas',RESE));
+
+  if(cfg.mejoras)MEJ=cfg.mejoras;
+  else faltantes.push(saveConfig('mejoras',MEJ));
+
+  if(cfg.recomendaciones)RECO=cfg.recomendaciones;
+  else faltantes.push(saveConfig('recomendaciones',RECO));
+
+  await Promise.all(faltantes);
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('login').style.display='block';
+  pLogin();
+ }catch(err){
+  console.error(err);
+  document.getElementById('loadMsg').style.display='none';
+  document.querySelector('#loading .spin').style.display='none';
+  document.getElementById('loadErr').style.display='block';
+ }
+}
+init();
+</script>
+</body>
+</html>
