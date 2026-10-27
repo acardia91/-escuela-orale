@@ -278,6 +278,28 @@ input,textarea,select{font-family:inherit}
 .aviso-l p{font-size:12.5px;color:var(--gris);line-height:1.5}
 .aviso-l .de{font-size:11.5px;color:var(--gris2);margin-top:6px}
 
+/* EVALUACIÓN DE DESEMPEÑO */
+.ev-c{border-bottom:1.5px dashed var(--borde);padding:12px 0}
+.ev-c:last-of-type{border-bottom:none}
+.ev-h strong{display:block;font-size:14px;font-weight:600;line-height:1.25}
+.ev-h small{display:block;font-size:11.5px;color:var(--gris2);margin-top:2px}
+.ev-b{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}
+.ev-o{padding:10px 6px;border-radius:var(--r2);font-size:12.5px;font-weight:600;text-align:center;background:var(--hueso);border:1.5px solid var(--borde);color:var(--gris)}
+.ev-o[aria-pressed="true"].v3{background:var(--ok);border-color:var(--ok);color:#fff}
+.ev-o[aria-pressed="true"].v2{background:var(--alerta);border-color:var(--alerta);color:#fff}
+.ev-o[aria-pressed="true"].v1{background:var(--mal);border-color:var(--mal);color:#fff}
+/* Lo que ve el empleado */
+.evl{background:var(--papel);border:1px solid var(--borde);border-left:4px solid var(--azul);border-radius:var(--r);padding:14px 15px;margin-bottom:9px}
+.evl .eh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:9px}
+.evl .eh strong{font-family:var(--display);font-size:17px;text-transform:uppercase;letter-spacing:.01em}
+.evl .eh span{font-family:var(--mono);font-size:11px;color:var(--gris2)}
+.evl .el{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--borde)}
+.evl .el:last-of-type{border-bottom:none}
+.evl .el b{font-weight:600;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.evl .el b.v3{color:var(--ok)}.evl .el b.v2{color:var(--alerta)}.evl .el b.v1{color:var(--mal)}
+.evl p{font-size:12.5px;color:var(--gris);line-height:1.5;margin-top:10px;font-style:italic}
+.evl .de{font-size:11.5px;color:var(--gris2);margin-top:7px}
+
 /* PROTOCOLO PRODUCTO NUEVO */
 .proto{background:var(--papel);border:1px solid var(--borde);border-left:4px solid var(--col);border-radius:var(--r);margin-bottom:12px;overflow:hidden;width:100%;text-align:left;display:block}
 .proto .pimg{width:100%;aspect-ratio:16/9;background:var(--hueso);border-bottom:1.5px dashed var(--borde2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
@@ -1612,6 +1634,15 @@ function vParaTi(){const mios=MOD.filter(m=>m.pub&&m.roles.includes(user.rol));
   ${mk.map(x=>{const m=MOD.find(z=>z.id===x.mod);if(!m)return '';
    return `<div class="marc"><div class="mk">Revisar con atención · ${x.quien}</div>
    <strong>${m.t}</strong><p>"${x.nota}"</p></div>`+tarjeta(m)}).join('')}`:''}
+ ${(()=>{const evs=evaluaciones[user.id]||[];if(!evs.length)return '';
+  const ev=evs[evs.length-1],n=notaEval(ev);
+  return `<p class="eye">Tu evaluación <b>${ev.quien}</b></p>
+  <div class="evl"><div class="eh"><strong>${n>=2.5?'Vas bien':n>=1.8?'Hay cosas que pulir':'Hay que apretar'}</strong>
+   <span>${ev.fecha}</span></div>
+   ${EVAL_CRIT.filter(c=>ev.puntos[c.k]).map(c=>`<div class="el"><span>${c.n}</span>
+    <b class="v${ev.puntos[c.k]}">${EVAL_N[ev.puntos[c.k]]}</b></div>`).join('')}
+   ${ev.nota?`<p>"${ev.nota}"</p>`:''}
+   <div class="de">Puesta por ${ev.quien}</div></div>`})()}
  ${peor?`<div class="debil"><div class="dk">Tu punto flojo</div>
   <strong>${peor.m.t}</strong><p>Sacaste un ${peor.v}%. ${peor.v<60?'Conviene repetirlo entero.':'Un repaso rápido y lo tienes.'}</p></div>`:''}
  ${reco?`<div class="aviso-l"><strong>${reco.t}</strong><p>${reco.d}</p><div class="de">${reco.de}</div></div>`:''}
@@ -1649,7 +1680,58 @@ function vMiEquipo(){
  <div class="pie"><strong>Toca a alguien para marcarle módulos o un área entera.</strong> Le aparecerá destacado con tu nota. Y recuerda: si alguien falla, se corrige en privado, nunca delante de todos.</div>`}
 
 /* Marcar módulos o áreas, con nota */
+/* EVALUACIÓN DE DESEMPEÑO: la pone dirección o el encargado, no el test.
+   Los criterios salen de las siete categorías de incidencias del
+   documento de operaciones, que es donde está el problema real. */
+const EVAL_CRIT=[
+ {k:'estandar',n:'Estándares y calidad',d:'Receta, gramajes, nada a ojo'},
+ {k:'pedidos',n:'Pedidos sin fallos',d:'Checklist, notas del cliente, alérgenos'},
+ {k:'limpieza',n:'Limpieza y orden',d:'Zona, etiquetado, cadena de frío'},
+ {k:'ritmo',n:'Ritmo en turno',d:'Aprovecha el valle, aguanta el pico'},
+ {k:'equipo',n:'Equipo y actitud',d:'Avisa, ayuda, buen trato'}
+];
+const EVAL_N={3:'Bien',2:'Mejorable',1:'Flojo'};
+let evaluaciones={},evalSel={},evalQuien=null;
+function notaEval(ev){const v=EVAL_CRIT.map(c=>ev.puntos[c.k]).filter(Boolean);
+ return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length*10)/10:null}
+
 let marcSel=[],marcArea=null,marcQuien=null;
+function evaluarA(id){evalQuien=id;evalSel={};
+ const e=EMP.find(x=>x.id===id),prev=(evaluaciones[id]||[]);
+ abrirSheet(`<div class="sh-top" style="background:var(--azul)">
+ <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Volver</button>
+ <h2>Evaluar a ${e.n}</h2><p>${e.rol} · ${e.loc}</p></div>
+ <div style="padding:16px 16px 0">
+ <p class="eye">Cómo lo está haciendo</p>
+ ${EVAL_CRIT.map(c=>`<div class="ev-c"><div class="ev-h"><strong>${c.n}</strong><small>${c.d}</small></div>
+  <div class="ev-b">${[3,2,1].map(v=>`<button data-k="${c.k}" data-v="${v}" class="ev-o v${v}" aria-pressed="false" onclick="togEval('${c.k}',${v})">${EVAL_N[v]}</button>`).join('')}</div></div>`).join('')}
+ <div class="f-c" style="margin-top:16px"><label>Comentario para ${e.n}</label>
+ <textarea id="ev-n" placeholder="Qué tiene que mantener y qué tiene que cambiar"></textarea></div>
+ ${prev.length?`<p class="eye">Anteriores</p>${prev.slice().reverse().slice(0,4).map(ev=>{const n=notaEval(ev);
+  return `<div class="det"><div class="dr"><strong>${ev.fecha}</strong>
+   <span class="p ${n>=2.5?'a':n>=1.8?'m':'b'}">${n}/3</span></div>
+   <small>${ev.quien}${ev.nota?' · "'+ev.nota+'"':''}</small></div>`}).join('')}`:''}
+ </div>
+ <div class="pub"><button class="pub-b" style="background:var(--azul)" onclick="guardarEval()">Guardar evaluación</button>
+ <small>${e.n} la verá en su inicio la próxima vez que entre</small></div>`,'--azul')}
+
+function togEval(k,v){evalSel[k]=evalSel[k]===v?null:v;
+ document.querySelectorAll(`#sheet .ev-o[data-k="${k}"]`).forEach(b=>
+  b.setAttribute('aria-pressed',String(Number(b.dataset.v)===evalSel[k])))}
+
+function guardarEval(){
+ const puestos=EVAL_CRIT.filter(c=>evalSel[c.k]).length;
+ if(!puestos)return toast('Valora al menos un apartado');
+ const nota=document.getElementById('ev-n').value.trim();
+ const e=EMP.find(x=>x.id===evalQuien);
+ const d=new Date();
+ const ev={fecha:`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`,
+  quien:user.n,puntos:{...evalSel},nota};
+ if(!evaluaciones[evalQuien])evaluaciones[evalQuien]=[];
+ evaluaciones[evalQuien].push(ev);
+ saveConfig('evaluaciones',evaluaciones);
+ cerrarSheet();toast(`Evaluación guardada para ${e.n}`);setTimeout(pintar,300)}
+
 function marcarA(id){marcSel=[];marcArea=null;marcQuien=id;
  const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
  const ms=MOD.filter(m=>m.pub&&m.roles.includes(e.rol));
@@ -1932,6 +2014,7 @@ function verPersona(id){const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
  <div class="chips">${mios.map(m=>
   `<button class="chip" data-m="${m.id}" aria-pressed="false" onclick="this.setAttribute('aria-pressed',this.getAttribute('aria-pressed')==='true'?'false':'true')">${m.t}</button>`).join('')}</div>
  <button class="ed-add" style="margin-top:14px;background:var(--vino)" onclick="cerrarSheet();setTimeout(()=>marcarA('${id}'),300)">Marcar con nota</button>
+ <button class="ed-add" style="margin-top:8px;background:var(--azul)" onclick="cerrarSheet();setTimeout(()=>evaluarA('${id}'),300)">Evaluar desempeño</button>
  </div><div class="pub"><button class="pub-b" onclick="enviarA('${id}')">Enviar seleccionados</button>
  <small>Le aparecerán como nuevos la próxima vez que entre</small></div>`,'--tinta')}
 
@@ -2183,6 +2266,9 @@ async function init(){
 
   if(cfg.asign&&typeof cfg.asign==='object')asign=cfg.asign;
   else faltantes.push(saveConfig('asign',{}));
+
+  if(cfg.evaluaciones&&typeof cfg.evaluaciones==='object')evaluaciones=cfg.evaluaciones;
+  else faltantes.push(saveConfig('evaluaciones',{}));
 
   if(cfg.marcados)marcados=cfg.marcados;
   else faltantes.push(saveConfig('marcados',marcados));
