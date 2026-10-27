@@ -1389,12 +1389,10 @@ function pLogin(){const b=document.getElementById('lbody');
  if(!empSel){
   b.innerHTML=`<div class="locs">${LOCALES.map(l=>`<button class="locb" aria-pressed="${l===locSel}" onclick="sLoc('${l}')">${l}</button>`).join('')}</div>
   <div class="emps">${EMP.filter(e=>!locSel||e.loc===locSel).map(e=>{
-   const h=hechos[e.id]||{},mios=MOD.filter(m=>m.pub&&m.roles.includes(e.rol));
-   const p=mios.filter(m=>h[m.id]===undefined||h[m.id]<60).length;
    return `<button class="emp" onclick="pEmp('${e.id}')">
    <div class="i" style="--col:var(${e.rol==='encargado'?'--amarillo':'--roja'})">${e.n.slice(0,2).toUpperCase()}</div>
    <div class="eb"><strong>${e.n}</strong><small>${e.rol}${locSel?'':' · '+e.loc}</small></div>
-   <span class="pend ${p?'':'cero'}">${p?`<b>${p}</b>pendiente${p>1?'s':''}`:'al día'}</span></button>`}).join('')}</div>
+   <span class="pend"></span></button>`}).join('')}</div>
   <button class="dir" onclick="irDir()">Acceso dirección</button>`;
   document.getElementById('lsub').textContent='Elige tu local y tu nombre';
  }else{const e=EMP.find(x=>x.id===empSel);
