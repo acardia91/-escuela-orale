@@ -446,6 +446,7 @@ input,textarea,select{font-family:inherit}
 .kpi small{font-size:10.5px;color:var(--gris2);font-weight:500;line-height:1.2;display:block}
 .kpi.ok b{color:var(--ok)}.kpi.mal b{color:var(--mal)}
 .per{background:var(--papel);border:1px solid var(--borde);border-radius:var(--r);padding:13px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:center;width:100%}
+.per .pos{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--gris2);width:16px;flex-shrink:0;text-align:center}
 .per .i{width:34px;height:34px;border-radius:var(--r2);background:var(--hueso);display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:13px;flex-shrink:0}
 .per-b{flex:1;min-width:0}
 .per-b strong{display:block;font-size:14.5px;font-weight:600}
@@ -1689,6 +1690,7 @@ function reenviar(id){if(!marcSel.length&&!marcArea)return toast('Selecciona mó
  lista=[...new Set(lista)];
  if(!asign[id])asign[id]=[];
  lista.forEach(m=>{if(!asign[id].includes(m))asign[id].push(m);if(hechos[id])delete hechos[id][m]});
+ saveConfig('asign',asign);
  cerrarSheet();toast(`${lista.length} módulo${lista.length>1?'s':''} reenviado${lista.length>1?'s':''} a ${e.n}`);setTimeout(pintar,300)}
 function guardarMarca(){if(!marcSel.length&&!marcArea)return toast('Selecciona módulos o un área');
  const nota=document.getElementById('mk-n').value.trim();
@@ -1857,7 +1859,7 @@ function corrOpt(i){const t=P.m.test[P.q],ok=!!t.op[i][1];
 function sigTest(){if(P.q<P.m.test.length-1){P.q++;P.res=null;P.ord=[]}else P.fase='f';pPlay()}
 async function guardarMod(){const pct=Math.round(P.ac/P.m.test.length*100);
  if(!hechos[user.id])hechos[user.id]={};hechos[user.id][P.m.id]=pct;
- if(asign[user.id]){const i=asign[user.id].indexOf(P.m.id);if(i>=0)asign[user.id].splice(i,1)}
+ if(asign[user.id]){const i=asign[user.id].indexOf(P.m.id);if(i>=0){asign[user.id].splice(i,1);saveConfig('asign',asign)}}
  const t=P.m.t,tot=P.m.test.length,ac=P.ac,fallos=P.fallos;
  const {error}=await db.from('escuela_resultados').insert({
   empleado_id:user.id,modulo_id:P.m.id,porcentaje:pct,aciertos:ac,total:tot,fallos,
@@ -1881,19 +1883,23 @@ function dirEquipo(){
  <div class="kpis"><div class="kpi ${mg>=80?'ok':mg>=60?'':'mal'}"><b>${mg}%</b><small>media del equipo</small></div>
  <div class="kpi ${critTot?'mal':'ok'}"><b>${critTot}</b><small>críticos sin superar</small></div>
  <div class="kpi"><b>${MOD.filter(m=>m.pub).length}</b><small>módulos publicados</small></div></div>
- <p class="eye">Por persona <b>de menor a mayor</b></p>
- ${filas.map(f=>`<button class="per" onclick="verPersona('${f.e.id}')">
+ <p class="eye">Por persona <b>quien más lo necesita, primero</b></p>
+ ${filas.map((f,i)=>`<button class="per" onclick="verPersona('${f.e.id}')">
+ <span class="pos">${i+1}</span>
  <div class="i">${f.e.n.slice(0,2).toUpperCase()}</div>
  <div class="per-b"><strong>${f.e.n}</strong><small>${f.e.rol} · ${f.e.loc} · ${f.hechos}/${f.tot}${f.crit?` · ${f.crit} crítico${f.crit>1?'s':''} pendiente${f.crit>1?'s':''}`:''}</small></div>
  <span class="pc ${f.media===null?'b':f.media>=80?'a':f.media>=60?'m':'b'}">${f.media===null?'—':f.media+'%'}</span></button>`).join('')}
- <p class="eye">Dónde cojea el equipo</p>
- ${MOD.map(m=>{const notas=EMP.filter(e=>hechos[e.id]&&hechos[e.id][m.id]!==undefined).map(e=>hechos[e.id][m.id]);
-  if(!notas.length)return null;
-  return {m,md:Math.round(notas.reduce((a,b)=>a+b,0)/notas.length),n:notas.length}}).filter(Boolean)
-  .sort((a,b)=>a.md-b.md).slice(0,5).map(x=>
- `<div class="det"><div class="dr"><strong>${x.m.t}</strong>
- <span class="p ${x.md>=80?'a':x.md>=60?'m':'b'}">${x.md}%</span></div>
- <small>${CAT[x.m.cat].n} · ${x.n} persona${x.n!==1?'s':''}</small></div>`).join('')}
+ ${(()=>{const medias=MOD.map(m=>{const notas=EMP.filter(e=>hechos[e.id]&&hechos[e.id][m.id]!==undefined).map(e=>hechos[e.id][m.id]);
+   if(!notas.length)return null;
+   return {m,md:Math.round(notas.reduce((a,b)=>a+b,0)/notas.length),n:notas.length}}).filter(Boolean);
+  const fila=x=>`<div class="det"><div class="dr"><strong>${x.m.t}</strong>
+   <span class="p ${x.md>=80?'a':x.md>=60?'m':'b'}">${x.md}%</span></div>
+   <small>${CAT[x.m.cat].n} · ${x.n} persona${x.n!==1?'s':''}</small></div>`;
+  if(!medias.length)return '<p class="eye">Dónde cojea el equipo</p><div class="det"><small style="margin:0">Todavía no hay resultados suficientes.</small></div>';
+  const flojos=medias.slice().sort((a,b)=>a.md-b.md).slice(0,5);
+  const fuertes=medias.slice().sort((a,b)=>b.md-a.md).filter(x=>x.md>=80).slice(0,3);
+  return `<p class="eye">Dónde cojea el equipo <b>a reforzar</b></p>${flojos.map(fila).join('')}
+   ${fuertes.length?`<p class="eye">Lo que el equipo domina</p>${fuertes.map(fila).join('')}`:''}`})()}
  <p class="eye">KPIs que esto debe mover</p>
  ${KPI.map(k=>`<div class="kpi-t"><div class="r"><strong>${k.n}</strong><span class="v">${k.a}</span></div>
  <small>Objetivo 3 meses: ${k.o3} · 6 meses: ${k.o6}</small></div>`).join('')}
@@ -1905,6 +1911,18 @@ function verPersona(id){const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
  <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Equipo</button>
  <h2>${e.n}</h2><p>${e.rol} · ${e.loc}</p></div>
  <div style="padding:16px 16px 0">
+ ${(()=>{const con=mios.filter(m=>h[m.id]!==undefined).map(m=>({m,v:h[m.id]}));
+  if(con.length<2)return '';
+  const alto=con.slice().sort((a,b)=>b.v-a.v)[0],bajo=con.slice().sort((a,b)=>a.v-b.v)[0];
+  if(alto.m.id===bajo.m.id)return '';
+  const sinHacer=mios.filter(m=>h[m.id]===undefined).length;
+  return `<p class="eye">De un vistazo</p>
+  <div class="det" style="border-left:4px solid var(--ok)"><div class="dr"><strong>Lo que mejor lleva</strong>
+   <span class="p a">${alto.v}%</span></div><small>${alto.m.t}</small></div>
+  <div class="det" style="border-left:4px solid var(--mal)"><div class="dr"><strong>Su punto flojo</strong>
+   <span class="p ${bajo.v>=60?'m':'b'}">${bajo.v}%</span></div><small>${bajo.m.t}</small></div>
+  ${sinHacer?`<div class="det"><div class="dr"><strong>Sin empezar</strong><span class="p b">${sinHacer}</span></div>
+   <small>de ${mios.length} módulos publicados para su rol</small></div>`:''}`})()}
  <p class="eye">Resultados</p>
  ${mios.map(m=>{const v=h[m.id];
   return `<div class="det"><div class="dr"><strong>${m.t}${m.crit?' ·':''}</strong>
@@ -1921,6 +1939,7 @@ function enviarA(id){const sel=[...document.querySelectorAll('.chips .chip[aria-
  if(!sel.length)return toast('No has seleccionado ninguno');
  if(!asign[id])asign[id]=[];
  sel.forEach(m=>{if(!asign[id].includes(m))asign[id].push(m);if(hechos[id])delete hechos[id][m]});
+ saveConfig('asign',asign);
  const e=EMP.find(x=>x.id===id);
  cerrarSheet();toast(`${sel.length} módulo${sel.length>1?'s':''} enviado${sel.length>1?'s':''} a ${e.n}`);setTimeout(pintar,300)}
 
@@ -2161,6 +2180,9 @@ async function init(){
 
   if(cfg.publicados){const pubs=cfg.publicados;MOD.forEach(m=>m.pub=pubs.includes(m.id)?1:0)}
   else faltantes.push(saveConfig('publicados',MOD.filter(m=>m.pub).map(m=>m.id)));
+
+  if(cfg.asign&&typeof cfg.asign==='object')asign=cfg.asign;
+  else faltantes.push(saveConfig('asign',{}));
 
   if(cfg.marcados)marcados=cfg.marcados;
   else faltantes.push(saveConfig('marcados',marcados));
