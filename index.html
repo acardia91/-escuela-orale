@@ -180,20 +180,24 @@ input,textarea,select{font-family:inherit}
 .hoy-t{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
 .hoy-t strong{font-family:var(--display);font-size:20px;text-transform:uppercase;letter-spacing:.01em}
 .hoy-t span{font-family:var(--mono);font-size:10.5px;color:var(--gris2)}
-.hoy{display:flex;gap:13px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px}
+.hoy{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;overscroll-behavior-x:contain;padding:2px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px}
 .hoy::-webkit-scrollbar{display:none}
-.st{flex:0 0 auto;width:74px;background:none;border:none;padding:0;text-align:center;position:relative}
-.st .ring{width:72px;height:72px;border-radius:50%;padding:2.5px;background:linear-gradient(145deg,var(--amarillo),var(--vino) 62%,var(--roja));display:block;transition:transform .14s cubic-bezier(.2,.8,.2,1)}
-.st.ok .ring{background:var(--borde2)}
+.st{flex:0 0 auto;width:80px;background:none;border:none;padding:0;text-align:center;position:relative;scroll-snap-align:start}
+.st .ring{width:76px;height:76px;border-radius:50%;padding:3px;background:linear-gradient(145deg,var(--amarillo),var(--vino) 62%,var(--roja));display:block;transition:transform .14s cubic-bezier(.2,.8,.2,1)}
+.st.ok .ring{background:var(--borde)}
 .st .in{width:100%;height:100%;border-radius:50%;background:var(--hueso);padding:2.5px}
 .st .av{width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--col);display:flex;align-items:center;justify-content:center}
 .st .av img{width:100%;height:100%;object-fit:cover;display:block}
-.st .av svg{width:27px;height:27px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.st.ok .av{filter:grayscale(.8);opacity:.6}
-.st small{display:block;margin-top:7px;font-size:10.5px;font-weight:600;color:var(--gris);line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.st .av svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.st.ok .av{filter:grayscale(.85);opacity:.5}
+/* Etiqueta: dos lineas como mucho, cortada por palabra y legible de verdad */
+.st small{display:-webkit-box;margin-top:8px;font-size:11.5px;font-weight:600;color:var(--tinta);line-height:1.22;letter-spacing:-.01em;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:break-word;hyphens:auto}
 .st.ok small{color:var(--gris2);font-weight:500}
 .st:active .ring{transform:scale(.92)}
-.st .bd{position:absolute;top:-2px;right:0;background:var(--roja);color:#fff;font-family:var(--mono);font-size:9px;font-weight:600;line-height:1;padding:3px 5px;border-radius:100px;border:2px solid var(--hueso)}
+.st .bd{position:absolute;top:-1px;right:2px;background:var(--roja);color:#fff;font-family:var(--mono);font-size:8.5px;font-weight:600;line-height:1;letter-spacing:.04em;padding:3px 5px;border-radius:100px;border:2px solid var(--hueso)}
+/* Superado: sello de visto, mas claro que un simple gris */
+.st .tick{position:absolute;bottom:26px;right:3px;width:21px;height:21px;border-radius:50%;background:var(--ok);border:2.5px solid var(--hueso);display:flex;align-items:center;justify-content:center}
+.st .tick svg{width:10px;height:10px;stroke:#fff;fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
 
 .quin{background:var(--tinta);border-radius:var(--r);padding:18px;color:var(--hueso);margin-bottom:11px;position:relative;overflow:hidden}
 .quin.urg{background:linear-gradient(135deg,#8C1F24,#C1272D)}
@@ -1193,7 +1197,7 @@ const MOD=[
   op:[['A ojo, con práctica se acierta',0],['Con la cuchara asignada y la receta delante',1],['Según lo que pida el cliente',0]],
   ex:'La cuchara asignada a cada ingrediente. Y ante la duda, lo que diga el encargado.'}]},
 
-{id:'n2',pub:1,nuevo:1,cat:'receta',t:'NUEVO · Combo Coca-Cola + Chips',min:4,fr:'Una vez',roles:['empleado','encargado'],
+{id:'n2',pub:1,nuevo:1,cat:'receta',t:'NUEVO · Combo Coca-Cola + Chips',corto:'Combo Chips',min:4,fr:'Una vez',roles:['empleado','encargado'],
  ficha:{lleva:['Chips','Crema agria','Pico de gallo','Guacamole','Coca-Cola'],aler:'Lácteos (crema agria) y aguacate (guacamole)',clave:'En delivery los toppings van <b>separados</b> con nota "Montar al recibir". La Coca-Cola entra <b>la última</b> en la bolsa.'},
  slides:[
  {k:'Producto nuevo',t:'Combo Coca-Cola + Chips',
@@ -1226,7 +1230,7 @@ const MOD=[
   op:[['Quitar la crema agria y montar normal',0],['Protocolo ROJO completo',1],['Avisar de que lleva lácteos y que decida',0]],
   ex:'Protocolo ROJO: ticket aparte, utensilios limpios y firma del encargado. La crema agria lleva lácteos.'}]},
 
-{id:'n3',pub:1,nuevo:1,cat:'receta',t:'NUEVO · Quesadilla cochinita + salsa verde',min:4,fr:'Una vez',roles:['empleado','encargado'],
+{id:'n3',pub:1,nuevo:1,cat:'receta',t:'NUEVO · Quesadilla cochinita + salsa verde',corto:'Quesadilla cochinita',min:4,fr:'Una vez',roles:['empleado','encargado'],
  ficha:{lleva:['Tortilla de quesadilla','Queso','Cochinita desmenuzada','Salsa verde aparte'],aler:'Lácteos (queso) y gluten (tortilla)',clave:'Cochinita <b>siempre desmenuzada</b>. Masa sin puntos crudos. Se corta <b>justo antes de cerrar</b> y la salsa verde va en tarrina aparte.'},
  slides:[
  {k:'Producto nuevo',t:'Quesadilla de cochinita con salsa verde',
@@ -1346,6 +1350,19 @@ let imgs={}; /* foto por módulo (id → dataURL), la sube Dirección */
 const ICO_FOTO='<rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1.2-2h5.6L16 5"/>';
 const ICO_ALER='<path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.5"/>';
 function nombreProd(m){return m.t.replace(/^NUEVO\s*·\s*/i,'')}
+/* Etiqueta para la bola de HOY: corta, sin cortar palabras y sin ruido.
+   Quita lo que ya se entiende por contexto y recorta por palabra entera. */
+function etiquetaCorta(m){
+ if(m.corto)return m.corto;
+ let t=nombreProd(m)
+  .replace(/\s*·\s*montaje$/i,'')
+  .replace(/^(protocolo|norma|guía|guia)\s+(de\s+)?/i,'')
+  .replace(/\s+y\s+productos\s+a\s+vigilar$/i,'')
+  .replace(/\s*\+\s*/g,' + ');
+ if(t.length<=20)return t;
+ const p=t.split(' ');let r='';
+ for(const w of p){if((r+' '+w).trim().length>20)break;r=(r+' '+w).trim()}
+ return r||p[0]}
 
 function diasRest(){return Math.ceil((QUIN.fin-new Date())/864e5)}
 function enQuin(m){return QUIN.mods.includes(m.id)&&QUIN.roles.includes(user.rol)}
@@ -1525,10 +1542,11 @@ function filaHoy(mios,h){
  const hechos2=mios.filter(m=>h[m.id]!==undefined&&h[m.id]>=60&&!vistos.has(m.id)).slice(0,4);
  if(!hoy.length&&!hechos2.length)return '';
  const bola=m=>{const c=CAT[m.cat],ok=h[m.id]!==undefined&&h[m.id]>=60;
-  return `<button class="st ${ok?'ok':''}" style="--col:var(${c.c})" onclick="abrirMod('${m.id}')">
+  return `<button class="st ${ok?'ok':''}" style="--col:var(${c.c})" onclick="abrirMod('${m.id}')" aria-label="${nombreProd(m)}">
    <span class="ring"><span class="in"><span class="av">${imgs[m.id]?`<img src="${imgs[m.id]}" alt="">`:`<svg viewBox="0 0 24 24">${c.ic}</svg>`}</span></span></span>
    ${m.nuevo&&!ok?'<span class="bd">NUEVO</span>':''}
-   <small>${nombreProd(m)}</small></button>`};
+   ${ok?'<span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>':''}
+   <small>${etiquetaCorta(m)}</small></button>`};
  return `<div class="hoy-w"><div class="hoy-t"><strong>Hoy</strong>
   <span>${hoy.length?hoy.length+' por ver':'todo al día'}</span></div>
   <div class="hoy">${hoy.map(bola).join('')}${hechos2.map(bola).join('')}</div></div>`}
@@ -1807,6 +1825,24 @@ function pPlay(){const m=P.m,tot=m.slides.length+m.test.length;
  const pb=document.querySelector('#play .p-body');if(pb)pb.scrollTop=0}
 
 function sigSlide(){if(P.i<P.m.slides.length-1){P.i++}else{P.fase='t';P.q=0;P.res=null;P.ord=[]}pPlay()}
+function atrasSlide(){if(P&&P.fase==='s'&&P.i>0){P.i--;pPlay()}}
+
+/* Deslizar entre pantallas del modulo: en movil es el gesto natural.
+   Solo durante la lectura; en el test se responde tocando. */
+(function(){
+ let x0=null,y0=null,t0=0;
+ document.addEventListener('touchstart',e=>{
+  const p=document.getElementById('play');
+  if(!p||!p.classList.contains('on')||!P||P.fase!=='s'){x0=null;return}
+  if(e.target.closest('.p-foot')){x0=null;return}
+  const t=e.touches[0];x0=t.clientX;y0=t.clientY;t0=Date.now()},{passive:true});
+ document.addEventListener('touchend',e=>{
+  if(x0===null)return;
+  const t=e.changedTouches[0],dx=t.clientX-x0,dy=Math.abs(t.clientY-y0),dt=Date.now()-t0;
+  x0=null;
+  if(dt>600||Math.abs(dx)<55||dy>70)return;
+  if(dx<0)sigSlide();else atrasSlide()},{passive:true});
+})();
 function corrOrden(){const t=P.m.test[P.q],ok=P.ord.every((x,i)=>x===t.items[i]);
  P.res={ok};P.marks[P.q]=ok?'ok':'mal';if(ok)P.ac++;else P.fallos.push(t.q);pPlay()}
 function corrColor(c){const t=P.m.test[P.q],ok=c===t.r;
