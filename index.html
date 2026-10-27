@@ -474,6 +474,10 @@ input,textarea,select{font-family:inherit}
 .per-b strong{display:block;font-size:14.5px;font-weight:600}
 .per-b small{font-size:12px;color:var(--gris2)}
 .per .pc{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:19px;flex-shrink:0}
+/* Barra de avance: el porcentaje solo no dice cuánto lleva hecho */
+.per-bar{height:4px;background:#EBE5DA;border-radius:100px;overflow:hidden;margin-top:7px}
+.per-bar i{display:block;height:100%;border-radius:100px;background:var(--ok);transition:width .5s}
+.per-bar i.m{background:var(--alerta)}.per-bar i.b{background:var(--mal)}
 .per .pc.a{color:var(--ok)}.per .pc.m{color:var(--alerta)}.per .pc.b{color:var(--mal)}
 .det{background:var(--papel);border:1px solid var(--borde);border-radius:var(--r);padding:12px 14px;margin-bottom:7px}
 .det .dr{display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -1969,7 +1973,8 @@ function dirEquipo(){
  ${filas.map((f,i)=>`<button class="per" onclick="verPersona('${f.e.id}')">
  <span class="pos">${i+1}</span>
  <div class="i">${f.e.n.slice(0,2).toUpperCase()}</div>
- <div class="per-b"><strong>${f.e.n}</strong><small>${f.e.rol} · ${f.e.loc} · ${f.hechos}/${f.tot}${f.crit?` · ${f.crit} crítico${f.crit>1?'s':''} pendiente${f.crit>1?'s':''}`:''}</small></div>
+ <div class="per-b"><strong>${f.e.n}</strong><small>${f.e.rol} · ${f.e.loc} · ${f.hechos}/${f.tot}${f.crit?` · ${f.crit} crítico${f.crit>1?'s':''} pendiente${f.crit>1?'s':''}`:''}</small>
+ <div class="per-bar"><i class="${f.tot&&f.hechos/f.tot>=.75?'':f.tot&&f.hechos/f.tot>=.4?'m':'b'}" style="width:${f.tot?Math.round(f.hechos/f.tot*100):0}%"></i></div></div>
  <span class="pc ${f.media===null?'b':f.media>=80?'a':f.media>=60?'m':'b'}">${f.media===null?'—':f.media+'%'}</span></button>`).join('')}
  ${(()=>{const medias=MOD.map(m=>{const notas=EMP.filter(e=>hechos[e.id]&&hechos[e.id][m.id]!==undefined).map(e=>hechos[e.id][m.id]);
    if(!notas.length)return null;
@@ -2168,7 +2173,19 @@ function dirEnviar(){
   <div class="hv">${LOCALES.map(l=>{const r=dato(f,l);
    return r?`<span>${l.split(' ')[l.split(' ').length-1]} <b>${r.uber}★ · ${r.sat}%</b></span>`:''}).join('')}</div></div>`).join('')}</div>
 
- <p class="eye">Registrar nueva medición</p>
+ ${(()=>{const sin=LOCALES.filter(l=>!RESE.some(r=>r.l===l));
+  return sin.length?`<div class="aviso-l"><strong>Sin datos todavía: ${sin.join(', ')}</strong>
+   <p>Esos locales no aparecen arriba porque aún no tienen ninguna medición registrada.</p></div>`:''})()}
+
+ <p class="eye">Volcar el mes entero <b>pegando</b></p>
+ <div class="pie" style="margin-top:0;margin-bottom:12px"><strong>Una línea por local.</strong>
+  El nombre del local y detrás los números en este orden: Uber ★, satisfacción %, Glovo %, Google ★.
+  Los dos últimos puedes dejarlos. Si el mes ya existe, se sobrescribe.</div>
+ <div class="f-c"><label>Mes del volcado</label><input id="vc-f" placeholder="2026-10" value="${new Date().toISOString().slice(0,7)}"></div>
+ <div class="f-c"><label>Pega aquí</label><textarea id="vc-t" style="min-height:104px;font-family:var(--mono);font-size:13px" placeholder="San Luis 4,1 64 99 4,4&#10;Los Remedios 4,2 61 98 4,3&#10;Sevilla Este 4,2 74 98 4,5&#10;Tomares 4,3 70 97 4,4"></textarea></div>
+ <button class="ed-add" style="background:var(--azul);margin-bottom:6px" onclick="volcarRese()">Volcar datos del mes</button>
+
+ <p class="eye">O registrar un local suelto</p>
  <div class="f-c"><label>Mes</label><input id="rs-f" placeholder="2026-09" value="${new Date().toISOString().slice(0,7)}"></div>
  <div class="f-c"><label>Local</label><select id="rs-l">${LOCALES.map(l=>`<option>${l}</option>`).join('')}</select></div>
  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
@@ -2212,6 +2229,33 @@ function addRese(){const f=document.getElementById('rs-f').value.trim(),l=docume
  if(i>=0)RESE[i]=nuevo;else RESE.push(nuevo);
  saveConfig('resenas',RESE);
  toast(`${l} · ${mesTxt(f)} guardado`);setTimeout(pintar,300)}
+/* VOLCADO MASIVO: pegar el mes entero de todos los locales de una vez,
+   en vez de rellenar el formulario local por local. Tolerante con el
+   formato: reconoce el local y coge los números que vengan detrás. */
+function volcarRese(){
+ const txt=(document.getElementById('vc-t').value||'').trim();
+ if(!txt)return toast('Pega los datos primero');
+ const mes=(document.getElementById('vc-f').value||'').trim();
+ if(!/^\d{4}-\d{2}$/.test(mes))return toast('Indica el mes en formato 2026-10');
+ const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z]/g,'');
+ const ok=[],fallo=[];
+ txt.split(/\r?\n/).forEach(linea=>{
+  if(!linea.trim())return;
+  const loc=LOCALES.find(l=>norm(linea).startsWith(norm(l)));
+  if(!loc){fallo.push(linea.trim().slice(0,28));return}
+  const nums=(linea.match(/\d+(?:[.,]\d+)?/g)||[]).map(x=>parseFloat(x.replace(',','.')));
+  if(nums.length<2){fallo.push(linea.trim().slice(0,28));return}
+  const [u,s,g,o]=nums;
+  const nuevo={f:mes,l:loc,uber:u,sat:Math.round(s),
+   glovo:g===undefined?98:Math.round(g),google:o===undefined?4.4:o};
+  const i=RESE.findIndex(r=>r.f===mes&&r.l===loc);
+  if(i>=0)RESE[i]=nuevo;else RESE.push(nuevo);
+  ok.push(loc)});
+ if(!ok.length)return toast('No he reconocido ningún local en lo que has pegado');
+ saveConfig('resenas',RESE);
+ toast(`${ok.length} local${ok.length>1?'es':''} guardado${ok.length>1?'s':''}${fallo.length?` · ${fallo.length} sin reconocer`:''}`);
+ setTimeout(pintar,400)}
+
 function addMej(){const l=document.getElementById('mj-l').value,t=document.getElementById('mj-t').value.trim(),
  d=document.getElementById('mj-d').value.trim();
  if(!t||!d)return toast('Rellena el qué y el detalle');
