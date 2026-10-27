@@ -183,20 +183,23 @@ input,textarea,select{font-family:inherit}
 .hoy{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;overscroll-behavior-x:contain;padding:2px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px}
 .hoy::-webkit-scrollbar{display:none}
 .st{flex:0 0 auto;width:80px;background:none;border:none;padding:0;text-align:center;position:relative;scroll-snap-align:start}
-.st .ring{width:76px;height:76px;border-radius:50%;padding:3px;background:linear-gradient(145deg,var(--amarillo),var(--vino) 62%,var(--roja));display:block;transition:transform .14s cubic-bezier(.2,.8,.2,1)}
+.st .ring{display:block;width:76px;height:76px;border-radius:50%;padding:3px;box-sizing:border-box;background:linear-gradient(145deg,var(--amarillo),var(--vino) 62%,var(--roja));transition:transform .14s cubic-bezier(.2,.8,.2,1)}
 .st.ok .ring{background:var(--borde)}
-.st .in{width:100%;height:100%;border-radius:50%;background:var(--hueso);padding:2.5px}
+/* display:block obligatorio: es un span y en linea ignora el tamaño,
+   se estiraba a 107px de alto y asomaba como una franja clara */
+.st .in{display:block;width:100%;height:100%;border-radius:50%;background:var(--hueso);padding:2.5px;box-sizing:border-box}
 .st .av{width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--col);display:flex;align-items:center;justify-content:center}
 .st .av img{width:100%;height:100%;object-fit:cover;display:block}
 .st .av svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .st.ok .av{filter:grayscale(.85);opacity:.5}
 /* Etiqueta: dos lineas como mucho, cortada por palabra y legible de verdad */
-.st small{display:-webkit-box;margin-top:8px;font-size:11.5px;font-weight:600;color:var(--tinta);line-height:1.22;letter-spacing:-.01em;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:break-word;hyphens:auto}
+/* Dos lineas reservadas siempre: con una u otra, la fila queda a escuadra */
+.st small{display:-webkit-box;margin-top:9px;min-height:28px;font-size:11.5px;font-weight:600;color:var(--tinta);line-height:1.22;letter-spacing:-.01em;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:break-word}
 .st.ok small{color:var(--gris2);font-weight:500}
 .st:active .ring{transform:scale(.92)}
 .st .bd{position:absolute;top:-1px;right:2px;background:var(--roja);color:#fff;font-family:var(--mono);font-size:8.5px;font-weight:600;line-height:1;letter-spacing:.04em;padding:3px 5px;border-radius:100px;border:2px solid var(--hueso)}
 /* Superado: sello de visto, mas claro que un simple gris */
-.st .tick{position:absolute;bottom:26px;right:3px;width:21px;height:21px;border-radius:50%;background:var(--ok);border:2.5px solid var(--hueso);display:flex;align-items:center;justify-content:center}
+.st .tick{position:absolute;top:40px;right:2px;width:22px;height:22px;border-radius:50%;background:var(--ok);border:2.5px solid var(--hueso);display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 .st .tick svg{width:10px;height:10px;stroke:#fff;fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
 
 .quin{background:var(--tinta);border-radius:var(--r);padding:18px;color:var(--hueso);margin-bottom:11px;position:relative;overflow:hidden}
