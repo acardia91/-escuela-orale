@@ -1,6 +1,6 @@
-# Escuela Órale
+# Equipo Órale
 
-Herramienta de formación para empleados de restaurante. Módulos por categoría (recetas, pedidos, atención al cliente, limpieza, etc.) con test de preguntas, seguimiento de resultados por empleado y panel de dirección para publicar módulos, lanzar quincenas de formación y registrar reseñas/mejoras.
+Herramienta de formación para el equipo de restaurante. Módulos por categoría (recetas, pedidos, atención al cliente, limpieza, etc.) con test de preguntas, seguimiento de resultados por empleado y panel de dirección para publicar módulos, lanzar quincenas de formación y registrar reseñas/mejoras.
 
 ## Stack
 
