@@ -41,7 +41,8 @@ input,textarea,select{font-family:inherit}
 .dot.on{background:var(--amarillo);border-color:var(--amarillo)}
 .dot.err{background:var(--mal);border-color:var(--mal)}
 .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.pad button{aspect-ratio:1.5;background:rgba(255,255,255,.08);border-radius:13px;color:var(--hueso);font-family:'Archivo';font-variation-settings:'wght' 700;font-size:22px;text-align:center;display:flex;align-items:center;justify-content:center}
+.pad button{aspect-ratio:1.5;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 1px 2px rgba(0,0,0,.2);border-radius:13px;color:var(--hueso);font-family:'Archivo';font-variation-settings:'wght' 700;font-size:22px;text-align:center;display:flex;align-items:center;justify-content:center;transition:transform .1s,background .1s}
+.pad button:active{transform:scale(.94);background:rgba(255,255,255,.14)}
 .pad .t{font-family:'Inter';font-size:12.5px;font-weight:600;color:rgba(245,242,236,.55)}
 @keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 .shake{animation:sh .3s}
@@ -78,42 +79,41 @@ input,textarea,select{font-family:inherit}
 .mod-h strong{flex:1;min-width:0}
 
 /* MARCADO POR ENCARGADO */
-.marc{background:#FDF4F6;border:1.5px solid #E8C4CF;border-left:5px solid var(--vino);border-radius:12px;padding:13px 14px;margin-bottom:9px}
-.marc .mk{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--vino);margin-bottom:5px}
+.marc{background:color-mix(in srgb,var(--vino) 6%,var(--papel));border:1.5px solid color-mix(in srgb,var(--vino) 24%,var(--borde));border-radius:14px;padding:13px 14px;margin-bottom:9px}
+.marc .mk{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--vino);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.marc .mk::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--vino)}
 .marc strong{display:block;font-size:14.5px;font-weight:600;margin-bottom:4px;line-height:1.3}
 .marc p{font-size:12.5px;color:var(--gris);line-height:1.5;font-style:italic}
 .marc .de{font-size:11.5px;color:var(--gris2);margin-top:6px;font-style:normal}
 
 /* GRUPOS CON % */
-.grp{background:var(--papel);border:1.5px solid var(--borde);border-radius:13px;padding:14px;margin-bottom:9px;box-shadow:var(--s);width:100%;position:relative;overflow:hidden}
-.grp::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--col)}
-.grp .gh{display:flex;align-items:center;gap:11px;margin-bottom:10px;margin-left:4px}
-.grp .ic{width:32px;height:32px;border-radius:9px;background:var(--col);flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.grp .ic svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.grp{background:color-mix(in srgb,var(--col) 5%,var(--papel));border:1.5px solid color-mix(in srgb,var(--col) 16%,var(--borde));border-radius:16px;padding:14px;margin-bottom:9px;box-shadow:var(--s);width:100%;position:relative;overflow:hidden}
+.grp .gh{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.grp .ic{width:34px;height:34px;border-radius:10px;background:color-mix(in srgb,var(--col) 16%,var(--papel));flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.grp .ic svg{width:17px;height:17px;stroke:var(--col);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .grp .gb{flex:1;min-width:0}
 .grp .gb strong{display:block;font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 700;font-size:14.5px;line-height:1.2}
 .grp .gb small{font-size:11.5px;color:var(--gris2)}
 .grp .gp{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:19px;flex-shrink:0}
 .grp .gp.a{color:var(--ok)}.grp .gp.m{color:var(--alerta)}.grp .gp.b{color:var(--mal)}
-.grp .gbar{height:6px;background:#EBE5DA;border-radius:100px;overflow:hidden;margin-left:4px}
+.grp .gbar{height:6px;background:color-mix(in srgb,var(--col) 12%,#EBE5DA);border-radius:100px;overflow:hidden}
 .grp .gbar i{display:block;height:100%;border-radius:100px;background:var(--col);transition:width .4s}
-.grp .gpend{font-size:11.5px;color:var(--gris);margin-top:8px;margin-left:4px;line-height:1.4}
+.grp .gpend{font-size:11.5px;color:var(--gris);margin-top:8px;line-height:1.4}
 
 /* RESEÑAS */
 .plat{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:12px}
-.pcard{background:var(--papel);border:1.5px solid var(--borde);border-radius:13px;padding:13px 10px;text-align:center;box-shadow:var(--s);position:relative;overflow:hidden}
-.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--col)}
+.pcard{background:color-mix(in srgb,var(--col) 5%,var(--papel));border:1.5px solid color-mix(in srgb,var(--col) 16%,var(--borde));border-radius:15px;padding:13px 10px;text-align:center;box-shadow:var(--s);position:relative;overflow:hidden}
 .pcard .pn{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gris2);margin-bottom:7px}
 .pcard .pv{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:24px;line-height:1;margin-bottom:4px}
 .pcard .pd{font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:3px}
 .pcard .pd.up{color:var(--ok)}.pcard .pd.dn{color:var(--mal)}.pcard .pd.eq{color:var(--gris2)}
 
-.lrow{background:var(--papel);border:1.5px solid var(--borde);border-radius:13px;padding:14px;margin-bottom:9px;box-shadow:var(--s);position:relative;overflow:hidden}
-.lrow::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--col)}
-.lrow .lh{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;margin-left:4px}
-.lrow .lh strong{font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 700;font-size:15.5px}
+.lrow{background:color-mix(in srgb,var(--col) 5%,var(--papel));border:1.5px solid color-mix(in srgb,var(--col) 16%,var(--borde));border-radius:16px;padding:14px;margin-bottom:9px;box-shadow:var(--s);position:relative;overflow:hidden}
+.lrow .lh{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;gap:8px}
+.lrow .lh strong{font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 700;font-size:15.5px;display:flex;align-items:center;gap:8px}
+.lrow .lh strong::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--col);flex-shrink:0}
 .lrow .lh small{font-size:11.5px;color:var(--gris2)}
-.mets{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-left:4px}
+.mets{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
 .met{text-align:center;padding:9px 4px;background:var(--hueso);border-radius:9px}
 .met b{display:block;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:15px;line-height:1.1;margin-bottom:2px}
 .met small{font-size:9.5px;color:var(--gris2);line-height:1.15;display:block}
@@ -129,8 +129,8 @@ input,textarea,select{font-family:inherit}
 .hist-r .hv b{color:var(--tinta);font-weight:600}
 .hbox{background:var(--papel);border:1.5px solid var(--borde);border-radius:13px;padding:4px 14px;box-shadow:var(--s)}
 
-.mej{background:var(--papel);border:1.5px solid var(--borde);border-left:5px solid var(--alerta);border-radius:12px;padding:13px 14px;margin-bottom:8px;box-shadow:var(--s)}
-.mej.cerr{border-left-color:var(--ok);opacity:.62}
+.mej{background:color-mix(in srgb,var(--alerta) 5%,var(--papel));border:1.5px solid color-mix(in srgb,var(--alerta) 22%,var(--borde));border-radius:14px;padding:13px 14px;margin-bottom:8px;box-shadow:var(--s)}
+.mej.cerr{background:color-mix(in srgb,var(--ok) 5%,var(--papel));border-color:color-mix(in srgb,var(--ok) 22%,var(--borde));opacity:.62}
 .mej .mh{display:flex;justify-content:space-between;align-items:flex-start;gap:9px;margin-bottom:4px}
 .mej strong{font-size:14px;font-weight:600;line-height:1.3}
 .mej p{font-size:12.5px;color:var(--gris);line-height:1.5}
@@ -160,8 +160,9 @@ input,textarea,select{font-family:inherit}
 .m3.ok b{color:var(--ok)}.m3.mal b{color:var(--mal)}.m3.am b{color:var(--alerta)}
 
 /* PUNTO DÉBIL */
-.debil{background:var(--papel);border:1.5px solid var(--borde);border-left:5px solid var(--mal);border-radius:12px;padding:14px 15px;margin-bottom:9px;box-shadow:var(--s)}
-.debil .dk{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mal);margin-bottom:6px}
+.debil{background:color-mix(in srgb,var(--mal) 5%,var(--papel));border:1.5px solid color-mix(in srgb,var(--mal) 22%,var(--borde));border-radius:14px;padding:14px 15px;margin-bottom:9px;box-shadow:var(--s)}
+.debil .dk{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mal);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.debil .dk::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--mal)}
 .debil strong{display:block;font-size:14.5px;font-weight:600;margin-bottom:4px;line-height:1.3}
 .debil p{font-size:12.5px;color:var(--gris);line-height:1.5}
 
@@ -193,10 +194,9 @@ input,textarea,select{font-family:inherit}
 .bar i{display:block;height:100%;background:var(--verde);border-radius:100px;transition:width .5s}
 .prog-c .sub{font-size:12.5px;color:var(--gris);margin-top:9px;line-height:1.45}
 
-.mod{background:var(--papel);border:1.5px solid var(--borde);border-radius:13px;padding:14px;margin-bottom:9px;display:flex;gap:12px;align-items:flex-start;width:100%;box-shadow:var(--s);position:relative;overflow:hidden}
-.mod::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--col)}
-.mod .ic{width:36px;height:36px;border-radius:10px;background:var(--col);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-left:4px}
-.mod .ic svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.mod{background:color-mix(in srgb,var(--col) 5%,var(--papel));border:1.5px solid color-mix(in srgb,var(--col) 16%,var(--borde));border-radius:16px;padding:14px;margin-bottom:9px;display:flex;gap:12px;align-items:flex-start;width:100%;box-shadow:var(--s);position:relative;overflow:hidden}
+.mod .ic{width:38px;height:38px;border-radius:11px;background:color-mix(in srgb,var(--col) 16%,var(--papel));flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.mod .ic svg{width:19px;height:19px;stroke:var(--col);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .mod-b{flex:1;min-width:0}
 .mod-b strong{display:block;font-size:14.5px;font-weight:600;line-height:1.3;margin-bottom:3px}
 .mod-b .mt{font-size:12px;color:var(--gris2);display:flex;gap:9px;flex-wrap:wrap}
@@ -209,10 +209,65 @@ input,textarea,select{font-family:inherit}
 .tg-r{background:#FDECEC;color:var(--mal)}
 .tg-c{background:#FDECEC;color:var(--mal)}
 
-.aviso-l{background:var(--papel);border:1.5px solid var(--borde);border-left:5px solid var(--amarillo);border-radius:12px;padding:14px 15px;margin-bottom:9px;box-shadow:var(--s)}
+.aviso-l{background:color-mix(in srgb,var(--amarillo) 8%,var(--papel));border:1.5px solid color-mix(in srgb,var(--amarillo) 28%,var(--borde));border-radius:14px;padding:14px 15px;margin-bottom:9px;box-shadow:var(--s)}
 .aviso-l strong{display:block;font-size:14px;margin-bottom:4px}
 .aviso-l p{font-size:12.5px;color:var(--gris);line-height:1.5}
 .aviso-l .de{font-size:11.5px;color:var(--gris2);margin-top:6px}
+
+/* PROTOCOLO PRODUCTO NUEVO */
+.proto{background:color-mix(in srgb,var(--col) 6%,var(--papel));border:1.5px solid color-mix(in srgb,var(--col) 22%,var(--borde));border-radius:18px;margin-bottom:12px;box-shadow:var(--s);overflow:hidden;width:100%;text-align:left;display:block}
+.proto .pimg{width:100%;aspect-ratio:16/9;background:color-mix(in srgb,var(--col) 14%,var(--papel));display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.proto .pimg img{width:100%;height:100%;object-fit:cover;display:block}
+.proto .pimg svg{width:34px;height:34px;stroke:var(--col);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
+.proto .pimg .ptag{position:absolute;top:10px;left:10px;background:var(--col);color:#fff;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:100px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.proto .pimg .pmin{position:absolute;bottom:10px;right:10px;background:rgba(23,20,15,.72);color:var(--hueso);font-size:11px;font-weight:600;padding:4px 9px;border-radius:100px;backdrop-filter:blur(4px)}
+.proto .pb{padding:13px 14px 14px}
+.proto .pk{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--col);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.proto .pk::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--col)}
+.proto strong.pt{display:block;font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 700;font-size:17px;line-height:1.2;margin-bottom:8px}
+.proto .pll{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+.proto .pll span{font-size:12px;font-weight:600;padding:5px 9px;border-radius:8px;background:color-mix(in srgb,var(--col) 10%,var(--papel));border:1px solid color-mix(in srgb,var(--col) 18%,var(--borde));color:var(--tinta)}
+.proto .pal{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--mal);font-weight:600;line-height:1.4;margin-bottom:9px}
+.proto .pal svg{width:15px;height:15px;flex-shrink:0;stroke:var(--mal);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;margin-top:2px}
+.proto .pcl{font-size:12.5px;color:var(--gris);line-height:1.5;margin-bottom:12px}
+.proto .pcl b{color:var(--tinta)}
+.proto .pcta{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--col);color:#fff;border-radius:12px;padding:13px 14px;font-family:'Archivo';font-variation-settings:'wght' 700;font-size:14px;box-shadow:0 3px 0 color-mix(in srgb,var(--col) 65%,#000);transition:transform .12s,box-shadow .12s}
+.proto .pcta small{font-family:'Inter';font-weight:500;font-size:12px;opacity:.85}
+.proto .pcta svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;flex-shrink:0}
+.proto:active .pcta{transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--col) 65%,#000)}
+.proto.leido .pcta{background:color-mix(in srgb,var(--ok) 12%,var(--papel));color:var(--ok);box-shadow:none;border:1.5px solid color-mix(in srgb,var(--ok) 30%,var(--borde))}
+.proto.leido .pcta svg{stroke:var(--ok)}
+.mod .ic.th{background:none;overflow:hidden}
+.mod .ic.th img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* visor: protocolo */
+.hero-img{width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;margin-bottom:14px;background:rgba(255,255,255,.06)}
+.hero-img img{width:100%;height:100%;object-fit:cover;display:block}
+.ficha{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;margin-bottom:13px}
+.ficha .fh{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,242,236,.5);margin-bottom:8px}
+.ficha .fl2{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.ficha .fl2 span{font-size:13.5px;font-weight:600;color:var(--hueso);background:rgba(255,255,255,.09);padding:6px 10px;border-radius:9px}
+.ficha .fa{display:flex;gap:8px;align-items:flex-start;color:#FF9A9A;font-size:14px;font-weight:600;line-height:1.4}
+.ficha .fa svg{width:16px;height:16px;flex-shrink:0;stroke:#FF9A9A;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;margin-top:2px}
+.ficha .fc{margin-top:10px;font-size:14px;color:rgba(245,242,236,.78);line-height:1.5}
+.ficha .fc b{color:var(--amarillo)}
+.p-n.proto-n{color:var(--naranja)}
+
+/* dirección: fotos y marcado de producto nuevo */
+.foto-r{background:var(--papel);border:1.5px solid var(--borde);border-radius:14px;padding:12px;margin-bottom:9px;display:flex;gap:12px;align-items:center;box-shadow:var(--s)}
+.foto-r .ft{width:72px;height:54px;border-radius:10px;background:color-mix(in srgb,var(--naranja) 12%,var(--papel));flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.foto-r .ft img{width:100%;height:100%;object-fit:cover;display:block}
+.foto-r .ft svg{width:22px;height:22px;stroke:var(--naranja);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
+.foto-r .fb2{flex:1;min-width:0}
+.foto-r .fb2 strong{display:block;font-size:13.5px;font-weight:600;line-height:1.3;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.foto-r .fb2 small{font-size:11.5px;color:var(--gris2);display:block;margin-bottom:7px}
+.foto-r .fbt{display:flex;gap:6px;flex-wrap:wrap}
+.foto-r .fbt label,.foto-r .fbt button{padding:7px 11px;border-radius:8px;font-size:12px;font-weight:600;background:var(--tinta);color:var(--hueso);cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.foto-r .fbt button.q{background:var(--hueso);color:var(--gris);border:1.5px solid var(--borde2)}
+.foto-r .fbt button.n{background:color-mix(in srgb,var(--naranja) 12%,var(--papel));color:var(--naranja);border:1.5px solid color-mix(in srgb,var(--naranja) 30%,var(--borde))}
+.foto-r .fbt input{display:none}
+.foto-r .fbt svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.foto-r.subiendo{opacity:.55;pointer-events:none}
 
 .play{position:fixed;inset:0;background:var(--tinta);z-index:220;display:none;flex-direction:column}
 .play.on{display:flex}
@@ -248,9 +303,11 @@ input,textarea,select{font-family:inherit}
 .col-r b{display:block;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:15px;margin-bottom:3px}
 .col-r span{font-size:13.5px;opacity:.92;line-height:1.4;display:block}
 
-.pbtn{width:100%;background:var(--amarillo);color:var(--tinta);padding:18px;border-radius:14px;font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 800;font-size:17px;text-align:center}
-.pbtn.v{background:var(--verde);color:#fff}
-.pbtn:disabled{opacity:.3}
+.pbtn{width:100%;background:var(--amarillo);color:var(--tinta);padding:18px;border-radius:14px;font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 800;font-size:17px;text-align:center;box-shadow:0 3px 0 color-mix(in srgb,var(--amarillo) 65%,#000),0 8px 20px -6px rgba(216,155,28,.45);transition:transform .12s,box-shadow .12s}
+.pbtn:active{transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--amarillo) 65%,#000),0 4px 10px -6px rgba(216,155,28,.4)}
+.pbtn.v{background:var(--verde);box-shadow:0 3px 0 color-mix(in srgb,var(--verde) 65%,#000),0 8px 20px -6px rgba(74,124,47,.4);color:#fff}
+.pbtn.v:active{box-shadow:0 1px 0 color-mix(in srgb,var(--verde) 65%,#000),0 4px 10px -6px rgba(74,124,47,.35)}
+.pbtn:disabled{opacity:.3;box-shadow:none}
 .pback{width:100%;text-align:center;color:rgba(245,242,236,.4);font-size:13px;font-weight:600;padding:11px 0 0}
 
 .q-t{font-family:'Archivo';font-variation-settings:'wdth' 105,'wght' 700;font-size:21px;line-height:1.25;color:var(--hueso);margin-bottom:16px}
@@ -1050,6 +1107,7 @@ const MOD=[
   ex:'La cuchara asignada a cada ingrediente. Y ante la duda, lo que diga el encargado.'}]},
 
 {id:'n2',pub:1,nuevo:1,cat:'receta',t:'NUEVO · Combo Coca-Cola + Chips',min:4,fr:'Una vez',roles:['empleado','encargado'],
+ ficha:{lleva:['Chips','Crema agria','Pico de gallo','Guacamole','Coca-Cola'],aler:'Lácteos (crema agria) y aguacate (guacamole)',clave:'En delivery los toppings van <b>separados</b> con nota "Montar al recibir". La Coca-Cola entra <b>la última</b> en la bolsa.'},
  slides:[
  {k:'Producto nuevo',t:'Combo Coca-Cola + Chips',
   p:['Lanzamos un combo nuevo: <b>Coca-Cola + chips con crema agria, pico de gallo y guacamole</b>.',
@@ -1082,6 +1140,7 @@ const MOD=[
   ex:'Protocolo ROJO: ticket aparte, utensilios limpios y firma del encargado. La crema agria lleva lácteos.'}]},
 
 {id:'n3',pub:1,nuevo:1,cat:'receta',t:'NUEVO · Quesadilla cochinita + salsa verde',min:4,fr:'Una vez',roles:['empleado','encargado'],
+ ficha:{lleva:['Tortilla de quesadilla','Queso','Cochinita desmenuzada','Salsa verde aparte'],aler:'Lácteos (queso) y gluten (tortilla)',clave:'Cochinita <b>siempre desmenuzada</b>. Masa sin puntos crudos. Se corta <b>justo antes de cerrar</b> y la salsa verde va en tarrina aparte.'},
  slides:[
  {k:'Producto nuevo',t:'Quesadilla de cochinita con salsa verde',
   p:['Producto nuevo en carta. Combina dos cosas que ya tenemos y que ya sabemos que dan problemas si se hacen mal.']},
@@ -1196,6 +1255,10 @@ const QHIST=[
 ];
 
 let locSel=null,empSel=null,pin='',user=null,esDir=false,tab='ti',P=null,hechos={},asign={},selMods=[];
+let imgs={}; /* foto por módulo (id → dataURL), la sube Dirección */
+const ICO_FOTO='<rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1.2-2h5.6L16 5"/>';
+const ICO_ALER='<path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.5"/>';
+function nombreProd(m){return m.t.replace(/^NUEVO\s*·\s*/i,'')}
 
 function diasRest(){return Math.ceil((QUIN.fin-new Date())/864e5)}
 function enQuin(m){return QUIN.mods.includes(m.id)&&QUIN.roles.includes(user.rol)}
@@ -1330,12 +1393,25 @@ function estadoMod(m,e){const h=(hechos[e.id]||{})[m.id];
 function tarjeta(m){const st=estadoMod(m,user),c=CAT[m.cat],h=(hechos[user.id]||{})[m.id];
  const pl=plazo(m);
  return `<button class="mod ${st==='hecho'?'hecho':''}" style="--col:var(${c.c})" onclick="abrirMod('${m.id}')">
- <div class="ic"><svg viewBox="0 0 24 24">${c.ic}</svg></div>
+ ${imgs[m.id]?`<div class="ic th"><img src="${imgs[m.id]}" alt=""></div>`:`<div class="ic"><svg viewBox="0 0 24 24">${c.ic}</svg></div>`}
  <div class="mod-b"><div class="mod-h"><strong>${m.t}</strong>
  <span class="pl ${pl.cls}">${pl.txt}</span></div>
  <div class="mt"><em>${m.min} min</em><em>${m.test.length} preguntas</em><em>${m.fr}</em></div>
  ${h!==undefined?`<div class="res ${h<60?'mal':'ok'}">${h}% de acierto${h<60?' · conviene repetirlo':''}</div>`:''}</div>
  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:.28;flex-shrink:0;align-self:center"><path d="M9 18l6-6-6-6"/></svg></button>`}
+
+/* Tarjeta de protocolo de producto nuevo (foto + qué lleva + alérgenos + regla clave) */
+function protoCard(m,nota){const f=m.ficha||{},leido=nota!==undefined&&nota>=60;
+ return `<button class="proto ${leido?'leido':''}" style="--col:var(--naranja)" onclick="abrirMod('${m.id}')">
+ <div class="pimg">${imgs[m.id]?`<img src="${imgs[m.id]}" alt="${nombreProd(m)}">`:`<svg viewBox="0 0 24 24">${CAT[m.cat].ic}</svg>`}
+  <span class="ptag">Nuevo en carta</span><span class="pmin">${m.min} min · ${m.test.length} preguntas</span></div>
+ <div class="pb"><div class="pk">Protocolo de producto</div>
+  <strong class="pt">${nombreProd(m)}</strong>
+  ${f.lleva?`<div class="pll">${f.lleva.map(x=>`<span>${x}</span>`).join('')}</div>`:''}
+  ${f.aler?`<div class="pal"><svg viewBox="0 0 24 24">${ICO_ALER}</svg><span>Alérgenos: ${f.aler}</span></div>`:''}
+  ${f.clave?`<div class="pcl">${f.clave}</div>`:`<div class="pcl">Un producto nuevo se monta <b>igual desde el primer día</b> en los tres locales.</div>`}
+  <div class="pcta">${leido?`<span>Protocolo leído · ${nota}%</span><small>Volver a verlo</small>`:`<span>Leer el protocolo</span><small>Antes de montarlo por primera vez</small>`}
+  <svg viewBox="0 0 24 24"><path d="${leido?'M20 6L9 17l-5-5':'M9 18l6-6-6-6'}"/></svg></div></div></button>`}
 
 function vParaTi(){const mios=MOD.filter(m=>m.pub&&m.roles.includes(user.rol));
  const h=hechos[user.id]||{};
@@ -1377,11 +1453,8 @@ function vParaTi(){const mios=MOD.filter(m=>m.pub&&m.roles.includes(user.rol));
   <div class="m3 ${crit?'mal':'ok'}"><b>${crit}</b><small>críticos pendientes</small></div>
   <div class="m3"><b>${ks.length}/${mios.length}</b><small>módulos hechos</small></div>
  </div>
- ${nuevos.length?`<p class="eye">Productos nuevos <b>protocolo recién publicado</b></p>
-  ${nuevos.map(m=>`<div class="marc" style="border-left-color:var(--naranja);background:#FEF6EE;border-color:#F0D9BE">
-   <div class="mk" style="color:var(--naranja)">Nuevo en carta</div>
-   <strong>${m.t.replace('NUEVO · ','')}</strong>
-   <p>Léelo antes de montarlo por primera vez. Un producto nuevo se hace igual desde el primer día en los tres locales.</p></div>`+tarjeta(m)).join('')}`:''}
+ ${nuevos.length?`<p class="eye">Protocolo de producto nuevo <b>léelo antes de montarlo</b></p>
+  ${nuevos.map(m=>protoCard(m,h[m.id])).join('')}`:''}
  ${qPend.length?`<p class="eye">Haz esto ahora <b>${dias>0?'antes del '+QUIN.fin.toLocaleDateString('es-ES',{day:'numeric',month:'short'}):'plazo vencido'}</b></p>
   ${ordenar(qPend).map(tarjeta).join('')}`:''}
  ${mkA.length?`<p class="eye">Área a reforzar</p>
@@ -1527,8 +1600,13 @@ function cerrarPlay(){document.getElementById('play').classList.remove('on');P=n
 function pPlay(){const m=P.m,tot=m.slides.length+m.test.length;
  const idx=P.fase==='s'?P.i:m.slides.length+P.q;
  let body='',foot='';
- if(P.fase==='s'){const s=m.slides[P.i];
-  body=`<div class="slide-k">${s.k}</div><div class="slide-t">${s.t}</div>
+ if(P.fase==='s'){const s=m.slides[P.i];const f=m.ficha;
+  body=`${P.i===0&&imgs[m.id]?`<div class="hero-img"><img src="${imgs[m.id]}" alt="${nombreProd(m)}"></div>`:''}
+  <div class="slide-k">${s.k}</div><div class="slide-t">${s.t}</div>
+  ${P.i===0&&m.nuevo&&f?`<div class="ficha">
+   ${f.lleva?`<div class="fh">Qué lleva</div><div class="fl2">${f.lleva.map(x=>`<span>${x}</span>`).join('')}</div>`:''}
+   ${f.aler?`<div class="fa"><svg viewBox="0 0 24 24">${ICO_ALER}</svg><span>Alérgenos: ${f.aler}</span></div>`:''}
+   ${f.clave?`<div class="fc">${f.clave}</div>`:''}</div>`:''}
   ${s.dest?`<div class="slide-d"><div class="big">${s.dest[0]}</div><div class="sm">${s.dest[1]}</div></div>`:''}
   ${s.cols?`<div class="cols">${s.cols.map(c=>`<div class="col-r" style="background:var(${c[0]})"><b>${c[1]}</b><span>${c[2]}</span></div>`).join('')}</div>`:''}
   ${s.pasos?`<div class="pasos-l">${s.pasos.map((p,i)=>`<div class="pl"><span class="pn">${i+1}</span><span class="pt">${p}</span></div>`).join('')}</div>`:''}
@@ -1602,7 +1680,7 @@ function pPlay(){const m=P.m,tot=m.slides.length+m.test.length;
   const im=i-m.slides.length;const cls=im>=0&&P.marks[im]?P.marks[im]:(i<=idx?'on':'');
   return `<div class="p-seg ${cls}"></div>`}).join('')}</div>
  <div class="p-head"><button class="p-x" onclick="cerrarPlay()">Cerrar</button>
- <span class="p-n">${CAT[m.cat].n}</span></div></div>
+ <span class="p-n ${m.nuevo?'proto-n':''}">${m.nuevo?'PROTOCOLO · PRODUCTO NUEVO':CAT[m.cat].n}</span></div></div>
  <div class="p-body">${body}</div><div class="p-foot">${foot}</div>`}
 
 function sigSlide(){if(P.i<P.m.slides.length-1){P.i++}else{P.fase='t';P.q=0;P.res=null;P.ord=[]}pPlay()}
@@ -1693,6 +1771,18 @@ function dirMods(){
   <div class="m3"><b>${MOD.length}</b><small>en total</small></div></div>
  <div class="pie" style="margin-top:0;margin-bottom:16px"><strong>Los ocultos no existen para el equipo.</strong>
  Publica solo lo que quieres que hagan ahora. Ir soltando de poco en poco funciona mucho mejor que abrir los 22 de golpe.</div>
+ ${(()=>{const prot=MOD.filter(m=>m.nuevo);
+  const cand=esDir?MOD.filter(m=>!m.nuevo&&(m.cat==='receta'||m.cat==='producto')):[];
+  return `<p class="eye">Protocolos de producto nuevo <b>${prot.length?prot.length+' activo'+(prot.length>1?'s':''):'ninguno'}</b></p>
+  ${prot.length?prot.map(m=>`<div class="foto-r" id="fr-${m.id}">
+   <div class="ft">${imgs[m.id]?`<img src="${imgs[m.id]}" alt="">`:`<svg viewBox="0 0 24 24">${ICO_FOTO}</svg>`}</div>
+   <div class="fb2"><strong>${nombreProd(m)}</strong><small>${m.pub?'Visible para el equipo':'Oculto'} · ${imgs[m.id]?'con foto':'sin foto'}</small>
+   <div class="fbt"><label><svg viewBox="0 0 24 24">${ICO_FOTO}</svg>${imgs[m.id]?'Cambiar foto':'Añadir foto'}<input type="file" accept="image/*" onchange="subirFoto('${m.id}',this)"></label>
+   ${imgs[m.id]?`<button class="q" onclick="quitarFoto('${m.id}')">Quitar</button>`:''}
+   ${esDir?`<button class="q" onclick="togNuevo('${m.id}')">Ya no es nuevo</button>`:''}</div></div></div>`).join('')
+   :`<div class="det"><small style="margin:0">No hay ningún producto marcado como nuevo. Cuando lances uno, márcalo abajo y le pones foto: al equipo le sale destacado en su inicio con el protocolo.</small></div>`}
+  ${cand.length?`<details style="margin:4px 0 16px"><summary style="font-size:12.5px;font-weight:600;color:var(--gris);cursor:pointer;padding:6px 0">Marcar otro módulo como producto nuevo</summary>
+   <div class="chips" style="margin-top:8px">${cand.map(m=>`<button class="chip" onclick="togNuevo('${m.id}')">+ ${nombreProd(m)}</button>`).join('')}</div></details>`:''}`})()}
  ${Object.keys(CAT).map(k=>{const ms=MOD.filter(m=>m.cat===k);
   if(!ms.length)return '';
   const np=ms.filter(m=>m.pub).length;
@@ -1706,6 +1796,25 @@ function dirMods(){
    <span class="pl ${m.pub?'pl-hecho':'pl-neu'}">${m.pub?'Visible':'Oculto'}</span></button>`}).join('')}`}).join('')}
  <div class="pie"><strong>Cómo empezar.</strong> Publica 3 o 4 para la primera quincena, los más críticos.
  Cuando el equipo los tenga, publicas los siguientes. Un módulo publicado y no hecho pesa más que uno oculto.</div>`}
+/* Foto de producto: se reduce en el móvil (máx 900px, JPEG) y se guarda en escuela_config.imgs */
+function subirFoto(id,input){const file=input.files&&input.files[0];if(!file)return;
+ const row=document.getElementById('fr-'+id);if(row)row.classList.add('subiendo');
+ const done=()=>{if(row)row.classList.remove('subiendo');input.value=''};
+ const img=new Image();const url=URL.createObjectURL(file);
+ img.onload=()=>{URL.revokeObjectURL(url);
+  const MAX=900,r=Math.min(1,MAX/Math.max(img.width,img.height));
+  const c=document.createElement('canvas');c.width=Math.round(img.width*r);c.height=Math.round(img.height*r);
+  c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+  const data=c.toDataURL('image/jpeg',.8);
+  imgs[id]=data;
+  saveConfig('imgs',imgs).then(()=>{done();toast('Foto guardada. Ya la ve el equipo');pintar()})};
+ img.onerror=()=>{URL.revokeObjectURL(url);done();toast('No se ha podido leer esa imagen. Prueba con otra o con una captura')};
+ img.src=url}
+function quitarFoto(id){delete imgs[id];saveConfig('imgs',imgs).then(()=>{toast('Foto quitada');pintar()})}
+function togNuevo(id){const m=MOD.find(x=>x.id===id);m.nuevo=m.nuevo?0:1;
+ saveConfig('nuevos',MOD.filter(x=>x.nuevo).map(x=>x.id));
+ toast(m.nuevo?`"${nombreProd(m)}" marcado como producto nuevo`:`"${nombreProd(m)}" ya no sale como nuevo`);pintar()}
+
 function togPub(id){const m=MOD.find(x=>x.id===id);
  m.pub=m.pub?0:1;
  let quinCambio=false;
@@ -1891,6 +2000,12 @@ async function init(){
 
   if(cfg.marcados)marcados=cfg.marcados;
   else faltantes.push(saveConfig('marcados',marcados));
+
+  if(cfg.imgs&&typeof cfg.imgs==='object')imgs=cfg.imgs;
+  else faltantes.push(saveConfig('imgs',{}));
+
+  if(Array.isArray(cfg.nuevos)){MOD.forEach(m=>m.nuevo=cfg.nuevos.includes(m.id)?1:0)}
+  else faltantes.push(saveConfig('nuevos',MOD.filter(m=>m.nuevo).map(m=>m.id)));
 
   if(cfg.resenas)RESE=cfg.resenas;
   else faltantes.push(saveConfig('resenas',RESE));
