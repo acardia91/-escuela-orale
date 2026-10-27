@@ -1345,7 +1345,51 @@ const MOD=[
   ex:'2-3 turnos acompañados. Es lo que marca la guía.'},
  {tipo:'opt',q:'¿Qué se le explica además de las tareas?',
   op:[['Los horarios y el sueldo',0],['La filosofía de la marca',1],['Nada más, con las tareas basta',0]],
-  ex:'La filosofía de la marca. El primer contacto marca todo lo que viene después.'}]}
+  ex:'La filosofía de la marca. El primer contacto marca todo lo que viene después.'}]},
+
+/* Protocolo creado el 28/10/2026 a partir del parte de incidencias de Uber:
+   tres fallos de personalización en Los Remedios en tres días seguidos
+   (F713B 24/10, E055C 25/10, F30DB 26/10). */
+{id:'x1',pub:1,nuevo:1,cat:'pedido',t:'NUEVO · Modificadores y extras del ticket',corto:'Modificadores',min:4,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
+ ficha:{lleva:['Leer el ticket entero','Marcar lo modificado','Revisar antes de cerrar','Contar contra el ticket'],
+  aler:'Una modificación no leída puede ser una alergia',
+  clave:'Tres cargos en tres días por lo mismo. El modificador está escrito en el ticket: el fallo es que no se lee, no que no esté.'},
+ slides:[
+ {k:'Por qué este protocolo',t:'Tres cargos en tres días',
+  p:['Los Remedios acumuló <b>tres incidencias de personalización en tres días seguidos</b>: F713B el 24, E055C el 25 y F30DB el 26 de octubre.',
+  'La del 26 fue un Burro Black Chancho al que le faltaba una personalización. Clienta habitual, nueve pedidos. Cargo de <b>3,29 €</b> y una clienta fiel tocada.'],
+  dest:['3 de 3 días','la misma causa: un modificador del ticket que no se leyó']},
+ {k:'El dato que duele',t:'No es que falte producto, es que no se lee',
+  p:['El modificador <b>viene impreso en el ticket</b>. No hay que adivinarlo ni recordarlo.',
+  'Por eso esto no se arregla con más cuidado genérico: se arregla con un gesto fijo, siempre el mismo, antes de montar.'],
+  frase:['Si el ticket lo pone y el burrito no lo lleva, el fallo es nuestro.','No hay discusión posible con la plataforma.']},
+ {k:'Los cuatro pasos',t:'Siempre en este orden',pasos:[
+  '<em>LEER</em> el ticket entero antes de tocar nada, incluidas las líneas de debajo de cada producto',
+  '<em>MARCAR</em> con rotulador cada producto que lleve modificación',
+  '<em>MONTAR</em> siguiendo lo marcado, no la receta estándar',
+  '<em>REVISAR</em> producto a producto contra el ticket antes de cerrar la bolsa'],
+  p:['Los extras y las quitas van en líneas aparte, debajo del nombre del producto. Son las que se saltan con prisa.']},
+ {k:'Quien empaqueta vuelve a leer',t:'Dos personas, dos lecturas',
+  p:['Quien prepara lee las notas. Quien empaqueta <b>las relee</b> antes de cerrar.',
+  'En Sevilla Este el recordatorio del 27/10 va en la misma línea: revisar cada bolsa contra el ticket antes de dársela al repartidor.'],
+  frase:['Son 20 segundos por pedido.','Un cargo son 3,29 € y un cliente que no vuelve.']},
+ {k:'Si llega una incidencia',t:'Se puede disputar',
+  p:['Si la cámara demuestra que el pedido salió correcto, la incidencia <b>se puede disputar</b> desde Uber Eats Manager.',
+  'Por eso importa que el ticket impreso se conserve y que el montaje se haga en la zona que cubre la cámara.',
+  'Hay unos <b>30 días</b> de plazo para disputar.']}],
+ test:[
+ {tipo:'opt',q:'¿Dónde está la personalización que pidió el cliente?',
+  op:[['Te la dice el encargado',0],['Impresa en el ticket, debajo del producto',1],['En la app del repartidor',0]],
+  ex:'En el ticket, en las líneas de debajo de cada producto. Están siempre: el fallo es no leerlas.'},
+ {tipo:'opt',q:'Vas con prisa en hora punta y el ticket lleva una modificación. ¿Qué haces?',
+  op:[['Montar rápido y revisar si da tiempo',0],['Marcar el ticket y revisar producto a producto antes de cerrar',1],['Montar estándar y avisar al cliente',0]],
+  ex:'Marcar y revisar. Son 20 segundos; el cargo son 3,29 € y un cliente perdido.'},
+ {tipo:'opt',q:'¿Quién comprueba las notas del pedido?',
+  op:[['Quien prepara',0],['Quien empaqueta',0],['Los dos: quien prepara lee y quien empaqueta relee',1]],
+  ex:'Los dos. Dos lecturas independientes es lo que corta los fallos de personalización.'},
+ {tipo:'opt',q:'Llega un cargo por un pedido que salió bien. ¿Se puede hacer algo?',
+  op:[['No, lo decide la plataforma',0],['Sí, disputarlo con la grabación y el ticket',1],['Solo si el cliente lo reconoce',0]],
+  ex:'Se disputa desde Uber Eats Manager, con la cámara y el ticket. Hay unos 30 días de plazo.'}]}
 ];
 
 let RECO=[
