@@ -650,6 +650,38 @@ input,textarea,select{font-family:inherit}
 .usr .uv b{display:block;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:14px}
 .usr .uv small{display:block;font-family:var(--mono);font-size:9px;color:var(--gris2)}
 .usr.frio .ui{background:var(--borde2);color:var(--gris)}
+
+/* ===== Controles de bloque en el panel de direccion ===== */
+.bulk{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 14px}
+.bulk button{border:1px solid var(--tinta);border-radius:var(--r2);padding:7px 11px;background:none;
+ font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;font-weight:600}
+.bulk button:active{background:var(--tinta);color:var(--hueso)}
+.bulk button.peli{border-color:var(--mal);color:var(--mal)}
+.bulk button.peli:active{background:var(--mal);color:var(--hueso)}
+.cat-h{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.cat-h .cb2{border:1px solid var(--borde2);border-radius:var(--r2);padding:4px 8px;background:none;
+ font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);white-space:nowrap}
+.cat-h .cb2:active{background:var(--tinta);color:var(--hueso);border-color:var(--tinta)}
+/* quien recibe: retrato + nombre, en rejilla */
+.quien{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin-bottom:4px}
+.qp{border:1px solid var(--borde);border-radius:var(--r);padding:9px 5px 8px;text-align:center;background:var(--papel)}
+.qp .qi{width:30px;height:30px;border-radius:50%;background:var(--borde2);color:var(--tinta);margin:0 auto 5px;
+ display:grid;place-items:center;font-family:var(--display);font-size:12px;padding-top:1px}
+.qp strong{display:block;font-size:11.5px;font-variation-settings:'wght' 650;line-height:1.2}
+.qp small{display:block;font-family:var(--mono);font-size:8px;color:var(--gris2);margin-top:2px;letter-spacing:.05em}
+.qp[aria-pressed="true"]{border-color:var(--tinta);background:var(--tinta);color:var(--hueso)}
+.qp[aria-pressed="true"] .qi{background:var(--hueso);color:var(--tinta)}
+.qp[aria-pressed="true"] small{color:var(--borde2)}
+.rep-sw{display:flex;align-items:center;gap:10px;border:1px solid var(--borde);border-radius:var(--r);
+ padding:11px 13px;background:var(--papel);margin:12px 0 4px}
+.rep-sw .t{flex:1;min-width:0}
+.rep-sw strong{display:block;font-size:13.5px;font-variation-settings:'wght' 650}
+.rep-sw small{display:block;font-size:11.5px;color:var(--gris);line-height:1.4;margin-top:2px}
+.rep-sw i{width:42px;height:25px;border-radius:13px;background:var(--borde2);flex-shrink:0;position:relative;transition:background .18s}
+.rep-sw i::after{content:'';position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;
+ background:var(--hueso);transition:transform .18s}
+.rep-sw[aria-pressed="true"] i{background:var(--vino)}
+.rep-sw[aria-pressed="true"] i::after{transform:translateX(17px)}
 </style>
 </head>
 <body>
@@ -1817,7 +1849,7 @@ function entrar(e){user=e;esDir=false;usoArranca(e.id);
  document.getElementById('login').style.display='none';document.getElementById('top').style.display='block';
  document.getElementById('app').style.display='block';
  document.getElementById('wi').textContent=e.n.slice(0,2).toUpperCase();
- document.getElementById('wn').textContent=e.n;document.getElementById('wr').textContent=`${e.rol} · ${e.loc}`;
+ document.getElementById('wn').textContent=e.n;document.getElementById('wr').textContent=`${e.rol} · ${localesDe(e).join(' · ')}`;
  if(!hechos[e.id])hechos[e.id]={};
  document.getElementById('tabs').innerHTML=`<button class="tab" data-t="ti" aria-pressed="true" onclick="sTab('ti')">Para ti</button>
  ${e.rol==='encargado'?`<button class="tab" data-t="eqp" aria-pressed="false" onclick="sTab('eqp')">Equipo</button>
@@ -2408,6 +2440,7 @@ function dirEquipo(){
  <div class="kpis"><div class="kpi ${mg>=80?'ok':mg>=60?'':'mal'}"><b>${mg}%</b><small>media del equipo</small></div>
  <div class="kpi ${critTot?'mal':'ok'}"><b>${critTot}</b><small>críticos sin superar</small></div>
  <div class="kpi"><b>${MOD.filter(m=>m.pub).length}</b><small>módulos publicados</small></div></div>
+ <div class="bulk"><button onclick="panelEnvio()">Enviar protocolos a varias personas</button></div>
  <p class="eye">Por persona <b>quien más lo necesita, primero</b></p>
  ${filas.map((f,i)=>`<button class="per" onclick="verPersona('${f.e.id}')">
  <span class="pos">${i+1}</span>
@@ -2471,6 +2504,83 @@ function enviarA(id){const sel=[...document.querySelectorAll('.chips .chip[aria-
  const e=EMP.find(x=>x.id===id);
  cerrarSheet();toast(`${sel.length} módulo${sel.length>1?'s':''} enviado${sel.length>1?'s':''} a ${e.n}`);setTimeout(pintar,300)}
 
+
+/* ===== Publicar u ocultar en bloque ===== */
+function pubTodos(valor,cat){
+ const afecta=MOD.filter(m=>!cat||m.cat===cat);
+ const antes=afecta.filter(m=>!!m.pub===!!valor).length;
+ if(antes===afecta.length)return toast(valor?'Ya estaban todos visibles':'Ya estaban todos ocultos');
+ afecta.forEach(m=>m.pub=valor?1:0);
+ /* un modulo oculto no puede seguir siendo el foco de la quincena */
+ const fuera=QUIN.mods.filter(id=>!MOD.find(m=>m.id===id&&m.pub));
+ if(fuera.length){QUIN.mods=QUIN.mods.filter(id=>!fuera.includes(id));
+  saveConfig('quincena',{...QUIN,fin:QUIN.fin.toISOString()})}
+ saveConfig('publicados',MOD.filter(m=>m.pub).map(m=>m.id));
+ const n=afecta.length-antes;
+ toast(`${n} ${n===1?'protocolo':'protocolos'} ${valor?'visibles para el equipo':'ocultos'}${cat?' · '+CAT[cat].n:''}`);
+ pintar()}
+
+/* ===== Enviar o mandar repetir a varias personas a la vez ===== */
+let envMods=[],envQuien=[],envRepe=false;
+function panelEnvio(){
+ envMods=[];envQuien=[];envRepe=false;
+ const pub=MOD.filter(m=>m.pub);
+ abrirSheet(`<div class="sh-top" style="background:var(--tinta)">
+ <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Equipo</button>
+ <h2>Enviar protocolos</h2><p>A varias personas de una vez</p></div>
+ <div style="padding:16px 16px 0">
+ <p class="eye">Qué envías <b id="env-n">ninguno</b></p>
+ <div class="chips">${pub.map(m=>`<button class="chip" onclick="envTogM('${m.id}',this)" aria-pressed="false">${m.t}</button>`).join('')}</div>
+ <p class="eye">A quién <b id="env-q">nadie</b></p>
+ <div class="bulk" style="margin-bottom:9px">
+  <button onclick="envTodos()">Todo el equipo</button>
+  ${LOCALES.map(l=>`<button onclick="envLocal('${l.replace(/'/g,"\\'")}')">${l}</button>`).join('')}
+ </div>
+ <div class="quien">${EMP.map(e=>`<button class="qp" aria-pressed="false" data-e="${e.id}" onclick="envTogQ('${e.id}',this)">
+  <span class="qi">${e.n.slice(0,2).toUpperCase()}</span><strong>${e.n}</strong><small>${localesDe(e)[0]}</small></button>`).join('')}</div>
+ <button class="rep-sw" aria-pressed="false" id="env-rep" onclick="envTogR(this)">
+  <span class="t"><strong>Que lo repitan</strong><small>Borra su nota de ese protocolo y les vuelve a salir como pendiente. Sin esto, a quien ya lo tenga hecho no le cambia nada.</small></span><i></i></button>
+ </div>
+ <div class="pub"><button class="pub-b" onclick="envEnviar()">Enviar</button>
+ <small>Les aparece arriba la próxima vez que entren</small></div>`,'--tinta')}
+
+function envTogM(id,b){const i=envMods.indexOf(id);
+ if(i<0){envMods.push(id);b.setAttribute('aria-pressed','true')}else{envMods.splice(i,1);b.setAttribute('aria-pressed','false')}
+ document.getElementById('env-n').textContent=envMods.length?envMods.length+(envMods.length===1?' protocolo':' protocolos'):'ninguno'}
+function envTogQ(id,b){const i=envQuien.indexOf(id);
+ if(i<0){envQuien.push(id);b.setAttribute('aria-pressed','true')}else{envQuien.splice(i,1);b.setAttribute('aria-pressed','false')}
+ envPintaQ()}
+function envPintaQ(){document.getElementById('env-q').textContent=
+ envQuien.length===EMP.length?'todo el equipo':envQuien.length?envQuien.length+(envQuien.length===1?' persona':' personas'):'nadie'}
+function envMarca(ids){envQuien=ids.slice();
+ document.querySelectorAll('.quien .qp').forEach(b=>b.setAttribute('aria-pressed',envQuien.includes(b.dataset.e)?'true':'false'));
+ envPintaQ()}
+function envTodos(){envMarca(envQuien.length===EMP.length?[]:EMP.map(e=>e.id))}
+function envLocal(l){const ids=EMP.filter(e=>trabajaEn(e,l)).map(e=>e.id);
+ const yaEstan=ids.every(i=>envQuien.includes(i))&&envQuien.length===ids.length;
+ envMarca(yaEstan?[]:ids)}
+function envTogR(b){envRepe=!envRepe;b.setAttribute('aria-pressed',envRepe?'true':'false')}
+
+function envEnviar(){
+ if(!envMods.length)return toast('No has elegido ningún protocolo');
+ if(!envQuien.length)return toast('No has elegido a nadie');
+ let tocados=0;
+ envQuien.forEach(id=>{
+  const e=EMP.find(x=>x.id===id); if(!e)return;
+  if(!asign[id])asign[id]=[];
+  envMods.forEach(m=>{
+   /* no se manda lo que esa persona no puede ver por rol o por 'solo' */
+   const mod=MOD.find(x=>x.id===m);
+   if(!mod||!mod.roles.includes(e.rol)||(mod.solo&&!mod.solo.includes(id)))return;
+   if(!asign[id].includes(m))asign[id].push(m);
+   if(envRepe&&hechos[id])delete hechos[id][m];
+   tocados++})});
+ if(!tocados)return toast('Nadie de los elegidos puede ver esos protocolos');
+ saveConfig('asign',asign);
+ cerrarSheet();
+ toast(`${envMods.length} ${envMods.length===1?'protocolo enviado':'protocolos enviados'} a ${envQuien.length} ${envQuien.length===1?'persona':'personas'}${envRepe?' · para repetir':''}`);
+ setTimeout(pintar,300)}
+
 function dirMods(){
  const pubs=MOD.filter(m=>m.pub).length;
  document.getElementById('app').innerHTML=`
@@ -2478,6 +2588,11 @@ function dirMods(){
   <div class="m3 ${pubs?'ok':'mal'}"><b>${pubs}</b><small>publicados</small></div>
   <div class="m3"><b>${MOD.length-pubs}</b><small>ocultos</small></div>
   <div class="m3"><b>${MOD.length}</b><small>en total</small></div></div>
+ <div class="bulk">
+  <button onclick="panelEnvio()">Enviar a varias personas</button>
+  <button class="peli" onclick="pubTodos(0)">Ocultar todos</button>
+  <button onclick="pubTodos(1)">Publicar todos</button>
+ </div>
  <div class="pie" style="margin-top:0;margin-bottom:16px"><strong>Los ocultos no existen para el equipo.</strong>
  Publica solo lo que quieres que hagan ahora. Ir soltando de poco en poco funciona mucho mejor que abrir los 22 de golpe.</div>
  ${(()=>{const prot=MOD.filter(m=>m.nuevo);
@@ -2495,7 +2610,8 @@ function dirMods(){
  ${Object.keys(CAT).map(k=>{const ms=MOD.filter(m=>m.cat===k);
   if(!ms.length)return '';
   const np=ms.filter(m=>m.pub).length;
-  return `<p class="eye">${CAT[k].n} <b>${np} de ${ms.length} visibles</b></p>
+  return `<p class="eye cat-h"><span>${CAT[k].n} <b>${np} de ${ms.length} visibles</b></span>
+   <button class="cb2" onclick="pubTodos(${np===ms.length?0:1},'${k}')">${np===ms.length?'Ocultar todos':'Publicar todos'}</button></p>
   ${ms.map(m=>{const notas=EMP.filter(e=>hechos[e.id]&&hechos[e.id][m.id]!==undefined).map(e=>hechos[e.id][m.id]);
    const md=notas.length?Math.round(notas.reduce((a,b)=>a+b,0)/notas.length):null;
    return `<button class="selm" aria-pressed="${!!m.pub}" onclick="togPub('${m.id}')">
