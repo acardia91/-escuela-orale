@@ -695,6 +695,41 @@ input,textarea,select{font-family:inherit}
  background:var(--hueso);transition:transform .18s}
 .rep-sw[aria-pressed="true"] i{background:var(--vino)}
 .rep-sw[aria-pressed="true"] i::after{transform:translateX(17px)}
+
+/* ===== Recomendaciones y controles de rol ===== */
+.reco-c{border:1px solid var(--borde);border-left:4px solid var(--vino);background:var(--papel);
+ padding:13px 14px;margin-bottom:9px}
+.reco-c .rh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:5px}
+.reco-c strong{font-size:14.5px;font-variation-settings:'wght' 650;line-height:1.3}
+.reco-c .rq{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+ color:var(--vino);white-space:nowrap;flex-shrink:0}
+.reco-c p{font-size:13px;color:var(--gris);line-height:1.45;margin:0 0 10px}
+.reco-c .quienes{font-size:12.5px;color:var(--tinta);line-height:1.5;margin:0 0 10px}
+.reco-c .quienes b{font-variation-settings:'wght' 650}
+.reco-b{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 14px;
+ border:1.5px solid var(--tinta);border-radius:100px;background:none;
+ font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+.reco-b:active{background:var(--tinta);color:var(--hueso)}
+.rol-sw{display:flex;align-items:center;gap:10px;border:1px solid var(--borde);border-radius:var(--r);
+ padding:11px 13px;background:var(--papel);margin:14px 0 0;width:100%}
+.rol-sw .t{flex:1;min-width:0}
+.rol-sw strong{display:block;font-size:13.5px;font-variation-settings:'wght' 650}
+.rol-sw small{display:block;font-size:11.5px;color:var(--gris);line-height:1.4;margin-top:2px}
+.rol-sw i{width:42px;height:25px;border-radius:13px;background:var(--borde2);flex-shrink:0;position:relative;transition:background .18s}
+.rol-sw i::after{content:'';position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;
+ background:var(--hueso);transition:transform .18s}
+.rol-sw[aria-pressed="true"] i{background:var(--azul)}
+.rol-sw[aria-pressed="true"] i::after{transform:translateX(17px)}
+/* dónde flojea cada local */
+.flo{border:1px solid var(--borde);background:var(--papel);padding:12px 13px;margin-bottom:9px}
+.flo .fh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
+.flo .fh strong{font-family:var(--display);font-size:16px;text-transform:uppercase;letter-spacing:.012em}
+.flo .fh span{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--gris2)}
+.flo-r{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px dashed var(--borde)}
+.flo-r:first-of-type{border-top:0}
+.flo-r .n{flex:1;min-width:0;font-size:13px;line-height:1.35}
+.flo-r .v{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:14px;flex-shrink:0}
+.flo-r .v.a{color:var(--ok)}.flo-r .v.m{color:var(--alerta)}.flo-r .v.b{color:var(--mal)}
 </style>
 </head>
 <body>
@@ -2112,6 +2147,10 @@ function vMiEquipo(){
   <h2>${alDia} de ${fil.length} al día</h2>
   <div class="qrow"><div class="qi"><strong>${QUIN.n}</strong>
   <span>${alDia===fil.length?'Todo el equipo la ha completado.':'Habla en privado con quien falta, como marca la guía.'}</span></div></div></div>
+ ${panelRecos(mios)}
+ <p class="eye">Dónde flojea tu local</p>
+ ${panelFlojea(misLocales)}
+ <p class="eye">Tu gente</p>
  ${(()=>{const ya=new Set();return misLocales.map(l=>{
   const es=fil.filter(f=>trabajaEn(f.e,l)&&!ya.has(f.e.id));
   es.forEach(f=>ya.add(f.e.id));
@@ -2156,6 +2195,7 @@ let bloques={},bloqSel=[],bloqQuien=null;
 /* Una persona puede cubrir varios locales. 'local' sigue siendo el suyo
    de referencia; 'locales' son todos en los que trabaja. */
 let locales={};
+let basicos=[];  /* lo que ve un empleado que no es encargado */
 let uso={};   /* {empleado:{v:visitas,s:segundos,u:ultima,d:{AAAA-MM-DD:segundos}}} */
 function localesDe(e){const l=locales[e.id];return (l&&l.length)?l:[e.loc]}
 function trabajaEn(e,loc){return localesDe(e).indexOf(loc)>=0}
@@ -2167,10 +2207,15 @@ let RESULTADOS=[];
 function modsDe(e){
  /* 'solo' limita un modulo a personas concretas: no lo ve nadie mas */
  const suyo=m=>m.pub&&m.roles.includes(e.rol)&&(!m.solo||m.solo.includes(e.id));
+ /* A quien no es encargado se le deja solo lo basico, mas lo que se le
+    haya enviado a mano y lo que sea suyo en exclusiva. Asi no se le
+    abren veinte protocolos de golpe. */
+ const llano=e.rol==='empleado'&&basicos.length;
+ const base=m=>!llano||basicos.includes(m.id)||(asign[e.id]||[]).includes(m.id)||(m.solo||[]).includes(e.id);
  const ids=new Set();
  localesDe(e).forEach(l=>(modsPorLocal[l]||[]).forEach(id=>ids.add(id)));
- if(!ids.size)return MOD.filter(suyo);
- return MOD.filter(m=>suyo(m)&&
+ if(!ids.size)return MOD.filter(m=>suyo(m)&&base(m));
+ return MOD.filter(m=>suyo(m)&&base(m)&&
   (ids.has(m.id)||QUIN.mods.includes(m.id)||(asign[e.id]||[]).includes(m.id)||(m.solo||[]).includes(e.id)))}
 let evaluaciones={},evalSel={},evalQuien=null;
 function notaEval(ev){const v=EVAL_CRIT.map(c=>ev.puntos[c.k]).filter(Boolean);
@@ -2460,6 +2505,92 @@ async function guardarMod(){if(window._guardando)return;window._guardando=true;
  if(error){console.error(error);toast('Resultado guardado en el dispositivo, pero no en el servidor')}
  else toast(pct>=80?`${t} completado · ${pct}%`:pct>=60?`Guardado con ${pct}%. Repasa lo fallado`:`${pct}%. Queda marcado para repetir`)}
 
+
+/* ===== Dónde flojea cada local =====
+   Media por protocolo de la gente que trabaja ahi. Un protocolo que
+   todos suspenden no es un problema de personas: esta mal explicado. */
+function flojeaLocal(l,limite){
+ const es=EMP.filter(e=>trabajaEn(e,l));
+ const filas=[];
+ MOD.filter(m=>m.pub).forEach(m=>{
+  const notas=es.filter(e=>(hechos[e.id]||{})[m.id]!==undefined).map(e=>hechos[e.id][m.id]);
+  const sin=es.filter(e=>modsDe(e).some(x=>x.id===m.id)&&(hechos[e.id]||{})[m.id]===undefined).length;
+  if(!notas.length&&!sin)return;
+  filas.push({m,md:notas.length?Math.round(notas.reduce((a,b)=>a+b,0)/notas.length):null,n:notas.length,sin});
+ });
+ /* primero lo suspendido, luego lo que nadie ha tocado */
+ filas.sort((a,b)=>{
+  const va=a.md===null?999:a.md, vb=b.md===null?999:b.md;
+  if(va!==vb)return va-vb; return b.sin-a.sin});
+ return filas.slice(0,limite||4)}
+
+function panelFlojea(locs){
+ return locs.map(l=>{const f=flojeaLocal(l);
+  if(!f.length)return `<div class="flo"><div class="fh"><strong>${l}</strong><span>sin datos</span></div>
+   <div class="flo-r"><span class="n">Nadie ha hecho todavía ningún protocolo aquí.</span></div></div>`;
+  return `<div class="flo"><div class="fh"><strong>${l}</strong><span>lo más flojo primero</span></div>
+  ${f.map(x=>`<div class="flo-r">
+   <span class="n">${x.m.t}${x.m.crit?' · crítico':''}</span>
+   <span class="v ${x.md===null?'b':x.md>=80?'a':x.md>=60?'m':'b'}">${x.md===null?`${x.sin} sin hacer`:x.md+'%'}</span></div>`).join('')}
+  </div>`}).join('')}
+
+/* ===== Recomendaciones: a quién le hace falta qué =====
+   No es magia: cruza quien tiene el protocolo pendiente o suspendido
+   con lo critico que es, y deja el envio a un toque. */
+function recomendaciones(gente){
+ const recs=[];
+ MOD.filter(m=>m.pub).forEach(m=>{
+  const suspenden=[],sinHacer=[];let alcance=0;
+  gente.forEach(e=>{
+   if(!modsDe(e).some(x=>x.id===m.id))return;
+   alcance++;
+   const v=(hechos[e.id]||{})[m.id];
+   if(v===undefined){if(!(asign[e.id]||[]).includes(m.id))sinHacer.push(e)}
+   else if(v<60)suspenden.push(e)});
+  /* Suspender siempre es señal: alguien lo intentó y no salió. */
+  if(suspenden.length)recs.push({m,quien:suspenden,tipo:'repetir',
+   peso:(m.crit?100:0)+suspenden.length*10});
+  /* "Sin hacer" solo vale como aviso cuando es un rezagado. Si no lo ha
+     hecho nadie, o ya es el foco de la quincena, no es un hueco: es que
+     acaba de salir, y repetirlo cinco veces tapa lo que sí importa. */
+  if(sinHacer.length>=2&&sinHacer.length<alcance&&!QUIN.mods.includes(m.id))
+   recs.push({m,quien:sinHacer,tipo:'enviar',peso:(m.crit?60:0)+sinHacer.length});
+ });
+ recs.sort((a,b)=>b.peso-a.peso);
+ return recs.slice(0,5)}
+
+function panelRecos(gente){
+ const recs=recomendaciones(gente);
+ recosActuales=recs;
+ if(!recs.length){
+  const hayNotas=gente.some(e=>Object.keys(hechos[e.id]||{}).length);
+  return `<p class="eye">Qué conviene enviar</p>
+  <div class="det"><small style="margin:0">${hayNotas
+   ? 'Nada urgente: no hay suspensos pendientes ni rezagados en un protocolo que el resto ya tiene hecho.'
+   : 'Todavía nadie ha hecho ningún protocolo, así que no hay nada que recomendar. Aparecerá en cuanto haya notas.'}</small></div>`}
+ return `<p class="eye">Qué conviene enviar <b>lo más urgente arriba</b></p>
+ ${recs.map((r,i)=>`<div class="reco-c">
+  <div class="rh"><strong>${r.m.t}</strong>
+   <span class="rq">${r.tipo==='repetir'?'suspendido':'sin hacer'}</span></div>
+  <p>${r.tipo==='repetir'
+    ? `${r.quien.length===1?'Sacó':'Sacaron'} menos de 60%. Conviene que ${r.quien.length===1?'lo repita':'lo repitan'}.`
+    : `${r.m.crit?'Es crítico y ':''}${r.quien.length} ${r.quien.length===1?'persona no lo ha hecho':'personas no lo han hecho'}.`}</p>
+  <div class="quienes">${r.quien.map(e=>`<b>${e.n}</b>`).join(' · ')}</div>
+  <button class="reco-b" onclick="aplicarReco(${i})">
+   ${r.tipo==='repetir'?'Mandar repetir':'Enviárselo'}</button>
+ </div>`).join('')}`}
+
+let recosActuales=[];
+function aplicarReco(i){
+ const r=recosActuales[i]; if(!r)return;
+ r.quien.forEach(e=>{
+  if(!asign[e.id])asign[e.id]=[];
+  if(!asign[e.id].includes(r.m.id))asign[e.id].push(r.m.id);
+  if(r.tipo==='repetir'&&hechos[e.id])delete hechos[e.id][r.m.id]});
+ saveConfig('asign',asign);
+ toast(`"${r.m.t}" enviado a ${r.quien.length} ${r.quien.length===1?'persona':'personas'}`);
+ setTimeout(pintar,300)}
+
 function dirEquipo(){
  const filas=EMP.map(e=>{const h=hechos[e.id]||{},ks=Object.keys(h);
   const mios=modsDe(e);
@@ -2476,6 +2607,9 @@ function dirEquipo(){
  <div class="kpi ${critTot?'mal':'ok'}"><b>${critTot}</b><small>críticos sin superar</small></div>
  <div class="kpi"><b>${MOD.filter(m=>m.pub).length}</b><small>módulos publicados</small></div></div>
  <div class="bulk"><button onclick="panelEnvio()">Enviar protocolos a varias personas</button></div>
+ ${panelRecos(EMP)}
+ <p class="eye">Dónde flojea cada local</p>
+ ${panelFlojea(LOCALES)}
  <p class="eye">Por persona <b>quien más lo necesita, primero</b></p>
  ${filas.map((f,i)=>`<button class="per" onclick="verPersona('${f.e.id}')">
  <span class="pos">${i+1}</span>
@@ -2528,8 +2662,26 @@ function verPersona(id){const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
  <button class="ed-add" style="margin-top:14px;background:var(--vino)" onclick="cerrarSheet();setTimeout(()=>marcarA('${id}'),300)">Marcar con nota</button>
  <button class="ed-add" style="margin-top:8px;background:var(--azul)" onclick="cerrarSheet();setTimeout(()=>evaluarA('${id}'),300)">Evaluar desempeño</button>
  <button class="ed-add" style="margin-top:8px" onclick="cerrarSheet();setTimeout(()=>bloquesA('${id}'),300)">Bloques a mejorar${(bloques[id]||[]).length?` · ${(bloques[id]||[]).length}`:''}</button>
+ ${esDir?`<button class="rol-sw" aria-pressed="${e.rol==='encargado'}" onclick="togRol('${id}',this)">
+  <span class="t"><strong>Encargado</strong><small>Ve a la gente de sus locales, dónde flojea cada uno, y puede enviarles protocolos y pedir que los repitan.</small></span><i></i></button>`:''}
  </div><div class="pub"><button class="pub-b" onclick="enviarA('${id}')">Enviar seleccionados</button>
  <small>Le aparecerán como nuevos la próxima vez que entre</small></div>`,'--tinta')}
+
+
+/* Direccion sube o baja a alguien de encargado. Cambia lo que ve esa
+   persona al entrar, asi que se avisa de que tiene que volver a entrar. */
+async function togRol(id,b){
+ const e=EMP.find(x=>x.id===id); if(!e)return;
+ const nuevo=e.rol==='encargado'?'empleado':'encargado';
+ b.setAttribute('aria-pressed',nuevo==='encargado');
+ const {error}=await db.from('escuela_empleados').update({rol:nuevo}).eq('id',id);
+ if(error){console.error(error);b.setAttribute('aria-pressed',e.rol==='encargado');
+  return toast('No se ha podido cambiar el rol en el servidor')}
+ e.rol=nuevo;
+ toast(nuevo==='encargado'?`${e.n} ya es encargado. Lo verá al volver a entrar`
+  :`${e.n} vuelve a ser empleado`);
+ const sh=document.getElementById('sheet');
+ if(sh&&sh.classList.contains('on')){const p=sh.querySelector('.sh-top p');if(p)p.textContent=`${nuevo} · ${localesDe(e).join(' · ')}`}}
 
 function enviarA(id){const sel=[...document.querySelectorAll('.chips .chip[aria-pressed="true"]')].map(c=>c.dataset.m);
  if(!sel.length)return toast('No has seleccionado ninguno');
@@ -2646,6 +2798,12 @@ function dirMods(){
    :`<div class="det"><small style="margin:0">No hay ningún producto marcado como nuevo. Cuando lances uno, márcalo abajo y le pones foto: al equipo le sale destacado en su inicio con el protocolo.</small></div>`}
   ${cand.length?`<details style="margin:4px 0 16px"><summary style="font-size:12.5px;font-weight:600;color:var(--gris);cursor:pointer;padding:6px 0">Marcar otro módulo como producto nuevo</summary>
    <div class="chips" style="margin-top:8px">${cand.map(m=>`<button class="chip" onclick="togNuevo('${m.id}')">+ ${nombreProd(m)}</button>`).join('')}</div></details>`:''}`})()}
+ ${esDir?`<p class="eye">Qué ve un empleado <b>${basicos.length?basicos.length+' de '+MOD.filter(m=>m.pub).length+' publicados':'todo lo publicado'}</b></p>
+ <div class="pie" style="margin-top:0;margin-bottom:10px">Marca aquí lo que ve quien <b>no</b> es encargado.
+ Los encargados y dirección ven todo lo publicado. Lo que envíes a mano a alguien le llega igual, esté o no en esta lista.</div>
+ <div class="chips">${MOD.filter(m=>m.pub).map(m=>
+  `<button class="chip" aria-pressed="${basicos.includes(m.id)}" onclick="togBasico('${m.id}',this)">${m.t}</button>`).join('')}</div>
+ <div class="bulk" style="margin:10px 0 18px"><button onclick="basicosTodos()">${basicos.length?'Que lo vean todo':'Volver a limitar'}</button></div>`:''}
  ${Object.keys(CAT).map(k=>{const ms=MOD.filter(m=>m.cat===k);
   if(!ms.length)return '';
   const np=ms.filter(m=>m.pub).length;
@@ -2679,6 +2837,22 @@ function quitarFoto(id){delete imgs[id];saveConfig('imgs',imgs).then(()=>{toast(
 function togNuevo(id){const m=MOD.find(x=>x.id===id);m.nuevo=m.nuevo?0:1;
  saveConfig('nuevos',MOD.filter(x=>x.nuevo).map(x=>x.id));
  toast(m.nuevo?`"${nombreProd(m)}" marcado como producto nuevo`:`"${nombreProd(m)}" ya no sale como nuevo`);pintar()}
+
+
+/* Qué ve quien no es encargado. Con la lista vacia ven todo lo publicado. */
+function togBasico(id,b){
+ const i=basicos.indexOf(id);
+ if(i<0){basicos.push(id);b.setAttribute('aria-pressed','true')}
+ else{basicos.splice(i,1);b.setAttribute('aria-pressed','false')}
+ saveConfig('basicos',basicos);
+ const m=MOD.find(x=>x.id===id);
+ toast(i<0?`"${m.t}" lo ven todos`:`"${m.t}" ya solo lo ven encargados`);
+ setTimeout(pintar,350)}
+function basicosTodos(){
+ if(basicos.length){basicos=[];toast('Los empleados vuelven a ver todo lo publicado')}
+ else{basicos=MOD.filter(m=>m.pub&&m.crit).map(m=>m.id);
+  toast(`Limitado a los ${basicos.length} protocolos críticos`)}
+ saveConfig('basicos',basicos);pintar()}
 
 function togPub(id){const m=MOD.find(x=>x.id===id);
  m.pub=m.pub?0:1;
@@ -3021,6 +3195,9 @@ async function init(){
 
   if(cfg.porlocal&&typeof cfg.porlocal==='object')modsPorLocal=cfg.porlocal;
   else faltantes.push(saveConfig('porlocal',{}));
+
+  if(Array.isArray(cfg.basicos))basicos=cfg.basicos;
+  else faltantes.push(saveConfig('basicos',[]));
 
   if(cfg.uso&&typeof cfg.uso==='object')uso=cfg.uso;
   else faltantes.push(saveConfig('uso',{}));
