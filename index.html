@@ -27,31 +27,26 @@ body.bloqueado{overflow:hidden;position:fixed;width:100%}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;text-align:left}
 input,textarea,select{font-family:inherit}
 
-/* ACCESO: negro con profundidad, retícula fina y un solo acento (oro).
-   El halo superior da cuerpo al fondo sin ensuciarlo. */
-#login{position:fixed;inset:0;background:var(--negro);z-index:300;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:max(34px,calc(env(safe-area-inset-top) + 20px)) max(18px,env(safe-area-inset-left)) max(30px,calc(env(safe-area-inset-bottom) + 16px)) max(18px,env(safe-area-inset-right))}
-#login::before{content:'';position:fixed;inset:0;pointer-events:none;
- background:radial-gradient(120% 68% at 50% -14%,rgba(201,138,18,.16),transparent 62%),
- radial-gradient(90% 50% at 50% 104%,rgba(124,36,48,.17),transparent 64%)}
-#login::after{content:'';position:fixed;inset:0;pointer-events:none;opacity:.5;
- background-image:linear-gradient(rgba(245,238,230,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(245,238,230,.028) 1px,transparent 1px);
- background-size:52px 52px;mask-image:radial-gradient(130% 80% at 50% 0,#000,transparent 72%)}
+/* ACCESO: mismo lenguaje que oralepadre.com — papel crema, tinta,
+   burdeos, y el filete sobre y bajo el titulo, que es su sello. */
+#login{position:fixed;inset:0;background:var(--hueso);z-index:300;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:max(26px,calc(env(safe-area-inset-top) + 16px)) max(18px,env(safe-area-inset-left)) max(30px,calc(env(safe-area-inset-bottom) + 16px)) max(18px,env(safe-area-inset-right))}
 #login>*{position:relative;z-index:1}
-/* ACCESO: parte de turno de cocina, no retícula de tarjetitas de app */
-.lc{max-width:460px;margin:0 auto 26px;text-align:center}
-.lc::before{content:'PLATAFORMA DE FORMACIÓN';display:block;font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.3em;color:rgba(201,138,18,.78);margin-bottom:14px}
-.lc .m{font-family:var(--display);font-size:clamp(42px,13vw,56px);line-height:.86;color:#fff;text-transform:uppercase;letter-spacing:.005em}
-.lc .m span{color:var(--amarillo)}
-.lc p{color:rgba(245,238,230,.4);font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:.04em;margin-top:13px}
+.lc{max-width:460px;margin:0 auto 24px;text-align:center}
+.lc .logo{display:block;width:86px;height:auto;margin:0 auto 16px}
+.lc::before{content:'PLATAFORMA DE EQUIPO · CUATRO LOCALES';display:block;font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.26em;color:var(--gris);margin-bottom:12px}
+/* Filete arriba y abajo del titulo: el recurso de la web de marca */
+.lc .m{font-family:var(--display);font-size:clamp(38px,11.5vw,50px);line-height:.92;color:var(--tinta);text-transform:uppercase;letter-spacing:.005em;border-top:2px solid var(--tinta);border-bottom:2px solid var(--tinta);padding:9px 0 11px}
+.lc .m span{color:var(--vino)}
+.lc p{color:var(--gris);font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:.04em;margin-top:13px}
 /* Control segmentado: pista oscura, pastilla sólida al seleccionar.
    Rejilla y no fila porque con cuatro locales no caben en el movil. */
-.locs{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;max-width:460px;margin:0 auto 14px;padding:4px;background:rgba(245,238,230,.045);border:1px solid rgba(245,238,230,.07);border-radius:12px}
-.locb{padding:11px 8px;font-size:11.5px;font-weight:600;letter-spacing:.03em;background:none;color:rgba(245,238,230,.52);text-align:center;border-radius:8px;transition:background .18s,color .18s}
-.locb[aria-pressed="true"]{background:var(--amarillo);color:var(--negro);font-weight:700}
+.locs{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;max-width:460px;margin:0 auto 14px;padding:4px;background:var(--papel);border:1px solid var(--borde);border-radius:12px}
+.locb{padding:11px 8px;font-size:11.5px;font-weight:600;letter-spacing:.03em;background:none;color:var(--gris);text-align:center;border-radius:8px;transition:background .18s,color .18s}
+.locb[aria-pressed="true"]{background:var(--vino);color:#fff;font-weight:700}
 @media(min-width:430px){.locs{grid-template-columns:repeat(4,1fr)}}
-.locb[aria-pressed="true"]{background:var(--amarillo);color:var(--tinta)}
+
 /* Lista agrupada: una sola superficie, filas altas y filetes de 1px */
-.emps{max-width:460px;margin:0 auto;background:rgba(245,238,230,.042);border:1px solid rgba(245,238,230,.08);border-radius:14px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 18px 40px -24px rgba(0,0,0,.9)}
+.emps{max-width:460px;margin:0 auto;background:var(--papel);border:1px solid var(--borde);border-radius:14px;overflow:hidden;box-shadow:0 14px 30px -24px rgba(36,26,28,.5)}
 /* Entrada escalonada: la pantalla se monta en vez de aparecer de golpe */
 @keyframes sube{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
 .lc,.locs,.emps,.dir,.pinw{animation:sube .42s cubic-bezier(.2,.8,.2,1) backwards}
@@ -61,32 +56,32 @@ input,textarea,select{font-family:inherit}
 .emp:nth-child(3){animation-delay:.2s}.emp:nth-child(4){animation-delay:.24s}
 .emp:nth-child(5){animation-delay:.28s}.emp:nth-child(6){animation-delay:.32s}
 .emp:nth-child(n+7){animation-delay:.36s}
-.lpie{max-width:460px;margin:22px auto 0;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,238,230,.22)}
+.lpie{max-width:460px;margin:22px auto 0;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gris2)}
 .emp{display:flex;align-items:center;gap:13px;width:100%;min-height:62px;padding:11px 14px;background:none;border:none;position:relative;transition:background .16s}
-.emp+.emp::before{content:'';position:absolute;left:67px;right:0;top:0;height:1px;background:rgba(245,238,230,.075)}
-.emp:active{background:rgba(245,238,230,.06)}
+.emp+.emp::before{content:'';position:absolute;left:67px;right:0;top:0;height:1px;background:var(--borde)}
+.emp:active{background:var(--hueso)}
 .emp .i{width:40px;height:40px;border-radius:12px;background:linear-gradient(155deg,color-mix(in srgb,var(--col) 86%,#fff),var(--col) 46%,color-mix(in srgb,var(--col) 62%,#000));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:16px;letter-spacing:.03em;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.26),inset 0 -1px 0 rgba(0,0,0,.22),0 3px 10px -3px color-mix(in srgb,var(--col) 60%,transparent)}
 .emp .eb{flex:1;min-width:0}
-.emp strong{display:block;font-size:16.5px;font-weight:600;color:#fff;line-height:1.2;letter-spacing:-.01em}
-.emp small{display:block;color:rgba(245,238,230,.38);font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;margin-top:2px;text-transform:lowercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emp strong{display:block;font-size:16.5px;font-weight:600;color:var(--tinta);line-height:1.2;letter-spacing:-.01em}
+.emp small{display:block;color:var(--gris2);font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;margin-top:2px;text-transform:lowercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .emp .pend{flex-shrink:0;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;color:var(--amarillo);letter-spacing:.02em;white-space:nowrap}
 .emp .pend b{font-family:var(--mono);font-weight:600;font-size:14px}
-.emp .pend::after{content:'';width:7px;height:7px;border-right:1.6px solid rgba(245,238,230,.3);border-bottom:1.6px solid rgba(245,238,230,.3);transform:rotate(-45deg);flex-shrink:0}
-.emp .pend.cero{color:rgba(245,238,230,.3)}
-.dir{margin:12px auto 0;max-width:460px;background:rgba(245,238,230,.042);border:1px solid rgba(245,238,230,.08);border-radius:14px;padding:16px;text-align:center;color:rgba(245,238,230,.6);font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;display:block;width:100%;transition:background .16s}
-.dir:active{background:rgba(245,238,230,.075)}
+.emp .pend::after{content:'';width:7px;height:7px;border-right:1.6px solid var(--borde2);border-bottom:1.6px solid var(--borde2);transform:rotate(-45deg);flex-shrink:0}
+.emp .pend.cero{color:var(--gris2)}
+.dir{margin:12px auto 0;max-width:460px;background:var(--papel);border:1px solid var(--borde);border-radius:14px;padding:16px;text-align:center;color:var(--gris);font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;display:block;width:100%;transition:background .16s}
+.dir:active{background:var(--hueso)}
 .pinw{max-width:300px;margin:0 auto;text-align:center}
-.pinw h2{font-family:var(--display);font-size:30px;letter-spacing:.01em;text-transform:uppercase;color:#fff;margin-bottom:7px}
-.pinw .s{color:rgba(245,238,230,.4);font-family:var(--mono);font-size:11px;letter-spacing:.04em;margin-bottom:30px}
+.pinw h2{font-family:var(--display);font-size:30px;letter-spacing:.01em;text-transform:uppercase;color:var(--tinta);margin-bottom:7px}
+.pinw .s{color:var(--gris);font-family:var(--mono);font-size:11px;letter-spacing:.04em;margin-bottom:30px}
 .dots{display:flex;gap:14px;justify-content:center;margin-bottom:34px}
-.dot{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(245,238,230,.22);transition:transform .18s,background .18s,border-color .18s}
-.dot.on{background:var(--amarillo);border-color:var(--amarillo);transform:scale(1.18);box-shadow:0 0 14px rgba(201,138,18,.5)}
+.dot{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--borde2);transition:transform .18s,background .18s,border-color .18s}
+.dot.on{background:var(--vino);border-color:var(--vino);transform:scale(1.18);box-shadow:0 0 12px rgba(124,36,48,.3)}
 .dot.err{background:var(--mal);border-color:var(--mal)}
 .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
-.pad button{aspect-ratio:1.45;background:rgba(245,238,230,.055);border:1px solid rgba(245,238,230,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.07);border-radius:14px;color:#fff;font-family:var(--mono);font-weight:500;font-size:23px;text-align:center;display:flex;align-items:center;justify-content:center;transition:transform .11s cubic-bezier(.2,.8,.2,1),background .11s}
-.pad button:active{transform:scale(.93);background:rgba(201,138,18,.26);border-color:rgba(201,138,18,.42)}
-.pad .t{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,238,230,.5);background:none;border-color:transparent}
-.pad .t:active{background:rgba(245,238,230,.08);border-color:rgba(245,238,230,.1)}
+.pad button{aspect-ratio:1.45;background:var(--papel);border:1px solid var(--borde);box-shadow:0 1px 0 var(--borde);border-radius:14px;color:var(--tinta);font-family:var(--mono);font-weight:500;font-size:23px;text-align:center;display:flex;align-items:center;justify-content:center;transition:transform .11s cubic-bezier(.2,.8,.2,1),background .11s}
+.pad button:active{transform:scale(.93);background:var(--vino);border-color:var(--vino);color:#fff}
+.pad .t{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);background:none;border-color:transparent}
+.pad .t:active{background:var(--papel);border-color:var(--borde);color:var(--gris)}
 @keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 .shake{animation:sh .3s}
 
@@ -610,7 +605,7 @@ input,textarea,select{font-family:inherit}
   <button onclick="location.reload()">Reintentar</button>
  </div>
 </div>
-<div id="login" style="display:none"><div class="lc"><div class="m">Equipo <span>Órale</span></div><p id="lsub">Elige tu local y tu nombre</p></div><div id="lbody"></div></div>
+<div id="login" style="display:none"><div class="lc"><img class="logo" src="img/logo-tinta.png" alt="Órale Padre" width="280" height="337"><div class="m">Equipo <span>Órale</span></div><p id="lsub">Elige tu local y tu nombre</p></div><div id="lbody"></div></div>
 <header class="top" id="top" style="display:none">
 <div class="tr"><div class="who"><div class="i" id="wi"></div><div><strong id="wn"></strong><small id="wr"></small></div></div>
 <button class="salir" onclick="salir()">Salir</button></div><div class="tabs" id="tabs"></div></header>
