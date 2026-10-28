@@ -1487,7 +1487,7 @@ function mesTxt(f){const [a,m]=f.split('-');
  return ['','ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][+m]+' '+a.slice(2)}
 
 /* Módulos marcados por encargado o dirección */
-let marcados={pablo:[{mod:'n1',quien:'Jesús',nota:'Ayer se pasaron las porciones de guacamole en varios pedidos. Repásalo antes del viernes.'}],andy:[{area:'producto',quien:'Nando',nota:'Los dos productos nuevos hay que tenerlos claros antes del finde. Dale un repaso al área entera.'}]};
+let marcados={}; /* lo rellena escuela_config; antes traia datos de demo */
 
 /* Días de plazo según frecuencia */
 const FREQ_D={'Cada 3 semanas':21,'Mensual':30,'Una vez':0};
