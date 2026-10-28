@@ -278,6 +278,19 @@ input,textarea,select{font-family:inherit}
 .aviso-l p{font-size:12.5px;color:var(--gris);line-height:1.5}
 .aviso-l .de{font-size:11.5px;color:var(--gris2);margin-top:6px}
 
+/* BLOQUES A MEJORAR */
+.bl-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bl-o{display:flex;align-items:center;gap:9px;padding:13px 12px;border-radius:var(--r);font-size:13px;font-weight:600;background:var(--papel);border:1.5px solid var(--borde);color:var(--gris);text-align:left;line-height:1.2}
+.bl-o .bl-p{width:11px;height:11px;border-radius:50%;background:var(--borde2);flex-shrink:0}
+.bl-o[aria-pressed="true"]{background:var(--papel);border-color:var(--col);color:var(--tinta)}
+.bl-o[aria-pressed="true"] .bl-p{background:var(--col)}
+/* Lo que ve el empleado */
+.bl-c{background:var(--papel);border:1px solid var(--borde);border-left:4px solid var(--col);border-radius:var(--r);padding:13px 14px;margin-bottom:8px}
+.bl-c .bh{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.bl-c .bh i{width:9px;height:9px;border-radius:50%;background:var(--col);flex-shrink:0}
+.bl-c .bh strong{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--col)}
+.bl-c p{font-size:13px;color:var(--gris);line-height:1.5}
+
 /* EVALUACIÓN DE DESEMPEÑO */
 .ev-c{border-bottom:1.5px dashed var(--borde);padding:12px 0}
 .ev-c:last-of-type{border-bottom:none}
@@ -491,7 +504,12 @@ input,textarea,select{font-family:inherit}
 .kpi-t .v{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:15px;color:var(--mal)}
 .kpi-t small{font-size:11.5px;color:var(--gris2)}
 
-.sheet{position:fixed;inset:0;height:100dvh;background:var(--hueso);z-index:180;transform:translateY(100%);transition:transform .27s cubic-bezier(.4,0,.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+/* sin padding-bottom: un sticky se pega al borde del area de relleno,
+   y esos 80px dejaban el boton de accion flotando a media pantalla */
+/* Caja flexible: con 'margin-top:auto' en la barra de accion, queda
+   abajo cuando el contenido es corto y fluye cuando es largo. Antes,
+   con relleno inferior y solo sticky, flotaba a media pantalla. */
+.sheet{position:fixed;inset:0;height:100dvh;background:var(--hueso);z-index:180;transform:translateY(100%);transition:transform .27s cubic-bezier(.4,0,.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column}
 .sheet.on{transform:translateY(0)}
 .sh-top{position:sticky;top:0;z-index:5;background:var(--col);color:#fff;padding:calc(14px + env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 17px max(16px,env(safe-area-inset-left))}
 .sh-x{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#fff;opacity:.82;margin-bottom:11px}
@@ -507,7 +525,7 @@ input,textarea,select{font-family:inherit}
 .chip{padding:9px 14px;border-radius:100px;font-size:13px;font-weight:600;background:var(--hueso);border:1.5px solid var(--borde2);color:var(--gris)}
 .chip[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--hueso)}
 .ed-add{width:100%;background:var(--tinta);color:var(--hueso);padding:14px;border-radius:var(--r);font-family:'Archivo';font-variation-settings:'wght' 700;font-size:14px;text-align:center;margin-top:4px}
-.pub{position:sticky;bottom:0;background:var(--hueso);padding:14px max(16px,env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));border-top:1.5px solid var(--borde);margin-top:18px}
+.pub{position:sticky;bottom:0;background:var(--hueso);padding:14px max(16px,env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));border-top:1.5px solid var(--borde);margin-top:auto;flex-shrink:0}
 .pub-b{width:100%;background:var(--verde);color:#fff;padding:16px;border-radius:var(--r);font-family:'Archivo';font-variation-settings:'wght' 700;font-size:15px;text-align:center}
 .pub small{display:block;text-align:center;font-size:11.5px;color:var(--gris2);margin-top:8px}
 .pie{margin-top:22px;padding:14px;background:rgba(123,29,58,.045);border-radius:var(--r2);font-size:12.5px;color:var(--gris);line-height:1.55}
@@ -1682,6 +1700,11 @@ function vParaTi(){const mios=MOD.filter(m=>m.pub&&m.roles.includes(user.rol));
   ${mk.map(x=>{const m=MOD.find(z=>z.id===x.mod);if(!m)return '';
    return `<div class="marc"><div class="mk">Revisar con atención · ${x.quien}</div>
    <strong>${m.t}</strong><p>"${x.nota}"</p></div>`+tarjeta(m)}).join('')}`:''}
+ ${(()=>{const bs=(bloques[user.id]||[]).map(k=>BLOQUES.find(b=>b.k===k)).filter(Boolean);
+  if(!bs.length)return '';
+  return `<p class="eye">A mejorar <b>${bs.length}</b></p>
+  ${bs.map(b=>`<div class="bl-c" style="--col:var(${b.c})"><div class="bh"><i></i><strong>${b.n}</strong></div>
+   <p>${b.tip}</p></div>`).join('')}`})()}
  ${(()=>{const evs=evaluaciones[user.id]||[];if(!evs.length)return '';
   const ev=evs[evs.length-1],n=notaEval(ev);
   return `<p class="eye">Tu evaluación <b>${ev.quien}</b></p>
@@ -1739,11 +1762,54 @@ const EVAL_CRIT=[
  {k:'equipo',n:'Equipo y actitud',d:'Avisa, ayuda, buen trato'}
 ];
 const EVAL_N={3:'Bien',2:'Mejorable',1:'Flojo'};
+
+/* BLOQUES A MEJORAR: etiquetas que dirección le pone a una persona.
+   Cada uno lleva su consejo, para que la etiqueta diga qué hacer y no
+   solo qué está mal. Los consejos salen del documento de operaciones. */
+const BLOQUES=[
+ {k:'limpieza',n:'Limpieza y orden',c:'--verde',tip:'Deja la zona como te gustaría encontrarla. Producto sin etiqueta es producto de fecha desconocida: no se usa.'},
+ {k:'puntualidad',n:'Puntualidad',c:'--azul',tip:'Llega con margen y entra al turno con el relevo hecho. Empezar tarde arrastra todo el servicio.'},
+ {k:'fichar',n:'Fichar',c:'--teal',tip:'Ficha al entrar y al salir, siempre. Sin fichaje no queda registro de tus horas.'},
+ {k:'stock',n:'Stock y reposición',c:'--marron',tip:'Avisa cuando quede poco, no cuando se acabe. "Queda poco" se resuelve; "se acabó" ya no.'},
+ {k:'equipo',n:'Equipo y actitud',c:'--morado',tip:'Avisa de lo que ves y pide ayuda a tiempo. Un problema dicho pronto deja de ser un problema.'},
+ {k:'delivery',n:'Delivery',c:'--naranja',tip:'Revisa cada bolsa contra el ticket antes de dársela al repartidor, y lee los modificadores.'},
+ {k:'cliente',n:'Atención al cliente',c:'--vino',tip:'Buena energía, producto cuidado y autenticidad. Las tres, en cada pedido.'},
+ {k:'temperatura',n:'Temperatura',c:'--roja',tip:'Nada sale frío. Si el pedido lleva esperando al repartidor, se recalienta antes de entregarlo.'},
+ {k:'estandar',n:'Estándares',c:'--amarillo',tip:'Cuchara asignada y receta delante. A ojo nadie acierta dos veces igual.'}
+];
+let bloques={},bloqSel=[],bloqQuien=null;
 let evaluaciones={},evalSel={},evalQuien=null;
 function notaEval(ev){const v=EVAL_CRIT.map(c=>ev.puntos[c.k]).filter(Boolean);
  return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length*10)/10:null}
 
 let marcSel=[],marcArea=null,marcQuien=null;
+function bloquesA(id){bloqQuien=id;bloqSel=(bloques[id]||[]).slice();
+ const e=EMP.find(x=>x.id===id);
+ abrirSheet(`<div class="sh-top" style="background:var(--tinta)">
+ <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Volver</button>
+ <h2>Bloques de ${e.n}</h2><p>Le aparecerán en su inicio con un consejo</p></div>
+ <div style="padding:16px 16px 0">
+ <p class="eye">Marca lo que tiene que mejorar</p>
+ <div class="bl-g">${BLOQUES.map(b=>`<button class="bl-o" data-b="${b.k}" style="--col:var(${b.c})" aria-pressed="${bloqSel.includes(b.k)}" onclick="togBloque('${b.k}')">
+  <span class="bl-p"></span>${b.n}</button>`).join('')}</div>
+ <div class="pie" style="margin-top:16px"><strong>Son solo señales, no una bronca.</strong>
+  Cada bloque lleva su consejo, para que la etiqueta diga qué hacer y no solo qué está mal.</div>
+ </div>
+ <div class="pub"><button class="pub-b" onclick="guardarBloques()">Guardar bloques</button>
+ <small>${e.n} los verá la próxima vez que entre</small></div>`,'--tinta')}
+
+function togBloque(k){const i=bloqSel.indexOf(k);
+ if(i>=0)bloqSel.splice(i,1);else bloqSel.push(k);
+ const b=document.querySelector(`#sheet .bl-o[data-b="${k}"]`);
+ if(b)b.setAttribute('aria-pressed',String(bloqSel.includes(k)))}
+
+function guardarBloques(){
+ if(bloqSel.length)bloques[bloqQuien]=bloqSel.slice();else delete bloques[bloqQuien];
+ saveConfig('bloques',bloques);
+ const e=EMP.find(x=>x.id===bloqQuien);
+ cerrarSheet();toast(bloqSel.length?`${bloqSel.length} bloque${bloqSel.length>1?'s':''} para ${e.n}`:`Sin bloques para ${e.n}`);
+ setTimeout(pintar,300)}
+
 function evaluarA(id){evalQuien=id;evalSel={};
  const e=EMP.find(x=>x.id===id),prev=(evaluaciones[id]||[]);
  abrirSheet(`<div class="sh-top" style="background:var(--azul)">
@@ -2064,6 +2130,7 @@ function verPersona(id){const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
   `<button class="chip" data-m="${m.id}" aria-pressed="false" onclick="this.setAttribute('aria-pressed',this.getAttribute('aria-pressed')==='true'?'false':'true')">${m.t}</button>`).join('')}</div>
  <button class="ed-add" style="margin-top:14px;background:var(--vino)" onclick="cerrarSheet();setTimeout(()=>marcarA('${id}'),300)">Marcar con nota</button>
  <button class="ed-add" style="margin-top:8px;background:var(--azul)" onclick="cerrarSheet();setTimeout(()=>evaluarA('${id}'),300)">Evaluar desempeño</button>
+ <button class="ed-add" style="margin-top:8px" onclick="cerrarSheet();setTimeout(()=>bloquesA('${id}'),300)">Bloques a mejorar${(bloques[id]||[]).length?` · ${(bloques[id]||[]).length}`:''}</button>
  </div><div class="pub"><button class="pub-b" onclick="enviarA('${id}')">Enviar seleccionados</button>
  <small>Le aparecerán como nuevos la próxima vez que entre</small></div>`,'--tinta')}
 
@@ -2357,6 +2424,9 @@ async function init(){
 
   if(cfg.evaluaciones&&typeof cfg.evaluaciones==='object')evaluaciones=cfg.evaluaciones;
   else faltantes.push(saveConfig('evaluaciones',{}));
+
+  if(cfg.bloques&&typeof cfg.bloques==='object')bloques=cfg.bloques;
+  else faltantes.push(saveConfig('bloques',{}));
 
   if(cfg.marcados)marcados=cfg.marcados;
   else faltantes.push(saveConfig('marcados',marcados));
