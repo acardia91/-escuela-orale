@@ -11,12 +11,12 @@
 /* Paleta tomada de la web de marca (web-orale-padre/styles.css), no aproximada:
    crema, tinta, burdeos, oro, nopal, chile y azul son los valores exactos. */
 :root{--tinta:#241A1C;--hueso:#F5EEE6;--papel:#FBF7F2;--borde:#DDD0C2;--borde2:#C9B7A6;
---gris:#6E5C60;--gris2:#9A8A8C;--vino:#7C2430;--roja:#C8321F;--naranja:#C97A1E;--verde:#4F7A3A;
---azul:#2E5E7E;--amarillo:#C98A12;--marron:#7A5230;--morado:#6B4A8C;--teal:#1F6F6B;
+--gris:#6E5C60;--gris2:#9A8A8C;--vino:#7C2430;--roja:#8E2F26;--naranja:#8A5A2B;--verde:#4A5F3C;
+--azul:#3B5260;--amarillo:#7E6526;--marron:#6B4A33;--morado:#55406B;--teal:#365A54;
 --display:'Anton','Arial Narrow',Impact,sans-serif;
 --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
 --negro:#0E0A0B;--negro-2:#171113;
---ok:#46703C;--alerta:#B4531A;--mal:#C8321F;
+--ok:#4A6340;--alerta:#8A6A2E;--mal:#7C2430;
 /* Sistema: tinta sobre papel. Radios cortos, sin sombras flotantes,
    el color es un canto macizo y no un lavado pálido de fondo. */
 --r:8px;--r2:4px;--s:none}
@@ -97,7 +97,7 @@ input,textarea,select{font-family:inherit}
 .tab{flex:1 1 0;min-width:fit-content;white-space:nowrap;padding:9px 10px;border-radius:var(--r2);font-size:12.5px;font-weight:600;background:rgba(255,255,255,.07);color:rgba(245,242,236,.55);text-align:center}
 .tab[aria-pressed="true"]{background:var(--hueso);color:var(--tinta)}
 
-.wrap{padding:16px max(16px,env(safe-area-inset-right)) calc(100px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));max-width:1000px;margin:0 auto}
+.wrap{--pad:max(16px,env(safe-area-inset-left));padding:16px max(16px,env(safe-area-inset-right)) calc(100px + env(safe-area-inset-bottom)) var(--pad);max-width:1000px;margin:0 auto}
 /* Cabecera de seccion con regla discontinua: guiño al ticket de cocina */
 /* Cabecera de seccion sobre regla discontinua: guiño al ticket de cocina.
    Como borde inferior, no como elemento en linea, para que aguante titulos largos. */
@@ -185,7 +185,7 @@ input,textarea,select{font-family:inherit}
 .hoy-t{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
 .hoy-t strong{font-family:var(--display);font-size:20px;text-transform:uppercase;letter-spacing:.01em}
 .hoy-t span{font-family:var(--mono);font-size:10.5px;color:var(--gris2)}
-.hoy{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;overscroll-behavior-x:contain;padding:2px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px}
+.hoy{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;overscroll-behavior-x:contain;padding:2px 0 4px;margin-inline:calc(-1*var(--pad,16px));padding-inline:var(--pad,16px)}
 .hoy::-webkit-scrollbar{display:none}
 .st{flex:0 0 auto;width:80px;background:none;border:none;padding:0;text-align:center;position:relative;scroll-snap-align:start}
 .st .ring{display:block;width:76px;height:76px;border-radius:50%;padding:3px;box-sizing:border-box;background:linear-gradient(145deg,var(--amarillo),var(--vino) 62%,var(--roja));transition:transform .14s cubic-bezier(.2,.8,.2,1)}
@@ -222,7 +222,10 @@ input,textarea,select{font-family:inherit}
 .quin .qi span{font-size:12.5px;opacity:.75;line-height:1.4;display:block}
 
 /* MINI STATS */
-.mini3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:11px}
+.mini3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:11px}
+/* los locales son cuatro: 2x2 en movil, en fila cuando hay sitio */
+.minil{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:11px}
+@media(min-width:460px){.minil{grid-template-columns:repeat(4,1fr)}}
 .m3{background:var(--papel);border:1px solid var(--borde);border-radius:var(--r);padding:12px 9px;text-align:center}
 .m3 b{display:block;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:20px;line-height:1;margin-bottom:3px}
 .m3 small{font-size:10px;color:var(--gris2);font-weight:500;line-height:1.25;display:block}
@@ -583,7 +586,7 @@ input,textarea,select{font-family:inherit}
  .kpi{padding:10px}
  .kpi small,.pcard .pn{font-size:9.5px}
  .m3 b{font-size:19px}
- .wrap{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+ .wrap{--pad:max(12px,env(safe-area-inset-left));padding-left:var(--pad);padding-right:max(12px,env(safe-area-inset-right))}
  .proto .pb,.mod,.grp,.lrow{padding-left:12px;padding-right:12px}
  .tab{flex:0 0 auto}
  .fin .big{font-size:52px}
@@ -593,6 +596,60 @@ input,textarea,select{font-family:inherit}
 .mod-b strong,.proto strong.pt,.grp .gb strong,.per-b strong,.det strong,.foto-r .fb2 strong{overflow-wrap:anywhere}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 :focus-visible{outline:2.5px solid var(--amarillo);outline-offset:2px}
+
+/* ===== Como funciona esto: desplegable de bienvenida ===== */
+.guia{border:1px solid var(--borde);border-radius:var(--r);background:var(--papel);margin:0 0 20px;overflow:hidden}
+.guia{list-style:none}.guia summary::-webkit-details-marker{display:none}
+.guia-h{display:flex;align-items:center;gap:11px;width:100%;padding:13px 14px;background:none}
+.guia-h .gi{width:30px;height:30px;border-radius:50%;background:var(--tinta);color:var(--hueso);
+ display:grid;place-items:center;flex-shrink:0;font-family:var(--display);font-size:15px;padding-top:1px}
+.guia-h .gt{flex:1;min-width:0}
+.guia-h .gt strong{display:block;font-family:var(--display);font-size:15px;text-transform:uppercase;letter-spacing:.01em;line-height:1.1}
+.guia-h .gt small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gris2);margin-top:3px}
+.guia-h .gx{flex-shrink:0;color:var(--gris);transition:transform .22s ease}
+.guia[open] .guia-h .gx{transform:rotate(180deg)}
+.guia-b{padding:0 14px 14px;display:none}
+.guia[open] .guia-b{display:block}
+.gp{border-top:1px dashed var(--borde);padding:11px 0 0;margin-top:2px}
+.gp:first-child{border-top:0;padding-top:0}
+.gpr{display:flex;align-items:flex-start;gap:10px;width:100%;background:none;padding:8px 0;text-align:left}
+.gpr .n{width:21px;height:21px;border-radius:50%;border:1.5px solid var(--tinta);flex-shrink:0;
+ display:grid;place-items:center;font-family:var(--mono);font-size:10px;font-weight:600;margin-top:1px}
+.gpr.on .n{background:var(--tinta);color:var(--hueso)}
+.gpr b{display:block;font-size:14px;font-variation-settings:'wght' 650;line-height:1.3}
+.gpr .d{display:none;font-size:13px;color:var(--gris);line-height:1.5;margin-top:5px}
+.gpr.on .d{display:block}
+.gnota{display:flex;gap:7px;margin-top:12px}
+.gnota div{flex:1;border-radius:var(--r2);padding:8px 6px;text-align:center;border:1px solid var(--borde)}
+.gnota b{display:block;font-family:var(--display);font-size:16px;line-height:1}
+.gnota small{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gris2);margin-top:3px}
+.gnota .g-a{border-color:var(--ok)}.gnota .g-a b{color:var(--ok)}
+.gnota .g-m{border-color:var(--alerta)}.gnota .g-m b{color:var(--alerta)}
+.gnota .g-b{border-color:var(--mal)}.gnota .g-b b{color:var(--mal)}
+
+/* ===== Progreso de la plantilla y uso de la plataforma ===== */
+.pg3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:11px}
+.pg3 div{border:1px solid var(--borde);border-radius:var(--r);background:var(--papel);padding:11px 8px;text-align:center}
+.pg3 b{display:block;font-family:var(--display);font-size:22px;line-height:1}
+.pg3 i{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--ok)}
+.pg3 small{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--gris2);margin-top:4px;line-height:1.3}
+.sem{display:flex;align-items:flex-end;gap:6px;height:74px;margin:4px 0 6px}
+.sem div{flex:1;background:var(--borde);border-radius:2px 2px 0 0;position:relative;min-height:3px}
+.sem div.ult{background:var(--tinta)}
+.sem span{position:absolute;top:-15px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:9px;color:var(--gris)}
+.sem-x{display:flex;gap:6px}
+.sem-x span{flex:1;text-align:center;font-family:var(--mono);font-size:8.5px;color:var(--gris2);text-transform:uppercase;letter-spacing:.06em}
+.usr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--borde)}
+.usr:last-child{border-bottom:0}
+.usr .ui{width:30px;height:30px;border-radius:50%;background:var(--tinta);color:var(--hueso);display:grid;place-items:center;
+ font-family:var(--display);font-size:12px;flex-shrink:0;padding-top:1px}
+.usr .ub{flex:1;min-width:0}
+.usr .ub strong{display:block;font-size:13.5px;font-variation-settings:'wght' 650}
+.usr .ub small{display:block;font-family:var(--mono);font-size:9.5px;color:var(--gris2);margin-top:2px}
+.usr .uv{text-align:right;flex-shrink:0}
+.usr .uv b{display:block;font-family:'Archivo';font-variation-settings:'wght' 800;font-size:14px}
+.usr .uv small{display:block;font-family:var(--mono);font-size:9px;color:var(--gris2)}
+.usr.frio .ui{background:var(--borde2);color:var(--gris)}
 </style>
 </head>
 <body>
@@ -624,6 +681,62 @@ const DIRPIN='1991';
 const SUPA_URL='https://pnpmigcbqgcggtkfkqeh.supabase.co';
 const SUPA_KEY='sb_publishable_O52yBoiZ7mtqR4Y1E6JsjQ_L8pK_mUZ';
 const db=supabase.createClient(SUPA_URL,SUPA_KEY);
+
+/* ===== Tiempo de uso =====
+   Solo se cuenta mientras la pestana esta visible, para que dejar el movil
+   abierto en la mesa no infle el dato. Se vuelca cada minuto y al salir. */
+let usoIni=null, usoPend=0, usoTimer=null;
+const hoyISO=()=>new Date().toISOString().slice(0,10);
+
+function usoArranca(id){
+ if(!id)return;
+ usoIni=Date.now(); usoPend=0;
+ if(!uso[id])uso[id]={v:0,s:0,u:null,d:{}};
+ uso[id].v++; uso[id].u=new Date().toISOString();
+ usoVuelca(id,true);
+ clearInterval(usoTimer);
+ usoTimer=setInterval(()=>usoVuelca(id),60000)}
+
+function usoCorta(){
+ if(usoIni===null)return 0;
+ const seg=Math.round((Date.now()-usoIni)/1000);
+ usoIni=null;
+ /* un tramo de mas de 30 min casi seguro es una pestana olvidada */
+ return seg>0&&seg<1800?seg:Math.min(seg,1800)}
+
+async function usoVuelca(id,forzar){
+ if(!id)return;
+ if(usoIni!==null){usoPend+=usoCorta();usoIni=Date.now()}
+ if(!usoPend&&!forzar)return;
+ const seg=usoPend; usoPend=0;
+ /* releemos antes de escribir: el blob es compartido y hay gente a la vez */
+ try{
+  const {data}=await db.from('escuela_config').select('valor').eq('clave','uso').maybeSingle();
+  const srv=(data&&data.valor&&typeof data.valor==='object')?data.valor:{};
+  const mio=srv[id]||{v:0,s:0,u:null,d:{}};
+  mio.v=Math.max(mio.v||0,(uso[id]||{}).v||0);
+  mio.s=(mio.s||0)+seg;
+  mio.u=new Date().toISOString();
+  mio.d=mio.d||{}; const k=hoyISO(); mio.d[k]=(mio.d[k]||0)+seg;
+  srv[id]=mio; uso=srv;
+  await saveConfig('uso',srv);
+ }catch(err){console.error(err);usoPend+=seg}}
+
+function usoPara(id){clearInterval(usoTimer);usoTimer=null;
+ if(usoIni!==null)usoPend+=usoCorta();
+ if(usoPend)usoVuelca(id,true)}
+
+document.addEventListener('visibilitychange',()=>{
+ const id=user&&user.id; if(!id)return;
+ if(document.hidden){if(usoIni!==null)usoPend+=usoCorta();usoVuelca(id,true)}
+ else usoIni=Date.now()});
+window.addEventListener('pagehide',()=>{const id=user&&user.id;if(id)usoPara(id)});
+
+const fmtDur=sg=>{const m=Math.round((sg||0)/60);
+ if(m<1)return 'menos de 1 min';
+ if(m<60)return m+' min';
+ const h=Math.floor(m/60),r=m%60;return r?`${h} h ${r} min`:`${h} h`};
+
 function saveConfig(clave,valor){
  return db.from('escuela_config').upsert({clave,valor,actualizado_en:new Date().toISOString()}).then(({error})=>{
   if(error){console.error(error);toast('Cambio guardado en el dispositivo, pero no en el servidor')}})}
@@ -641,6 +754,122 @@ const CAT={
 };
 
 const MOD=[
+/* ===== LO QUE NO PUEDE VOLVER A PASAR — va el primero a proposito ===== */
+{id:'ev1',pub:1,base:1,cat:'pedido',t:'Lo que no puede volver a pasar',corto:'No repetir',min:7,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
+ ficha:{lleva:['La comida sale caliente','Las notas se leen','Los artículos se cuentan','Nada fuera de fecha'],
+  aler:'Tres clientes enfermaron y hubo un cilantro con alergia de por medio',
+  clave:'Ninguno de estos fallos fue mala suerte. Todos eran evitables y todos se repitieron.'},
+ slides:[
+ {k:'Por qué empezamos por aquí',t:'Son nuestros números y los podemos cambiar',
+  p:['En doce meses hemos devuelto <b>1.501,65 €</b> en contracargos. Los errores subieron un <b>50%</b> respecto al año anterior. El <b>89%</b> son pedidos incorrectos.',
+  'Esto no es para señalar a nadie. Es para que todos sepamos qué está pasando, por qué importa y qué hacemos distinto a partir de hoy.'],
+  dest:['1.501 €','devueltos por fallos que se podían evitar']},
+ {k:'Lo que dicen los clientes',t:'Esto lo escribió gente que nos pagó',
+  p:['«Estaba todo frío y prácticamente incomestible. He acabado tirando todo a la basura.»',
+  '«Pedí tres burritos sin cebolla y sin lechuga y los tres la tenían.»',
+  '«Le habéis echado cilantro al burrito y había alergia de por medio.»',
+  '«Han bajado muchísimo la calidad. Los burritos son más pequeños. No volvemos.»'],
+  frase:['Cada reseña es un cliente real que pagó y se fue decepcionado.','La mayoría no vuelve.']},
+ {k:'Los cinco que más nos dañan',t:'Por orden de daño',pasos:[
+  '<em>COMIDA FRÍA</em> — lo más repetido en reseñas negativas, en los tres locales',
+  '<em>NOTAS IGNORADAS</em> — sin cebolla, sin arroz, carne aparte… y va igual',
+  '<em>ARTÍCULOS QUE FALTAN</em> — el 89% de los cargos salen de aquí',
+  '<em>SABOR Y CALIDAD</em> — especiado de más, cochinita en trozos, patatas sin pelar',
+  '<em>LENTITUD</em> — hasta tres horas en un caso'],
+  p:['Los cinco se arreglan con gestos fijos, no con buena voluntad. Los gestos están en los protocolos siguientes.']},
+ {k:'Cada local tiene su punto flaco',t:'Mira el tuyo',pasos:[
+  '<em>LOS REMEDIOS</em> — 59% de los pedidos incorrectos de la marca y 749,90 € en cargos. Los clientes nuevos nos ponen 3,1★: la primera impresión está rota',
+  '<em>SAN LUIS</em> — satisfacción de artículos al 64% y la nota más baja, 4,1★. Lo que aparece en las reseñas es temperatura y cantidad',
+  '<em>SEVILLA ESTE</em> — el mejor ejecutando delivery (0,85% de error), pero la sala cayó un 26% y hay ingredientes en mal estado documentados',
+  '<em>TOMARES</em> — empieza limpio. El trabajo aquí es no heredar los vicios de los demás'],
+  p:['Si trabajas en varios locales, el tuyo es cada uno de ellos el día que estás.']},
+ {k:'Las tres que no se perdonan',t:'Aquí no hay matices',
+  p:['<b>Alergias.</b> Si el ticket menciona una alergia, se monta con utensilios limpios y lo revisa el encargado antes de cerrar. En España los alérgenos están regulados: un caso grave puede cerrar el local.',
+  '<b>Cadena de frío.</b> Hay tres clientes que enfermaron en dos locales distintos. Producto con fecha pasada o con mala pinta no sale. Se tira y se avisa.',
+  '<b>Pedido a medias.</b> Si falta algo y no se puede hacer, se cancela. Nunca se manda la mitad y se cobra entero.'],
+  frase:['Un contracargo cuesta de media 9,33 €.','Un cliente intoxicado cuesta el negocio.']},
+ {k:'Qué cambia desde hoy',t:'Cuatro gestos y ya',pasos:[
+  '<em>LEO</em> el ticket entero antes de tocar nada',
+  '<em>MARCO</em> lo que lleve modificación o alergia',
+  '<em>CUENTO</em> los artículos de la bolsa contra el ticket',
+  '<em>TOCO</em> la bolsa antes de cerrarla: si no quema, no sale'],
+  p:['Son unos 30 segundos por pedido. Merece la pena.']}],
+ test:[
+ {tipo:'opt',q:'Hora punta, el ticket pone «sin cebolla» y vas tarde. ¿Qué haces?',
+  op:[['Montarlo estándar, se nota poco',0],['Marcar el ticket y montarlo sin cebolla',1],['Avisar al cliente por la app',0]],
+  ex:'Se marca y se monta como pide. «Sin cebolla» puede ser manía o puede ser alergia, y tú no sabes cuál es.'},
+ {tipo:'opt',q:'El burrito lleva 12 minutos montado y el rider no llega. ¿Qué haces?',
+  op:[['Dejarlo, ya se apañará',0],['Recalentarlo o rehacerlo',1],['Meterlo en la nevera',0]],
+  ex:'A partir de 10 minutos esperando, se recalienta o se rehace. La comida fría es nuestra queja número uno.'},
+ {tipo:'opt',q:'Abres una bolsa de frijoles y huele raro, pero está en fecha. ¿Qué haces?',
+  op:[['Usarla, la fecha manda',0],['Olerla otra vez y decidir tú',0],['No usarla y avisar al encargado',1]],
+  ex:'No se usa. Tenemos tres casos de clientes que enfermaron: ante la duda, fuera. La fecha no es lo único que cuenta.'},
+ {tipo:'opt',q:'Falta un producto del pedido y no se puede hacer. ¿Qué haces?',
+  op:[['Mandar lo que hay y cobrar todo',0],['Cambiarlo por otro parecido sin avisar',0],['Avisar y cancelar o ajustar el pedido',1]],
+  ex:'Se avisa. Mandar medio pedido y cobrarlo entero es la vía rápida al contracargo y a la reseña de una estrella.'},
+ {tipo:'opt',q:'¿De dónde sale el 89% de lo que nos cuesta en cargos?',
+  op:[['De la lentitud',0],['De pedidos incorrectos: falta algo o no es lo pedido',1],['Del precio',0]],
+  ex:'Pedidos incorrectos. No es el precio ni la cocina: es lo que sale por la puerta sin comprobar.'}]},
+/* ===== INGREDIENTES POR PRODUCTO — para quien entra nuevo ===== */
+{id:'ing1',pub:1,base:1,solo:['manuel'],cat:'producto',t:'Ingredientes de cada producto',corto:'Ingredientes',min:8,fr:'Cada 2 semanas',roles:['empleado','encargado'],crit:1,
+ ficha:{lleva:['Qué lleva cada burrito','Qué lleva cada nacho','Qué lleva cada taco','Los tres que se confunden'],
+  aler:'El cilantro solo va en los Tacos Don Pastor. Si alguien pide sin cilantro, mira ahí',
+  clave:'La carta cambia poco. Lo que cambia es quién la monta. Tenerla en la cabeza es lo que hace que salga igual siempre.'},
+ slides:[
+ {k:'Cómo leerlo',t:'Todos los burritos comparten esqueleto',
+  p:['Casi todos llevan <b>arroz, frijoles, pico de gallo y guacamole</b>. Eso es la base.',
+  'Lo que cambia de uno a otro es <b>la proteína y la salsa</b>. Si tienes claras esas dos, tienes el burrito.'],
+  frase:['Base igual, proteína distinta.','Ahí está el 80% de la carta.']},
+ {k:'Burritos · 9,95 €',t:'Los nueve de carta',pasos:[
+  '<em>DOÑA DOLORES</em> — arroz, carne, chipotle, frijoles, cheddar, pico, guacamole, lechuga y salsa verde · PICANTE',
+  '<em>DON JUÁREZ</em> — arroz, pulled pork BBQ, frijoles, pico, guacamole, totopos, lechuga y crema agria',
+  '<em>POLLO PASTOR</em> — arroz, pollo al pastor, salsa verde, frijoles, pico, guacamole, totopos, mix de quesos y crema agria',
+  '<em>LADY COCHINITA</em> — arroz, cochinita pibil, chipotle, frijoles, piña, guacamole, lechuga, crema agria y pico · PICANTE',
+  '<em>DON HAMPI</em> — arroz, pollo deshilachado, mayo coco, pico, guacamole, totopos y lechuga · FUSIÓN'],
+  p:['La cochinita va <b>siempre desmenuzada</b>, nunca en trozos. Es la queja más repetida de ese burrito.']},
+ {k:'Burritos · segunda tanda',t:'Los cuatro que quedan',pasos:[
+  '<em>BLACK CHANCHO</em> — arroz, carrillada ibérica, salsa lima, pico, cebolla encurtida, patatas paja y salsa verde · PREMIUM',
+  '<em>DON BRASA</em> — pollo braseado, frijoles, arroz, pico, lechuga, guacamole y crema agria',
+  '<em>DOÑA JUANA</em> — arroz, Heura vegetal, lechuga, frijoles, pico, guacamole y salsa verde · 100% VEGETAL',
+  '<em>POLLO PADRE</em> — arroz, pollo empanado, mayo coco, cheddar, cebolla encurtida, ensalada de maíz risketos, lechuga y salsa agria'],
+  p:['La Doña Juana es la vegetal. No comparte plancha ni utensilio con carne: para quien la pide, eso es justo el motivo.']},
+ {k:'Nachos y botanas',t:'Lo que se comparte',pasos:[
+  '<em>NACHOS GUADALUPE</em> 10,50 € — totopos, pulled pork BBQ, cheddar, queso gratinado, pico, guacamole y crema agria',
+  '<em>NACHOS CIENFUEGOS</em> 9,90 € — totopos, queso gratinado, cheddar, frijoles, carne sazonada, guacamole, crema agria y pico',
+  '<em>BACON CHEESE APACHURRADAS</em> 6,95 € — patatas al horno con ranchera, bacon y 4 quesos gratinados',
+  '<em>ALITAS PADRE</em> 6,90 € — alitas BBQ al horno con mayo-lima y crujiente de totopos'],
+  p:['En delivery los nachos van con <b>el topping aparte</b>. Montados en la bolsa llegan blandos y eso es reseña segura.']},
+ {k:'Tacos y quesadillas',t:'Tres y tres',pasos:[
+  '<em>TACOS BABY COCHINITA</em> 9,90 € — cochinita a baja temperatura, guacamole casero y 4 quesos',
+  '<em>TACOS CHANCHO</em> 9,90 € — carrillada casera, 4 quesos, cebolla encurtida y mayo lima · PREMIUM',
+  '<em>TACOS DON PASTOR</em> 9,90 € — pollo pastor, cebolla morada, CILANTRO, 4 quesos y mayo chipotle',
+  '<em>QUESADILLA PULLED PORK</em> 8,95 € — pulled pork BBQ y 4 quesos fundentes, dorada al grill',
+  '<em>QUESADILLA BUTTER CHICKEN</em> 8,95 € — pollo mantequilla y mezcla de 4 quesos, dorada al grill'],
+  p:['El <b>cilantro</b> de la carta está en los Tacos Don Pastor. Tenlo localizado: ya tuvimos un caso de alergia con cilantro.']},
+ {k:'Los que se confunden',t:'Mira dos veces en estos',
+  p:['<b>Dolores y Juárez.</b> Dolores lleva carne, chipotle y cheddar. Juárez lleva pulled pork, totopos y crema agria. No se parecen al comerlos, sí al montarlos deprisa.',
+  '<b>Guadalupe y Cienfuegos.</b> Guadalupe es pulled pork. Cienfuegos es carne sazonada y lleva frijoles.',
+  '<b>Los postres.</b> Kinder Bueno y Lotus se cambian constantemente. Mira la etiqueta antes de meterlo en la bolsa.'],
+  frase:['Un postre cambiado es un cargo.','Y es el error más tonto de todos.']}],
+ test:[
+ {tipo:'opt',q:'¿Qué proteína lleva el Burro Don Juárez?',
+  op:[['Carne sazonada',0],['Pulled pork BBQ',1],['Pollo al pastor',0]],
+  ex:'Pulled pork BBQ, con totopos y crema agria. El de carne con chipotle y cheddar es el Doña Dolores.'},
+ {tipo:'opt',q:'Un cliente pide sin cilantro. ¿Dónde tienes que mirar?',
+  op:[['En todos los burritos',0],['En los Tacos Don Pastor',1],['En las quesadillas',0]],
+  ex:'El cilantro de carta está en los Tacos Don Pastor. Ya tuvimos un caso de alergia por esto.'},
+ {tipo:'opt',q:'¿Cuál es el burrito 100% vegetal?',
+  op:[['Don Hampi',0],['Doña Juana, con Heura',1],['Don Brasa',0]],
+  ex:'Doña Juana, con Heura. Y no comparte utensilio con carne.'},
+ {tipo:'opt',q:'Nachos Guadalupe para delivery. ¿Cómo salen?',
+  op:[['Montados, como en sala',0],['Con el topping en recipiente aparte',1],['Con el queso sin gratinar',0]],
+  ex:'Topping aparte. Montados llegan blandos y es la queja de siempre de ese producto.'},
+ {tipo:'opt',q:'¿Cómo tiene que ir la cochinita del Lady Cochinita?',
+  op:[['En trozos, que se note la carne',0],['Desmenuzada',1],['Como salga',0]],
+  ex:'Desmenuzada, siempre. «Eran trozos de carne mal cocinados» es literal de una reseña.'},
+ {tipo:'opt',q:'¿Qué comparten casi todos los burritos?',
+  op:[['Arroz, frijoles, pico y guacamole',1],['Cheddar y chipotle',0],['Totopos y crema agria',0]],
+  ex:'Esa es la base. Lo que cambia de uno a otro es la proteína y la salsa.'}]},
 /* ===== PEDIDOS ===== */
 {id:'p1',pub:0,cat:'pedido',t:'Los 12 pasos del cierre de bolsa',min:6,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
  slides:[
@@ -1584,7 +1813,7 @@ function tec(n){if(pin.length>=4)return;pin+=n;pLogin();
  else{document.getElementById('pw').classList.add('shake');
  document.querySelectorAll('.dot').forEach(d=>d.classList.add('err'));setTimeout(()=>{pin='';pLogin()},550)}},160)}}
 
-function entrar(e){user=e;esDir=false;
+function entrar(e){user=e;esDir=false;usoArranca(e.id);
  document.getElementById('login').style.display='none';document.getElementById('top').style.display='block';
  document.getElementById('app').style.display='block';
  document.getElementById('wi').textContent=e.n.slice(0,2).toUpperCase();
@@ -1595,7 +1824,7 @@ function entrar(e){user=e;esDir=false;
  <button class="tab" data-t="mds" aria-pressed="false" onclick="sTab('mds')">Módulos</button>`:''}
  <button class="tab" data-t="todo" aria-pressed="false" onclick="sTab('todo')">Áreas</button>`;
  tab='ti';pintar()}
-function entrarDir(){esDir=true;user={n:'Dirección',rol:'dirección',loc:'Los tres locales'};
+function entrarDir(){esDir=true;user={n:'Dirección',rol:'dirección',loc:'Los cuatro locales'};
  document.getElementById('login').style.display='none';document.getElementById('top').style.display='block';
  document.getElementById('app').style.display='block';
  document.getElementById('wi').textContent='RA';
@@ -1606,7 +1835,8 @@ function entrarDir(){esDir=true;user={n:'Dirección',rol:'dirección',loc:'Los t
  <button class="tab" data-t="mods" aria-pressed="false" onclick="sTab('mods')">Módulos</button>
  <button class="tab" data-t="env" aria-pressed="false" onclick="sTab('env')">Reseñas</button>`;
  tab='quin';pintar()}
-function salir(){user=null;empSel=null;pin='';locSel=null;esDir=false;
+function salir(){if(user&&user.id)usoPara(user.id);
+ user=null;empSel=null;pin='';locSel=null;esDir=false;
  document.getElementById('login').style.display='block';document.getElementById('top').style.display='none';
  document.getElementById('app').style.display='none';pLogin()}
 /* Bloqueo del fondo mientras hay una capa abierta (visor o panel).
@@ -1680,6 +1910,41 @@ function filaHoy(mios,h){
   <span>${hoy.length?hoy.length+' por ver':'todo al día'}</span></div>
   <div class="hoy">${hoy.map(bola).join('')}${hechos2.map(bola).join('')}</div></div>`}
 
+
+/* Desplegable "cómo funciona esto". Se abre solo mientras no hayas hecho
+   ningún módulo; a partir de ahí queda plegado salvo que lo abras tú. */
+const GUIA=[
+ ['Entras y ves lo tuyo','Arriba tienes lo que te toca ahora: lo nuevo, lo de esta quincena y lo que conviene repetir. No te sale todo el catálogo, solo lo de tu puesto y tu local.'],
+ ['Cada protocolo son 2 minutos','Pasas las tarjetas deslizando o con los botones. Son cortas a propósito: lo importante está en negrita y en las reglas.'],
+ ['Al final, cuatro preguntas','No es un examen. Es para saber qué se ha quedado. Si fallas, te dice por qué, y ese protocolo te vuelve a salir.'],
+ ['La quincena marca el foco','Cada quince días hay dos o tres protocolos marcados. Esos son los que hay que tener hechos antes de que cierre.'],
+ ['Dirección ve el conjunto','Se ve quién lleva qué y qué protocolo le sale mal a todo el equipo. Si algo lo falla todo el mundo, el problema es cómo está explicado, no la persona.']
+];
+function vistaGuia(hechosN){
+ const abierta=localStorage.getItem('guia-abierta');
+ const open=abierta===null?(hechosN===0):abierta==='1';
+ return `<details class="guia" ${open?'open':''} ontoggle="localStorage.setItem('guia-abierta',this.open?'1':'0')">
+ <summary class="guia-h">
+  <span class="gi">?</span>
+  <span class="gt"><strong>Cómo funciona esto</strong><small>30 segundos · toca cada paso</small></span>
+  <svg class="gx" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+ </summary>
+ <div class="guia-b">
+  <div class="gp">
+  ${GUIA.map((g,i)=>`<button class="gpr${i===0?' on':''}" onclick="gPaso(this)">
+   <span class="n">${i+1}</span>
+   <span><b>${g[0]}</b><span class="d">${g[1]}</span></span></button>`).join('')}
+  </div>
+  <div class="gnota">
+   <div class="g-a"><b>80%+</b><small>bien</small></div>
+   <div class="g-m"><b>60-79</b><small>justo</small></div>
+   <div class="g-b"><b>&lt;60%</b><small>a repetir</small></div>
+  </div>
+ </div></details>`}
+function gPaso(b){const ya=b.classList.contains('on');
+ b.parentElement.querySelectorAll('.gpr').forEach(x=>x.classList.remove('on'));
+ if(!ya)b.classList.add('on')}
+
 function vParaTi(){const mios=modsDe(user);
  const h=hechos[user.id]||{};
  const qm=mios.filter(enQuin);
@@ -1687,9 +1952,13 @@ function vParaTi(){const mios=modsDe(user);
  const qPend=qm.filter(m=>(h[m.id]===undefined||h[m.id]<60)&&!m.nuevo);
  const qpct=qm.length?Math.round(qHechos.length/qm.length*100):0;
  const dias=diasRest();
- const rep=mios.filter(m=>estadoMod(m,user)==='repetir'&&!enQuin(m));
- const nue=mios.filter(m=>estadoMod(m,user)==='nuevo'&&!enQuin(m));
- const pen=mios.filter(m=>estadoMod(m,user)==='pendiente'&&!enQuin(m)&&!m.nuevo);
+ /* los de base se ponen arriba mientras no esten superados, y entonces
+    se sacan del resto de listas para no verlos dos veces */
+ const base=mios.filter(m=>m.base&&(h[m.id]===undefined||h[m.id]<60)&&!enQuin(m));
+ const enBase=m=>base.indexOf(m)>=0;
+ const rep=mios.filter(m=>estadoMod(m,user)==='repetir'&&!enQuin(m)&&!enBase(m));
+ const nue=mios.filter(m=>estadoMod(m,user)==='nuevo'&&!enQuin(m)&&!enBase(m));
+ const pen=mios.filter(m=>estadoMod(m,user)==='pendiente'&&!enQuin(m)&&!m.nuevo&&!enBase(m));
  const hec=mios.filter(m=>estadoMod(m,user)==='hecho'&&!enQuin(m));
  const ks=Object.keys(h);
  const media=ks.length?Math.round(ks.reduce((s,k)=>s+h[k],0)/ks.length):null;
@@ -1698,11 +1967,12 @@ function vParaTi(){const mios=modsDe(user);
  const nuevos=mios.filter(m=>m.nuevo&&(h[m.id]===undefined||h[m.id]<60));
  const mk=(marcados[user.id]||[]).filter(x=>x.mod&&MOD.find(m=>m.id===x.mod&&m.pub&&!QUIN.mods.includes(x.mod)));
  const mkA=(marcados[user.id]||[]).filter(x=>x.area&&CAT[x.area]);
- const reco=RECO.find(r=>r.loc===user.loc);
+ const reco=RECO.find(r=>trabajaEn(user,r.loc));
  const est=qpct===100?'hecha':dias<=2?'urg':'';
  const circ=2*Math.PI*26;
  document.getElementById('app').innerHTML=`
  ${filaHoy(mios,h)}
+ ${vistaGuia(ks.length)}
  <div class="quin ${est}">
   <div class="qk"><span>Esta quincena</span>
    <span class="qd">${qpct===100?'Completada':dias>0?`${dias} día${dias!==1?'s':''} para acabar`:'Fuera de plazo'}</span></div>
@@ -1710,7 +1980,7 @@ function vParaTi(){const mios=modsDe(user);
   <div class="qrow">
    <div class="ring"><svg width="62" height="62">
     <circle cx="31" cy="31" r="26" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="6"/>
-    <circle cx="31" cy="31" r="26" fill="none" stroke="${qpct===100?'#8FD37A':'#D89B1C'}" stroke-width="6"
+    <circle cx="31" cy="31" r="26" fill="none" stroke="${qpct===100?'#A8BE93':'#E0CDB2'}" stroke-width="6"
      stroke-dasharray="${circ}" stroke-dashoffset="${circ*(1-qpct/100)}" stroke-linecap="round"/></svg>
     <div class="rt">${qHechos.length}/${qm.length}</div></div>
    <div class="qi"><strong>${qpct===100?'Ya la tienes hecha':qPend.length===1?'Te queda uno':`Te quedan ${qPend.length}`}</strong>
@@ -1721,6 +1991,7 @@ function vParaTi(){const mios=modsDe(user);
   <div class="m3 ${crit?'mal':'ok'}"><b>${crit}</b><small>críticos pendientes</small></div>
   <div class="m3"><b>${ks.length}/${mios.length}</b><small>módulos hechos</small></div>
  </div>
+ ${base.length?`<p class="eye">Empieza por aquí <b>${base.length===1?'es la base de todo':'son la base de todo'}</b></p>${base.map(tarjeta).join('')}`:''}
  ${nuevos.length?`<p class="eye">Protocolo de producto nuevo <b>léelo antes de montarlo</b></p>
   ${nuevos.map(m=>protoCard(m,h[m.id])).join('')}`:''}
  ${qPend.length?`<p class="eye">Haz esto ahora <b>${dias>0?'antes del '+QUIN.fin.toLocaleDateString('es-ES',{day:'numeric',month:'short'}):'plazo vencido'}</b></p>
@@ -1773,7 +2044,7 @@ function vMiEquipo(){
  const dias=diasRest();
  document.getElementById('app').innerHTML=`
  <div class="quin ${alDia===fil.length?'hecha':dias<=2?'urg':''}">
-  <div class="qk"><span>Equipo · los tres locales</span>
+  <div class="qk"><span>Equipo · los cuatro locales</span>
    <span class="qd">${dias>0?`${dias} día${dias!==1?'s':''}`:'Fuera de plazo'}</span></div>
   <h2>${alDia} de ${fil.length} al día</h2>
   <div class="qrow"><div class="qi"><strong>${QUIN.n}</strong>
@@ -1818,6 +2089,7 @@ let bloques={},bloqSel=[],bloqQuien=null;
 /* Una persona puede cubrir varios locales. 'local' sigue siendo el suyo
    de referencia; 'locales' son todos en los que trabaja. */
 let locales={};
+let uso={};   /* {empleado:{v:visitas,s:segundos,u:ultima,d:{AAAA-MM-DD:segundos}}} */
 function localesDe(e){const l=locales[e.id];return (l&&l.length)?l:[e.loc]}
 function trabajaEn(e,loc){return localesDe(e).indexOf(loc)>=0}
 /* Módulos activos por local: cada local arrastra problemas distintos
@@ -1826,11 +2098,13 @@ let modsPorLocal={};
 /* Filas crudas de escuela_resultados, para las estadísticas por fecha */
 let RESULTADOS=[];
 function modsDe(e){
+ /* 'solo' limita un modulo a personas concretas: no lo ve nadie mas */
+ const suyo=m=>m.pub&&m.roles.includes(e.rol)&&(!m.solo||m.solo.includes(e.id));
  const ids=new Set();
  localesDe(e).forEach(l=>(modsPorLocal[l]||[]).forEach(id=>ids.add(id)));
- if(!ids.size)return MOD.filter(m=>m.pub&&m.roles.includes(e.rol));
- return MOD.filter(m=>m.pub&&m.roles.includes(e.rol)&&
-  (ids.has(m.id)||QUIN.mods.includes(m.id)||(asign[e.id]||[]).includes(m.id)))}
+ if(!ids.size)return MOD.filter(suyo);
+ return MOD.filter(m=>suyo(m)&&
+  (ids.has(m.id)||QUIN.mods.includes(m.id)||(asign[e.id]||[]).includes(m.id)||(m.solo||[]).includes(e.id)))}
 let evaluaciones={},evalSel={},evalQuien=null;
 function notaEval(ev){const v=EVAL_CRIT.map(c=>ev.puntos[c.k]).filter(Boolean);
  return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length*10)/10:null}
@@ -1905,7 +2179,7 @@ function marcarA(id){marcSel=[];marcArea=null;marcQuien=id;
  const areas=Object.keys(CAT).filter(k=>ms.some(m=>m.cat===k));
  abrirSheet(`<div class="sh-top" style="background:var(--vino)">
  <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Volver</button>
- <h2>${e.n}</h2><p>${e.rol} · ${e.loc}</p></div>
+ <h2>${e.n}</h2><p>${e.rol} · ${localesDe(e).join(' · ')}</p></div>
  ${(marcados[id]||[]).length?`<div style="padding:16px 16px 0"><p class="eye">Ya marcados</p>
   ${(marcados[id]).map((x,i)=>{const m=x.mod?MOD.find(z=>z.id===x.mod):null;
    return `<div class="marc"><div class="mk">${x.quien}${x.area?' · área completa':''}</div>
@@ -2106,7 +2380,8 @@ function corrCant(o){const t=P.m.test[P.q],ok=o===t.r;
 function corrOpt(i){const t=P.m.test[P.q],ok=!!t.op[i][1];
  P.res={ok,dado:i};P.marks[P.q]=ok?'ok':'mal';if(ok)P.ac++;else P.fallos.push(t.q);pPlay()}
 function sigTest(){if(P.q<P.m.test.length-1){P.q++;P.res=null;P.ord=[]}else P.fase='f';pPlay()}
-async function guardarMod(){const pct=Math.round(P.ac/P.m.test.length*100);
+async function guardarMod(){if(window._guardando)return;window._guardando=true;
+ const pct=Math.round(P.ac/P.m.test.length*100);
  if(!hechos[user.id])hechos[user.id]={};hechos[user.id][P.m.id]=pct;
  if(asign[user.id]){const i=asign[user.id].indexOf(P.m.id);if(i>=0){asign[user.id].splice(i,1);saveConfig('asign',asign)}}
  const t=P.m.t,tot=P.m.test.length,ac=P.ac,fallos=P.fallos;
@@ -2114,6 +2389,7 @@ async function guardarMod(){const pct=Math.round(P.ac/P.m.test.length*100);
   empleado_id:user.id,modulo_id:P.m.id,porcentaje:pct,aciertos:ac,total:tot,fallos,
   creado_en:new Date().toISOString()});
  cerrarPlay();
+ window._guardando=false;
  if(error){console.error(error);toast('Resultado guardado en el dispositivo, pero no en el servidor')}
  else toast(pct>=80?`${t} completado · ${pct}%`:pct>=60?`Guardado con ${pct}%. Repasa lo fallado`:`${pct}%. Queda marcado para repetir`)}
 
@@ -2136,7 +2412,7 @@ function dirEquipo(){
  ${filas.map((f,i)=>`<button class="per" onclick="verPersona('${f.e.id}')">
  <span class="pos">${i+1}</span>
  <div class="i">${f.e.n.slice(0,2).toUpperCase()}</div>
- <div class="per-b"><strong>${f.e.n}</strong><small>${f.e.rol} · ${f.e.loc} · ${f.hechos}/${f.tot}${f.crit?` · ${f.crit} crítico${f.crit>1?'s':''} pendiente${f.crit>1?'s':''}`:''}</small>
+ <div class="per-b"><strong>${f.e.n}</strong><small>${f.e.rol} · ${localesDe(f.e).join(' · ')} · ${f.hechos}/${f.tot}${f.crit?` · ${f.crit} crítico${f.crit>1?'s':''} pendiente${f.crit>1?'s':''}`:''}</small>
  <div class="per-bar"><i class="${f.tot&&f.hechos/f.tot>=.75?'':f.tot&&f.hechos/f.tot>=.4?'m':'b'}" style="width:${f.tot?Math.round(f.hechos/f.tot*100):0}%"></i></div></div>
  <span class="pc ${f.media===null?'b':f.media>=80?'a':f.media>=60?'m':'b'}">${f.media===null?'—':f.media+'%'}</span></button>`).join('')}
  ${(()=>{const medias=MOD.map(m=>{const notas=EMP.filter(e=>hechos[e.id]&&hechos[e.id][m.id]!==undefined).map(e=>hechos[e.id][m.id]);
@@ -2159,7 +2435,7 @@ function verPersona(id){const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
  const mios=modsDe(e);
  abrirSheet(`<div class="sh-top" style="background:var(--tinta)">
  <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Equipo</button>
- <h2>${e.n}</h2><p>${e.rol} · ${e.loc}</p></div>
+ <h2>${e.n}</h2><p>${e.rol} · ${localesDe(e).join(' · ')}</p></div>
  <div style="padding:16px 16px 0">
  ${(()=>{const con=mios.filter(m=>h[m.id]!==undefined).map(m=>({m,v:h[m.id]}));
   if(con.length<2)return '';
@@ -2258,6 +2534,75 @@ function togPub(id){const m=MOD.find(x=>x.id===id);
  pintar()}
 
 /* Estadísticas del panel: todo sale de los resultados reales de test */
+
+/* ===== Progreso de la plantilla =====
+   Se calcula sobre RESULTADOS, que son las filas crudas con fecha.
+   'hechos' solo guarda la ultima nota, asi que no sirve para ver evolucion. */
+function panelProgreso(){
+ /* cobertura: pares persona-modulo superados sobre los que le tocan */
+ let sup=0,tot=0;
+ EMP.forEach(e=>{const h=hechos[e.id]||{};modsDe(e).forEach(m=>{tot++;if(h[m.id]!==undefined&&h[m.id]>=60)sup++})});
+ const cob=tot?Math.round(sup/tot*100):0;
+
+ /* primeros intentos: el primer resultado de cada par persona-modulo */
+ const porPar={};
+ RESULTADOS.slice().sort((a,b)=>new Date(a.creado_en)-new Date(b.creado_en))
+  .forEach(r=>{const k=r.empleado_id+'|'+r.modulo_id;(porPar[k]=porPar[k]||[]).push(r)});
+ const pares=Object.values(porPar);
+ const prim=pares.map(v=>v[0].porcentaje);
+ const aPrim=prim.length?Math.round(prim.filter(v=>v>=60).length/prim.length*100):0;
+
+ /* mejora: cuanto sube de media quien repite un protocolo */
+ const rep=pares.filter(v=>v.length>1).map(v=>v[v.length-1].porcentaje-v[0].porcentaje);
+ const mej=rep.length?Math.round(rep.reduce((a,b)=>a+b,0)/rep.length):null;
+
+ /* cobertura acumulada al cierre de cada una de las ultimas 4 semanas */
+ const hoy=new Date();hoy.setHours(23,59,59,999);
+ const cortes=[];for(let i=3;i>=0;i--){const d=new Date(hoy);d.setDate(d.getDate()-i*7);cortes.push(d)}
+ const serie=cortes.map(d=>{
+  const vistos={};
+  RESULTADOS.forEach(r=>{if(new Date(r.creado_en)<=d){
+   const k=r.empleado_id+'|'+r.modulo_id;
+   const t=new Date(r.creado_en);
+   if(!vistos[k]||t>vistos[k].t)vistos[k]={t,v:r.porcentaje}}});
+  const ok=Object.values(vistos).filter(x=>x.v>=60).length;
+  return tot?Math.round(ok/tot*100):0});
+ const maxS=Math.max(1,...serie);
+ const delta=serie[3]-serie[0];
+
+ return `<p class="eye">Cómo progresa la plantilla ${delta?`<b>${delta>0?'+':''}${delta} ${Math.abs(delta)===1?'punto':'puntos'} en 4 semanas</b>`:'<b>sin cambios este mes</b>'}</p>
+ <div class="pg3">
+  <div><b>${cob}%</b><small>protocolos superados</small></div>
+  <div><b>${aPrim}%</b><small>aprobados a la primera</small></div>
+  <div><b>${mej===null?'—':(mej>0?'+':'')+mej}${mej===null?'':'<i> pts</i>'}</b><small>mejora al repetir</small></div>
+ </div>
+ <div class="est"><div class="est-h"><strong>Avance semana a semana</strong><span>% de protocolos superados</span></div>
+  <div class="sem">${serie.map((v,i)=>`<div class="${i===3?'ult':''}" style="height:${Math.max(3,Math.round(v/maxS*100))}%"><span>${v}%</span></div>`).join('')}</div>
+  <div class="sem-x"><span>hace 3 sem</span><span>hace 2</span><span>semana pasada</span><span>hoy</span></div></div>`}
+
+/* ===== Uso de la plataforma ===== */
+function panelUso(){
+ const filas=EMP.map(e=>{const u=uso[e.id]||{v:0,s:0,u:null};
+  const dias=u.u?Math.floor((Date.now()-new Date(u.u))/86400000):null;
+  return {e,v:u.v||0,s:u.s||0,dias}}).sort((a,b)=>b.s-a.s);
+ const act=filas.filter(f=>f.dias!==null&&f.dias<=7).length;
+ const nunca=filas.filter(f=>f.v===0).length;
+ const totSeg=filas.reduce((a,f)=>a+f.s,0);
+ const cuando=d=>d===null?'nunca ha entrado':d===0?'hoy':d===1?'ayer':d<7?`hace ${d} días`:d<30?`hace ${Math.round(d/7)} sem`:`hace ${Math.round(d/30)} meses`;
+ return `<p class="eye">Uso de la plataforma <b>${act} de ${EMP.length} esta semana</b></p>
+ <div class="pg3">
+  <div><b>${act}</b><small>activos 7 días</small></div>
+  <div><b>${nunca}</b><small>no han entrado</small></div>
+  <div><b>${fmtDur(totSeg).replace(' min','′').replace(' h','h')}</b><small>tiempo total</small></div>
+ </div>
+ <div class="est" style="padding-top:4px">
+ ${filas.map(f=>`<div class="usr ${f.dias===null||f.dias>7?'frio':''}">
+  <span class="ui">${f.e.n.slice(0,2).toUpperCase()}</span>
+  <span class="ub"><strong>${f.e.n}</strong><small>${f.v} ${f.v===1?'visita':'visitas'} · ${cuando(f.dias)}</small></span>
+  <span class="uv"><b>${f.s?fmtDur(f.s):'—'}</b><small>en total</small></span></div>`).join('')}
+ </div>
+ <div class="pie"><strong>El tiempo solo cuenta con la app delante.</strong> Si alguien la deja abierta en la mesa no suma, así que el dato es tiempo real leyendo, no móvil encendido.</div>`}
+
 function panelEstadisticas(){
  const notas=[];EMP.forEach(e=>Object.values(hechos[e.id]||{}).forEach(v=>notas.push(v)));
  const a=notas.filter(v=>v>=80).length,m=notas.filter(v=>v>=60&&v<80).length,b=notas.filter(v=>v<60).length;
@@ -2294,7 +2639,7 @@ function dirQuin(){
   const ok=qm.filter(m=>h[m.id]!==undefined&&h[m.id]>=60).length;
   return {e,ok,tot:qm.length,pct:qm.length?Math.round(ok/qm.length*100):0}});
  const alDia=cumpl.filter(c=>c.pct===100).length;
- const porLocal=LOCALES.map(l=>{const es=cumpl.filter(c=>c.e.loc===l);
+ const porLocal=LOCALES.map(l=>{const es=cumpl.filter(c=>trabajaEn(c.e,l));
   return {l,ok:es.filter(c=>c.pct===100).length,tot:es.length}});
  if(!selMods.length)selMods=[...QUIN.mods];
  document.getElementById('app').innerHTML=`
@@ -2303,13 +2648,15 @@ function dirQuin(){
   <h2>${QUIN.n}</h2>
   <div class="qrow"><div class="qi"><strong>${alDia} de ${cumpl.length} al día</strong>
   <span>Cierra el ${QUIN.fin.toLocaleDateString('es-ES',{day:'numeric',month:'long'})} · ${QUIN.mods.length} módulos</span></div></div></div>
- <div class="mini3">${porLocal.map(p=>`<div class="m3 ${p.ok===p.tot?'ok':p.ok?'am':'mal'}">
+ <div class="minil">${porLocal.map(p=>`<div class="m3 ${p.ok===p.tot?'ok':p.ok?'am':'mal'}">
   <b>${p.ok}/${p.tot}</b><small>${p.l}</small></div>`).join('')}</div>
+ ${panelProgreso()}
  ${panelEstadisticas()}
+ ${panelUso()}
  <p class="eye">Quién falta</p>
  ${cumpl.sort((a,b)=>a.pct-b.pct).map(c=>`<div class="eq-r">
   <div class="i ${c.pct===100?'ok':c.pct>0?'med':'no'}">${c.e.n.slice(0,2).toUpperCase()}</div>
-  <div class="b"><strong>${c.e.n}</strong><small>${c.e.loc} · ${c.ok} de ${c.tot}</small></div>
+  <div class="b"><strong>${c.e.n}</strong><small>${localesDe(c.e).join(' · ')} · ${c.ok} de ${c.tot}</small></div>
   <span class="st ${c.pct===100?'ok':c.pct>0?'med':'no'}">${c.pct===100?'Al día':c.pct>0?'A medias':'Sin empezar'}</span></div>`).join('')}
  <p class="eye">Lanzar la siguiente quincena</p>
  <div class="f-c"><label>Nombre</label><input id="q-n" value="${QUIN.n}"></div>
@@ -2339,7 +2686,7 @@ function dirEnviar(){
   return rs.length?+(rs.reduce((s,r)=>s+r[k],0)/rs.length).toFixed(k==='sat'?0:1):undefined};
  const plats=[['uber','Uber Eats','--verde',1],['glovo','Glovo','--amarillo',0],['google','Google','--azul',1]];
  document.getElementById('app').innerHTML=`
- <p class="eye">Media de los tres locales <b>${mesTxt(act)}</b></p>
+ <p class="eye">Media de los cuatro locales <b>${mesTxt(act)}</b></p>
  <div class="plat">${plats.map(p=>{const a=med(act,p[0]),b=med(ant,p[0]);
   const d=delta(a,b,p[3]);
   return `<div class="pcard" style="--col:var(${p[2]})"><div class="pn">${p[1]}</div>
