@@ -288,6 +288,33 @@ input,textarea,select{font-family:inherit}
 .aviso-l p{font-size:12.5px;color:var(--gris);line-height:1.5}
 .aviso-l .de{font-size:11.5px;color:var(--gris2);margin-top:6px}
 
+/* ESTADÍSTICAS DEL PANEL DE DIRECCIÓN */
+.est{background:var(--papel);border:1px solid var(--borde);border-radius:var(--r);padding:15px;margin-bottom:10px}
+.est-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:13px;gap:10px}
+.est-h strong{font-family:var(--display);font-size:17px;text-transform:uppercase;letter-spacing:.01em}
+.est-h span{font-family:var(--mono);font-size:10.5px;color:var(--gris2);text-align:right}
+.bar-l{margin-bottom:12px}
+.bar-l:last-child{margin-bottom:0}
+.bar-l .bt{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;margin-bottom:5px;gap:8px}
+.bar-l .bt b{font-weight:600}
+.bar-l .bt span{font-family:var(--mono);font-size:11px;color:var(--gris2);flex-shrink:0}
+.bar-l .tr{height:9px;background:#EBE5DA;border-radius:100px;overflow:hidden;display:flex}
+.bar-l .tr i{display:block;height:100%;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar-l .tr i.ok{background:var(--ok)}
+.bar-l .tr i.med{background:var(--alerta)}
+.bar-l .tr i.mal{background:var(--mal)}
+.spark{display:flex;align-items:flex-end;gap:5px;height:56px}
+.spark div{flex:1;background:var(--borde);border-radius:3px 3px 0 0;min-height:3px;transition:height .5s}
+.spark div.hay{background:var(--vino)}
+.spark-x{display:flex;gap:5px;margin-top:6px}
+.spark-x span{flex:1;text-align:center;font-family:var(--mono);font-size:9px;color:var(--gris2);text-transform:uppercase}
+.rep{display:flex;height:34px;border-radius:var(--r2);overflow:hidden;margin-bottom:9px}
+.rep i{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;color:#fff;min-width:0;overflow:hidden}
+.rep i.a{background:var(--ok)}.rep i.m{background:var(--alerta)}.rep i.b{background:var(--mal)}.rep i.s{background:var(--borde2);color:var(--gris)}
+.rep-l{display:flex;flex-wrap:wrap;gap:11px;font-size:11.5px;color:var(--gris)}
+.rep-l span{display:flex;align-items:center;gap:5px}
+.rep-l em{width:9px;height:9px;border-radius:2px;display:block;font-style:normal}
+
 /* BLOQUES A MEJORAR */
 .bl-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .bl-o{display:flex;align-items:center;gap:9px;padding:13px 12px;border-radius:var(--r);font-size:13px;font-weight:600;background:var(--papel);border:1.5px solid var(--borde);color:var(--gris);text-align:left;line-height:1.2}
@@ -1537,7 +1564,7 @@ function pLogin(){const b=document.getElementById('lbody');
   document.getElementById('lsub').textContent='Acceso de dirección';return}
  if(!empSel){
   b.innerHTML=`<div class="locs">${LOCALES.map(l=>`<button class="locb" aria-pressed="${l===locSel}" onclick="sLoc('${l}')">${l}</button>`).join('')}</div>
-  <div class="emps">${EMP.filter(e=>!locSel||e.loc===locSel).map(e=>{
+  <div class="emps">${EMP.filter(e=>!locSel||trabajaEn(e,locSel)).map(e=>{
    return `<button class="emp" onclick="pEmp('${e.id}')">
    <div class="i" style="--col:var(${e.rol==='encargado'?'--amarillo':'--roja'})">${e.n.slice(0,2).toUpperCase()}</div>
    <div class="eb"><strong>${e.n}</strong><small>${e.rol}${locSel?'':' · '+e.loc}</small></div>
@@ -1658,7 +1685,7 @@ function filaHoy(mios,h){
   <span>${hoy.length?hoy.length+' por ver':'todo al día'}</span></div>
   <div class="hoy">${hoy.map(bola).join('')}${hechos2.map(bola).join('')}</div></div>`}
 
-function vParaTi(){const mios=MOD.filter(m=>m.pub&&m.roles.includes(user.rol));
+function vParaTi(){const mios=modsDe(user);
  const h=hechos[user.id]||{};
  const qm=mios.filter(enQuin);
  const qHechos=qm.filter(m=>h[m.id]!==undefined&&h[m.id]>=60);
@@ -1793,6 +1820,22 @@ const BLOQUES=[
  {k:'estandar',n:'Estándares',c:'--amarillo',tip:'Cuchara asignada y receta delante. A ojo nadie acierta dos veces igual.'}
 ];
 let bloques={},bloqSel=[],bloqQuien=null;
+/* Una persona puede cubrir varios locales. 'local' sigue siendo el suyo
+   de referencia; 'locales' son todos en los que trabaja. */
+let locales={};
+function localesDe(e){const l=locales[e.id];return (l&&l.length)?l:[e.loc]}
+function trabajaEn(e,loc){return localesDe(e).indexOf(loc)>=0}
+/* Módulos activos por local: cada local arrastra problemas distintos
+   según sus reseñas, así que no todos ven lo mismo. */
+let modsPorLocal={};
+/* Filas crudas de escuela_resultados, para las estadísticas por fecha */
+let RESULTADOS=[];
+function modsDe(e){
+ const ids=new Set();
+ localesDe(e).forEach(l=>(modsPorLocal[l]||[]).forEach(id=>ids.add(id)));
+ if(!ids.size)return MOD.filter(m=>m.pub&&m.roles.includes(e.rol));
+ return MOD.filter(m=>m.pub&&m.roles.includes(e.rol)&&
+  (ids.has(m.id)||QUIN.mods.includes(m.id)||(asign[e.id]||[]).includes(m.id)))}
 let evaluaciones={},evalSel={},evalQuien=null;
 function notaEval(ev){const v=EVAL_CRIT.map(c=>ev.puntos[c.k]).filter(Boolean);
  return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length*10)/10:null}
@@ -2081,7 +2124,7 @@ async function guardarMod(){const pct=Math.round(P.ac/P.m.test.length*100);
 
 function dirEquipo(){
  const filas=EMP.map(e=>{const h=hechos[e.id]||{},ks=Object.keys(h);
-  const mios=MOD.filter(m=>m.pub&&m.roles.includes(e.rol));
+  const mios=modsDe(e);
   const media=ks.length?Math.round(ks.reduce((s,k)=>s+h[k],0)/ks.length):null;
   const rep=ks.filter(k=>h[k]<60).length;
   const crit=mios.filter(m=>m.crit&&(h[m.id]===undefined||h[m.id]<60)).length;
@@ -2118,7 +2161,7 @@ function dirEquipo(){
  <div class="pie"><strong>El dato útil no es quién saca mejor nota.</strong> Es qué módulo saca mala nota en todo el equipo: eso no es un problema de la persona, es que el contenido o el proceso están mal explicados.</div>`}
 
 function verPersona(id){const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
- const mios=MOD.filter(m=>m.pub&&m.roles.includes(e.rol));
+ const mios=modsDe(e);
  abrirSheet(`<div class="sh-top" style="background:var(--tinta)">
  <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Equipo</button>
  <h2>${e.n}</h2><p>${e.rol} · ${e.loc}</p></div>
@@ -2219,6 +2262,36 @@ function togPub(id){const m=MOD.find(x=>x.id===id);
  toast(m.pub?`"${m.t}" ya lo ve el equipo`:`"${m.t}" oculto`);
  pintar()}
 
+/* Estadísticas del panel: todo sale de los resultados reales de test */
+function panelEstadisticas(){
+ const notas=[];EMP.forEach(e=>Object.values(hechos[e.id]||{}).forEach(v=>notas.push(v)));
+ const a=notas.filter(v=>v>=80).length,m=notas.filter(v=>v>=60&&v<80).length,b=notas.filter(v=>v<60).length;
+ let pend=0;EMP.forEach(e=>{const h=hechos[e.id]||{};modsDe(e).forEach(x=>{if(h[x.id]===undefined)pend++})});
+ const tot=a+m+b+pend||1,pc=n=>Math.round(n/tot*100);
+ const locs=LOCALES.map(l=>{const es=EMP.filter(e=>trabajaEn(e,l));
+  let he=0,to=0;
+  es.forEach(e=>{const h=hechos[e.id]||{},ms=modsDe(e);to+=ms.length;
+   he+=ms.filter(x=>h[x.id]!==undefined&&h[x.id]>=60).length});
+  return {l,n:es.length,hechos:he,tot:to,pct:to?Math.round(he/to*100):0}}).sort((x,y)=>x.pct-y.pct);
+ const hoy=new Date();hoy.setHours(23,59,59,999);
+ const d7=[];for(let i=6;i>=0;i--){const d=new Date(hoy);d.setDate(d.getDate()-i);d7.push(d)}
+ const cu=d7.map(d=>{const ini=new Date(d);ini.setHours(0,0,0,0);
+  return RESULTADOS.filter(r=>{const t=new Date(r.creado_en);return t>=ini&&t<=d}).length});
+ const maxd=Math.max(1,...cu),dn=['D','L','M','X','J','V','S'];
+ return `<p class="eye">Cómo va el equipo <b>${notas.length} test hechos</b></p>
+ <div class="est"><div class="est-h"><strong>Reparto de notas</strong><span>${notas.length+pend} en juego</span></div>
+  <div class="rep">${a?`<i class="a" style="width:${pc(a)}%">${pc(a)>=9?pc(a)+'%':''}</i>`:''}${m?`<i class="m" style="width:${pc(m)}%">${pc(m)>=9?pc(m)+'%':''}</i>`:''}${b?`<i class="b" style="width:${pc(b)}%">${pc(b)>=9?pc(b)+'%':''}</i>`:''}${pend?`<i class="s" style="width:${pc(pend)}%">${pc(pend)>=9?pc(pend)+'%':''}</i>`:''}</div>
+  <div class="rep-l"><span><em style="background:var(--ok)"></em>Bien ${a}</span>
+   <span><em style="background:var(--alerta)"></em>Justo ${m}</span>
+   <span><em style="background:var(--mal)"></em>A repetir ${b}</span>
+   <span><em style="background:var(--borde2)"></em>Sin hacer ${pend}</span></div></div>
+ <div class="est"><div class="est-h"><strong>Avance por local</strong><span>módulos superados</span></div>
+  ${locs.map(x=>`<div class="bar-l"><div class="bt"><b>${x.l}</b><span>${x.hechos}/${x.tot} · ${x.pct}%</span></div>
+   <div class="tr"><i class="${x.pct>=70?'ok':x.pct>=35?'med':'mal'}" style="width:${x.pct}%"></i></div></div>`).join('')}</div>
+ <div class="est"><div class="est-h"><strong>Actividad</strong><span>últimos 7 días</span></div>
+  <div class="spark">${cu.map(c=>`<div class="${c?'hay':''}" style="height:${Math.round(c/maxd*100)}%"></div>`).join('')}</div>
+  <div class="spark-x">${d7.map((d,i)=>`<span>${dn[d.getDay()]}${cu[i]?' '+cu[i]:''}</span>`).join('')}</div></div>`}
+
 function dirQuin(){
  const dias=diasRest();
  const cumpl=EMP.map(e=>{const h=hechos[e.id]||{};
@@ -2237,6 +2310,7 @@ function dirQuin(){
   <span>Cierra el ${QUIN.fin.toLocaleDateString('es-ES',{day:'numeric',month:'long'})} · ${QUIN.mods.length} módulos</span></div></div></div>
  <div class="mini3">${porLocal.map(p=>`<div class="m3 ${p.ok===p.tot?'ok':p.ok?'am':'mal'}">
   <b>${p.ok}/${p.tot}</b><small>${p.l}</small></div>`).join('')}</div>
+ ${panelEstadisticas()}
  <p class="eye">Quién falta</p>
  ${cumpl.sort((a,b)=>a.pct-b.pct).map(c=>`<div class="eq-r">
   <div class="i ${c.pct===100?'ok':c.pct>0?'med':'no'}">${c.e.n.slice(0,2).toUpperCase()}</div>
@@ -2421,6 +2495,7 @@ async function init(){
 
   EMP=empRes.data.map(e=>({id:e.id,n:e.nombre,rol:e.rol,pin:e.pin,loc:e.local}));
 
+  RESULTADOS=resRes.data||[];
   resRes.data.slice().sort((a,b)=>new Date(a.creado_en)-new Date(b.creado_en)).forEach(r=>{
    if(!hechos[r.empleado_id])hechos[r.empleado_id]={};
    hechos[r.empleado_id][r.modulo_id]=r.porcentaje});
@@ -2442,6 +2517,12 @@ async function init(){
 
   if(cfg.bloques&&typeof cfg.bloques==='object')bloques=cfg.bloques;
   else faltantes.push(saveConfig('bloques',{}));
+
+  if(cfg.locales&&typeof cfg.locales==='object')locales=cfg.locales;
+  else faltantes.push(saveConfig('locales',{}));
+
+  if(cfg.porlocal&&typeof cfg.porlocal==='object')modsPorLocal=cfg.porlocal;
+  else faltantes.push(saveConfig('porlocal',{}));
 
   if(cfg.marcados)marcados=cfg.marcados;
   else faltantes.push(saveConfig('marcados',marcados));
