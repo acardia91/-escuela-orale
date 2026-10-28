@@ -2982,6 +2982,9 @@ async function init(){
   if(cfg.porlocal&&typeof cfg.porlocal==='object')modsPorLocal=cfg.porlocal;
   else faltantes.push(saveConfig('porlocal',{}));
 
+  if(cfg.uso&&typeof cfg.uso==='object')uso=cfg.uso;
+  else faltantes.push(saveConfig('uso',{}));
+
   if(cfg.marcados)marcados=cfg.marcados;
   else faltantes.push(saveConfig('marcados',marcados));
 
