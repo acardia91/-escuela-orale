@@ -52,6 +52,7 @@ input,textarea,select{font-family:inherit}
 .lc,.locs,.emps,.dir,.pinw{animation:sube .42s cubic-bezier(.2,.8,.2,1) backwards}
 .locs{animation-delay:.05s}.emps{animation-delay:.1s}.dir{animation-delay:.16s}
 .emp{animation:sube .4s cubic-bezier(.2,.8,.2,1) backwards}
+.quieto .locs,.quieto .emps,.quieto .dir,.quieto .pinw,.quieto .emp{animation:none}
 .emp:nth-child(1){animation-delay:.12s}.emp:nth-child(2){animation-delay:.16s}
 .emp:nth-child(3){animation-delay:.2s}.emp:nth-child(4){animation-delay:.24s}
 .emp:nth-child(5){animation-delay:.28s}.emp:nth-child(6){animation-delay:.32s}
@@ -406,8 +407,9 @@ input,textarea,select{font-family:inherit}
 .foto-r .fbt svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .foto-r.subiendo{opacity:.55;pointer-events:none}
 
-/* 100dvh: con el teclado abierto en movil, 100% no encoge y el pie se sale */
-.play{position:fixed;inset:0;height:100dvh;background:var(--tinta);z-index:220;display:none;flex-direction:column}
+/* svh y no dvh: dvh se recalcula mientras la barra del navegador se
+   esconde o aparece, y la capa entera se reajusta al desplazarse. */
+.play{position:fixed;inset:0;height:100svh;background:var(--tinta);z-index:220;display:none;flex-direction:column}
 .play.on{display:flex}
 .p-top{padding:calc(14px + env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));flex-shrink:0}
 .p-bar{display:flex;gap:3px;margin-bottom:12px}
@@ -415,7 +417,12 @@ input,textarea,select{font-family:inherit}
 .p-seg.on{background:var(--amarillo)}
 .p-seg.ok{background:var(--verde)}.p-seg.mal{background:var(--roja)}
 .p-head{display:flex;align-items:center;justify-content:space-between}
-.p-x{color:rgba(245,242,236,.55);font-size:13px;font-weight:600;padding:6px 0}
+.p-x{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:0 14px;
+ border:1.5px solid rgba(245,242,236,.38);border-radius:100px;background:rgba(245,242,236,.08);
+ font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+ color:var(--hueso);transition:background .15s,border-color .15s}
+.p-x:active{background:var(--hueso);color:var(--tinta);border-color:var(--hueso)}
+.p-x:focus-visible{outline:2px solid var(--hueso);outline-offset:2px}
 .p-n{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:12px;color:rgba(245,242,236,.45);letter-spacing:.08em}
 .p-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:8px max(18px,env(safe-area-inset-right)) 18px max(18px,env(safe-area-inset-left))}
 .p-foot{padding:14px max(16px,env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));flex-shrink:0}
@@ -544,10 +551,16 @@ input,textarea,select{font-family:inherit}
 /* Caja flexible: con 'margin-top:auto' en la barra de accion, queda
    abajo cuando el contenido es corto y fluye cuando es largo. Antes,
    con relleno inferior y solo sticky, flotaba a media pantalla. */
-.sheet{position:fixed;inset:0;height:100dvh;background:var(--hueso);z-index:180;transform:translateY(100%);transition:transform .27s cubic-bezier(.4,0,.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column}
+.sheet{position:fixed;inset:0;height:100svh;background:var(--hueso);z-index:180;transform:translateY(100%);transition:transform .27s cubic-bezier(.4,0,.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column}
 .sheet.on{transform:translateY(0)}
 .sh-top{position:sticky;top:0;z-index:5;background:var(--col);color:#fff;padding:calc(14px + env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 17px max(16px,env(safe-area-inset-left))}
-.sh-x{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#fff;opacity:.82;margin-bottom:11px}
+/* Cerrar: un boton que se ve, no un texto tenue. 44px de alto para el pulgar. */
+.sh-x{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:0 13px 0 10px;
+ border:1.5px solid rgba(255,255,255,.45);border-radius:100px;background:rgba(255,255,255,.1);
+ font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+ color:#fff;margin-bottom:13px;transition:background .15s,border-color .15s}
+.sh-x:active{background:#fff;color:var(--tinta);border-color:#fff}
+.sh-x:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .sh-top h2{font-family:var(--display);font-size:27px;letter-spacing:.01em;text-transform:uppercase;margin-bottom:4px;line-height:1.02}
 .sh-top p{font-size:13px;opacity:.88}
 .f-c{margin-bottom:14px}
@@ -1834,16 +1847,25 @@ function pLogin(){const b=document.getElementById('lbody');
   <div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="tec('${n}')">${n}</button>`).join('')}
   <button class="t" onclick="volver()">Atrás</button><button onclick="tec('0')">0</button><button class="t" onclick="bor()">Borrar</button></div></div>`;
   document.getElementById('lsub').textContent=e.loc}}
-function sLoc(l){locSel=locSel===l?null:l;pLogin()}
-function pEmp(i){empSel=i;pin='';pLogin()}
-function irDir(){empSel='DIR';pin='';pLogin()}
-function volver(){empSel=null;pin='';pLogin()}
-function bor(){pin=pin.slice(0,-1);pLogin()}
-function tec(n){if(pin.length>=4)return;pin+=n;pLogin();
+function sLoc(l){locSel=locSel===l?null:l;
+ /* la marca 'quieto' apaga las animaciones de entrada en los repintados:
+    solo se animan la primera vez que se ve la pantalla */
+ document.getElementById('lbody').classList.add('quieto');pLogin()}
+function pEmp(i){empSel=i;pin='';document.getElementById('lbody').classList.add('quieto');pLogin()}
+function irDir(){empSel='DIR';pin='';document.getElementById('lbody').classList.add('quieto');pLogin()}
+function volver(){empSel=null;pin='';document.getElementById('lbody').classList.add('quieto');pLogin()}
+/* Solo se repintan los puntos. Antes se rehacia todo el panel en cada
+   pulsacion y la animacion de entrada se lanzaba otra vez: la pantalla
+   daba un saltito por cada digito. */
+function pintaDots(){document.querySelectorAll('.dots .dot').forEach((d,i)=>{
+ d.classList.toggle('on',pin.length>i);d.classList.remove('err')})}
+function bor(){pin=pin.slice(0,-1);pintaDots()}
+function tec(n){if(pin.length>=4)return;pin+=n;pintaDots();
  if(pin.length===4){const ok=empSel==='DIR'?pin===DIRPIN:pin===EMP.find(x=>x.id===empSel).pin;
  setTimeout(()=>{if(ok){empSel==='DIR'?entrarDir():entrar(EMP.find(x=>x.id===empSel))}
  else{document.getElementById('pw').classList.add('shake');
- document.querySelectorAll('.dot').forEach(d=>d.classList.add('err'));setTimeout(()=>{pin='';pLogin()},550)}},160)}}
+ document.querySelectorAll('.dot').forEach(d=>d.classList.add('err'));
+ setTimeout(()=>{pin='';document.getElementById('pw').classList.remove('shake');pintaDots()},550)}},160)}}
 
 function entrar(e){user=e;esDir=false;usoArranca(e.id);
  document.getElementById('login').style.display='none';document.getElementById('top').style.display='block';
@@ -2065,30 +2087,43 @@ function vParaTi(){const mios=modsDe(user);
 
 /* ENCARGADO: mi equipo */
 function vMiEquipo(){
- const mios=EMP.filter(e=>e.id!==user.id);
+ /* Solo la gente de sus locales: un encargado de San Luis no tiene por que
+    estar mirando como va el equipo de Tomares. */
+ const misLocales=localesDe(user);
+ const mios=EMP.filter(e=>e.id!==user.id&&misLocales.some(l=>trabajaEn(e,l)));
  const fil=mios.map(e=>{const h=hechos[e.id]||{};
   const qm=MOD.filter(m=>m.pub&&QUIN.mods.includes(m.id)&&m.roles.includes(e.rol));
   const ok=qm.filter(m=>h[m.id]!==undefined&&h[m.id]>=60).length;
+  /* y no solo la quincena: cuantos protocolos lleva superados en total */
+  const todos=modsDe(e);
+  const supTot=todos.filter(m=>h[m.id]!==undefined&&h[m.id]>=60).length;
+  const notas=todos.map(m=>h[m.id]).filter(v=>v!==undefined);
+  const media=notas.length?Math.round(notas.reduce((a,b)=>a+b,0)/notas.length):null;
   const nm=(marcados[e.id]||[]).length;
-  return {e,ok,tot:qm.length,nm,pct:qm.length?Math.round(ok/qm.length*100):0}});
+  return {e,ok,tot:qm.length,nm,supTot,totTot:todos.length,media,
+   pct:qm.length?Math.round(ok/qm.length*100):0}});
  fil.sort((a,b)=>a.pct-b.pct);
  const alDia=fil.filter(f=>f.pct===100).length;
  const dias=diasRest();
  document.getElementById('app').innerHTML=`
  <div class="quin ${alDia===fil.length?'hecha':dias<=2?'urg':''}">
-  <div class="qk"><span>Equipo · los cuatro locales</span>
+  <div class="qk"><span>Tu equipo · ${misLocales.join(' · ')}</span>
    <span class="qd">${dias>0?`${dias} día${dias!==1?'s':''}`:'Fuera de plazo'}</span></div>
   <h2>${alDia} de ${fil.length} al día</h2>
   <div class="qrow"><div class="qi"><strong>${QUIN.n}</strong>
   <span>${alDia===fil.length?'Todo el equipo la ha completado.':'Habla en privado con quien falta, como marca la guía.'}</span></div></div></div>
- ${LOCALES.map(l=>{const es=fil.filter(f=>f.e.loc===l);
+ ${(()=>{const ya=new Set();return misLocales.map(l=>{
+  const es=fil.filter(f=>trabajaEn(f.e,l)&&!ya.has(f.e.id));
+  es.forEach(f=>ya.add(f.e.id));
   if(!es.length)return '';
   return `<p class="eye">${l} <b>${es.filter(f=>f.pct===100).length} de ${es.length} al día</b></p>
   ${es.map(f=>`<button class="eq-r" onclick="marcarA('${f.e.id}')">
    <div class="i ${f.pct===100?'ok':f.pct>0?'med':'no'}">${f.e.n.slice(0,2).toUpperCase()}</div>
-   <div class="b"><strong>${f.e.n}</strong><small>${f.e.rol} · ${f.ok} de ${f.tot} de la quincena${f.nm?` · ${f.nm} marcado${f.nm>1?'s':''}`:''}</small></div>
-   <span class="st ${f.pct===100?'ok':f.pct>0?'med':'no'}">${f.pct===100?'Al día':f.pct>0?'A medias':'Sin empezar'}</span></button>`).join('')}`}).join('')}
- <div class="pie"><strong>Toca a alguien para marcarle módulos o un área entera.</strong> Le aparecerá destacado con tu nota. Y recuerda: si alguien falla, se corrige en privado, nunca delante de todos.</div>`}
+   <div class="b"><strong>${f.e.n}</strong><small>${(()=>{const otros=localesDe(f.e).filter(x=>misLocales.includes(x));return otros.length>1?otros.join(' · ')+' · ':''})()}${f.ok} de ${f.tot} de la quincena · ${f.supTot} de ${f.totTot} protocolos${f.media!==null?` · media ${f.media}%`:''}${f.nm?` · ${f.nm} marcado${f.nm>1?'s':''}`:''}</small>
+   <div class="per-bar"><i class="${f.totTot&&f.supTot/f.totTot>=.75?'':f.totTot&&f.supTot/f.totTot>=.4?'m':'b'}" style="width:${f.totTot?Math.round(f.supTot/f.totTot*100):0}%"></i></div></div>
+   <span class="st ${f.pct===100?'ok':f.pct>0?'med':'no'}">${f.pct===100?'Al día':f.pct>0?'A medias':'Sin empezar'}</span></button>`).join('')}`}).join('')})()}
+ <div class="pie"><strong>Ves a la gente de tus locales.</strong> La barra es el total de protocolos superados; la etiqueta de la derecha, solo los de esta quincena.
+ Toca a alguien para marcarle módulos o un área, y recuerda: si alguien falla, se corrige en privado, nunca delante de todos.</div>`}
 
 /* Marcar módulos o áreas, con nota */
 /* EVALUACIÓN DE DESEMPEÑO: la pone dirección o el encargado, no el test.
@@ -2378,7 +2413,7 @@ function pPlay(){const m=P.m,tot=m.slides.length+m.test.length;
  <div class="p-top"><div class="p-bar">${Array.from({length:tot},(_,i)=>{
   const im=i-m.slides.length;const cls=im>=0&&P.marks[im]?P.marks[im]:(i<=idx?'on':'');
   return `<div class="p-seg ${cls}"></div>`}).join('')}</div>
- <div class="p-head"><button class="p-x" onclick="cerrarPlay()">Cerrar</button>
+ <div class="p-head"><button class="p-x" onclick="cerrarPlay()" aria-label="Cerrar el protocolo"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>Cerrar</button>
  <span class="p-n ${m.nuevo?'proto-n':''}">${m.nuevo?'PROTOCOLO · PRODUCTO NUEVO':CAT[m.cat].n}</span></div></div>
  <div class="p-body">${body}</div><div class="p-foot">${foot}</div>`;
  /* cada pantalla del modulo empieza arriba, no a media altura de la anterior */
@@ -2521,22 +2556,26 @@ function pubTodos(valor,cat){
  pintar()}
 
 /* ===== Enviar o mandar repetir a varias personas a la vez ===== */
-let envMods=[],envQuien=[],envRepe=false;
+let envMods=[],envQuien=[],envRepe=false,envGente=[];
 function panelEnvio(){
  envMods=[];envQuien=[];envRepe=false;
  const pub=MOD.filter(m=>m.pub);
+ /* direccion llega a todo el mundo; un encargado, solo a su gente */
+ const misL=esDir?LOCALES:localesDe(user);
+ const gente=esDir?EMP:EMP.filter(e=>e.id!==user.id&&misL.some(l=>trabajaEn(e,l)));
+ envGente=gente;
  abrirSheet(`<div class="sh-top" style="background:var(--tinta)">
  <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Equipo</button>
- <h2>Enviar protocolos</h2><p>A varias personas de una vez</p></div>
+ <h2>Enviar protocolos</h2><p>${esDir?'A varias personas de una vez':'A la gente de '+misL.join(' · ')}</p></div>
  <div style="padding:16px 16px 0">
  <p class="eye">Qué envías <b id="env-n">ninguno</b></p>
  <div class="chips">${pub.map(m=>`<button class="chip" onclick="envTogM('${m.id}',this)" aria-pressed="false">${m.t}</button>`).join('')}</div>
  <p class="eye">A quién <b id="env-q">nadie</b></p>
  <div class="bulk" style="margin-bottom:9px">
-  <button onclick="envTodos()">Todo el equipo</button>
-  ${LOCALES.map(l=>`<button onclick="envLocal('${l.replace(/'/g,"\\'")}')">${l}</button>`).join('')}
+  <button onclick="envTodos()">${esDir?'Todo el equipo':'Toda tu gente'}</button>
+  ${misL.map(l=>`<button onclick="envLocal('${l.replace(/'/g,"\\'")}')">${l}</button>`).join('')}
  </div>
- <div class="quien">${EMP.map(e=>`<button class="qp" aria-pressed="false" data-e="${e.id}" onclick="envTogQ('${e.id}',this)">
+ <div class="quien">${gente.map(e=>`<button class="qp" aria-pressed="false" data-e="${e.id}" onclick="envTogQ('${e.id}',this)">
   <span class="qi">${e.n.slice(0,2).toUpperCase()}</span><strong>${e.n}</strong><small>${localesDe(e)[0]}</small></button>`).join('')}</div>
  <button class="rep-sw" aria-pressed="false" id="env-rep" onclick="envTogR(this)">
   <span class="t"><strong>Que lo repitan</strong><small>Borra su nota de ese protocolo y les vuelve a salir como pendiente. Sin esto, a quien ya lo tenga hecho no le cambia nada.</small></span><i></i></button>
@@ -2551,12 +2590,12 @@ function envTogQ(id,b){const i=envQuien.indexOf(id);
  if(i<0){envQuien.push(id);b.setAttribute('aria-pressed','true')}else{envQuien.splice(i,1);b.setAttribute('aria-pressed','false')}
  envPintaQ()}
 function envPintaQ(){document.getElementById('env-q').textContent=
- envQuien.length===EMP.length?'todo el equipo':envQuien.length?envQuien.length+(envQuien.length===1?' persona':' personas'):'nadie'}
+ envQuien.length&&envQuien.length===envGente.length?'todos':envQuien.length?envQuien.length+(envQuien.length===1?' persona':' personas'):'nadie'}
 function envMarca(ids){envQuien=ids.slice();
  document.querySelectorAll('.quien .qp').forEach(b=>b.setAttribute('aria-pressed',envQuien.includes(b.dataset.e)?'true':'false'));
  envPintaQ()}
-function envTodos(){envMarca(envQuien.length===EMP.length?[]:EMP.map(e=>e.id))}
-function envLocal(l){const ids=EMP.filter(e=>trabajaEn(e,l)).map(e=>e.id);
+function envTodos(){envMarca(envQuien.length===envGente.length?[]:envGente.map(e=>e.id))}
+function envLocal(l){const ids=envGente.filter(e=>trabajaEn(e,l)).map(e=>e.id);
  const yaEstan=ids.every(i=>envQuien.includes(i))&&envQuien.length===ids.length;
  envMarca(yaEstan?[]:ids)}
 function envTogR(b){envRepe=!envRepe;b.setAttribute('aria-pressed',envRepe?'true':'false')}
@@ -2566,7 +2605,7 @@ function envEnviar(){
  if(!envQuien.length)return toast('No has elegido a nadie');
  let tocados=0;
  envQuien.forEach(id=>{
-  const e=EMP.find(x=>x.id===id); if(!e)return;
+  const e=envGente.find(x=>x.id===id); if(!e)return;
   if(!asign[id])asign[id]=[];
   envMods.forEach(m=>{
    /* no se manda lo que esa persona no puede ver por rol o por 'solo' */
@@ -2586,12 +2625,12 @@ function dirMods(){
  document.getElementById('app').innerHTML=`
  <div class="mini3">
   <div class="m3 ${pubs?'ok':'mal'}"><b>${pubs}</b><small>publicados</small></div>
-  <div class="m3"><b>${MOD.length-pubs}</b><small>ocultos</small></div>
+  <div class="m3"><b>${MOD.length-pubs}</b><small>${esDir?'ocultos':'aún no abiertos'}</small></div>
   <div class="m3"><b>${MOD.length}</b><small>en total</small></div></div>
  <div class="bulk">
   <button onclick="panelEnvio()">Enviar a varias personas</button>
-  <button class="peli" onclick="pubTodos(0)">Ocultar todos</button>
-  <button onclick="pubTodos(1)">Publicar todos</button>
+  ${esDir?`<button class="peli" onclick="pubTodos(0)">Ocultar todos</button>
+  <button onclick="pubTodos(1)">Publicar todos</button>`:''}
  </div>
  <div class="pie" style="margin-top:0;margin-bottom:16px"><strong>Los ocultos no existen para el equipo.</strong>
  Publica solo lo que quieres que hagan ahora. Ir soltando de poco en poco funciona mucho mejor que abrir los 22 de golpe.</div>
@@ -2611,16 +2650,17 @@ function dirMods(){
   if(!ms.length)return '';
   const np=ms.filter(m=>m.pub).length;
   return `<p class="eye cat-h"><span>${CAT[k].n} <b>${np} de ${ms.length} visibles</b></span>
-   <button class="cb2" onclick="pubTodos(${np===ms.length?0:1},'${k}')">${np===ms.length?'Ocultar todos':'Publicar todos'}</button></p>
+   ${esDir?`<button class="cb2" onclick="pubTodos(${np===ms.length?0:1},'${k}')">${np===ms.length?'Ocultar todos':'Publicar todos'}</button>`:''}</p>
   ${ms.map(m=>{const notas=EMP.filter(e=>hechos[e.id]&&hechos[e.id][m.id]!==undefined).map(e=>hechos[e.id][m.id]);
    const md=notas.length?Math.round(notas.reduce((a,b)=>a+b,0)/notas.length):null;
-   return `<button class="selm" aria-pressed="${!!m.pub}" onclick="togPub('${m.id}')">
+   return `<button class="selm" aria-pressed="${!!m.pub}" ${esDir?`onclick="togPub('${m.id}')"`:'disabled style="cursor:default;opacity:.92"'}>
    <div class="cb"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
    <div class="b"><strong>${m.t}</strong>
    <small>${m.slides.length} pantallas · ${m.test.length} preguntas · ${m.fr}${m.crit?' · crítico':''}${md!==null?` · media ${md}%`:''}</small></div>
    <span class="pl ${m.pub?'pl-hecho':'pl-neu'}">${m.pub?'Visible':'Oculto'}</span></button>`}).join('')}`}).join('')}
- <div class="pie"><strong>Cómo empezar.</strong> Publica 3 o 4 para la primera quincena, los más críticos.
- Cuando el equipo los tenga, publicas los siguientes. Un módulo publicado y no hecho pesa más que uno oculto.</div>`}
+ <div class="pie">${esDir?`<strong>Cómo empezar.</strong> Publica 3 o 4 para la primera quincena, los más críticos.
+ Cuando el equipo los tenga, publicas los siguientes. Un módulo publicado y no hecho pesa más que uno oculto.`
+ :`<strong>Qué hay publicado.</strong> Publicar u ocultar protocolos lo hace dirección. Tú sí puedes enviárselos a tu gente y pedir que los repitan, con el botón de arriba.`}</div>`}
 /* Foto de producto: se reduce en el móvil (máx 900px, JPEG) y se guarda en escuela_config.imgs */
 function subirFoto(id,input){const file=input.files&&input.files[0];if(!file)return;
  const row=document.getElementById('fr-'+id);if(row)row.classList.add('subiendo');
