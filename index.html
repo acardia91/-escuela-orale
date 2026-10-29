@@ -2874,9 +2874,14 @@ function panelProgreso(){
  EMP.forEach(e=>{const h=hechos[e.id]||{};modsDe(e).forEach(m=>{tot++;if(h[m.id]!==undefined&&h[m.id]>=60)sup++})});
  const cob=tot?Math.round(sup/tot*100):0;
 
+ /* Solo cuenta la gente en plantilla: las filas de quien esta de baja
+    no dicen nada de como va el equipo de hoy. */
+ const enPlantilla=new Set(EMP.map(e=>e.id));
+ const filas=RESULTADOS.filter(r=>enPlantilla.has(r.empleado_id));
+
  /* primeros intentos: el primer resultado de cada par persona-modulo */
  const porPar={};
- RESULTADOS.slice().sort((a,b)=>new Date(a.creado_en)-new Date(b.creado_en))
+ filas.slice().sort((a,b)=>new Date(a.creado_en)-new Date(b.creado_en))
   .forEach(r=>{const k=r.empleado_id+'|'+r.modulo_id;(porPar[k]=porPar[k]||[]).push(r)});
  const pares=Object.values(porPar);
  const prim=pares.map(v=>v[0].porcentaje);
@@ -2891,7 +2896,7 @@ function panelProgreso(){
  const cortes=[];for(let i=3;i>=0;i--){const d=new Date(hoy);d.setDate(d.getDate()-i*7);cortes.push(d)}
  const serie=cortes.map(d=>{
   const vistos={};
-  RESULTADOS.forEach(r=>{if(new Date(r.creado_en)<=d){
+  filas.forEach(r=>{if(new Date(r.creado_en)<=d){
    const k=r.empleado_id+'|'+r.modulo_id;
    const t=new Date(r.creado_en);
    if(!vistos[k]||t>vistos[k].t)vistos[k]={t,v:r.porcentaje}}});
@@ -2934,6 +2939,7 @@ function panelUso(){
  <div class="pie"><strong>El tiempo solo cuenta con la app delante.</strong> Si alguien la deja abierta en la mesa no suma, así que el dato es tiempo real leyendo, no móvil encendido.</div>`}
 
 function panelEstadisticas(){
+ const enPlantilla=new Set(EMP.map(e=>e.id));
  const notas=[];EMP.forEach(e=>Object.values(hechos[e.id]||{}).forEach(v=>notas.push(v)));
  const a=notas.filter(v=>v>=80).length,m=notas.filter(v=>v>=60&&v<80).length,b=notas.filter(v=>v<60).length;
  let pend=0;EMP.forEach(e=>{const h=hechos[e.id]||{};modsDe(e).forEach(x=>{if(h[x.id]===undefined)pend++})});
@@ -2946,7 +2952,8 @@ function panelEstadisticas(){
  const hoy=new Date();hoy.setHours(23,59,59,999);
  const d7=[];for(let i=6;i>=0;i--){const d=new Date(hoy);d.setDate(d.getDate()-i);d7.push(d)}
  const cu=d7.map(d=>{const ini=new Date(d);ini.setHours(0,0,0,0);
-  return RESULTADOS.filter(r=>{const t=new Date(r.creado_en);return t>=ini&&t<=d}).length});
+  return RESULTADOS.filter(r=>enPlantilla.has(r.empleado_id)&&
+   (()=>{const t=new Date(r.creado_en);return t>=ini&&t<=d})()).length});
  const maxd=Math.max(1,...cu),dn=['D','L','M','X','J','V','S'];
  return `<p class="eye">Cómo va el equipo <b>${notas.length} test hechos</b></p>
  <div class="est"><div class="est-h"><strong>Reparto de notas</strong><span>${notas.length+pend} en juego</span></div>
