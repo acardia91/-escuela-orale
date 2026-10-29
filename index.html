@@ -435,10 +435,10 @@ input,textarea,select{font-family:inherit}
 .slide-d .big{font-family:'Archivo';font-variation-settings:'wght' 900;font-size:36px;color:var(--amarillo);line-height:1;margin-bottom:6px}
 .slide-d .sm{font-size:13.5px;color:rgba(245,242,236,.7);line-height:1.45}
 .pasos-l{background:rgba(255,255,255,.06);border-radius:var(--r);padding:6px 16px;margin-bottom:13px}
-.pasos-l .pl{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);align-items:flex-start}
+.pasos-l .pl{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);align-items:flex-start;white-space:normal;font-size:inherit;font-weight:inherit;text-transform:none;letter-spacing:normal;border-radius:0}
 .pasos-l .pl:last-child{border-bottom:none}
 .pasos-l .pn{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:13px;color:var(--amarillo);flex-shrink:0;width:22px}
-.pasos-l .pt{font-size:15px;color:var(--hueso);line-height:1.4}
+.pasos-l .pt{font-size:15px;color:var(--hueso);line-height:1.4;min-width:0;flex:1}
 .pasos-l .pt em{font-style:normal;color:var(--amarillo);font-weight:700}
 .frase{border-left:3px solid var(--amarillo);padding:4px 0 4px 14px;margin-bottom:13px}
 .frase p{font-size:16.5px;color:var(--hueso);font-style:italic;line-height:1.5}
@@ -834,6 +834,74 @@ const CAT={
 };
 
 const MOD=[
+/* ===== DELIVERY: dos partes, IMPORTANTE y DELIVERY ===== */
+{id:'d1',pub:1,cat:'pedido',t:'Lo importante y el empaque',corto:'Delivery',min:7,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
+ ficha:{lleva:['Nada en mal estado sale','El ticket se lee en alto','Nachos abajo, salsas al lado','Bebida en bolsa aparte'],
+  aler:'Una salsa encima de los nachos revienta en el trayecto',
+  clave:'La primera parte es lo que no se negocia. La segunda es cómo se monta la bolsa para que llegue como salió.'},
+ slides:[
+ {k:'IMPORTANTE',t:'Lo que no sale de la cocina',pasos:[
+  '<em>EN MAL ESTADO</em> — si huele raro, tiene mala pinta o está pasado, no sale. Se tira y se avisa',
+  '<em>QUEMADO</em> — un producto quemado no se manda «que ya se apañará». Se rehace',
+  '<em>INVENTADO</em> — si falta un ingrediente no se sustituye por otro parecido. Se avisa al encargado'],
+  p:['Esto es lo único de la lista que puede acabar con alguien malo en casa. Tenemos <b>tres casos documentados</b> de clientes que enfermaron.'],
+  frase:['Ante la duda, fuera.','Un producto tirado cuesta céntimos. Un cliente intoxicado cuesta el negocio.']},
+ {k:'IMPORTANTE',t:'El ticket se lee en alto',
+  p:['Cuando un pedido lleva algo especial o va <b>sin</b> algún ingrediente, se lee en voz alta para que lo oiga quien está al lado.',
+  'No es por formalismo: el que monta y el que empaqueta son dos personas distintas, y la mitad de los fallos ocurren en ese salto.'],
+  frase:['«Burro Don Juárez, SIN cebolla.»','Dicho en alto. Así hay dos personas que lo saben, no una.']},
+ {k:'IMPORTANTE',t:'Rotulador de color',
+  p:['Los burritos y las órdenes especiales van <b>marcados con rotulador de color</b>.',
+  'Qué color es cada cosa lo dice tu encargado en tu local. Si no lo tienes claro, pregúntaselo hoy, no la próxima vez que haya prisa.'],
+  dest:['Marcado','para que se vea desde fuera del envoltorio, sin abrirlo']},
+ {k:'IMPORTANTE',t:'Lo que falta, se dice',
+  p:['<b>Todos los días</b> se le reporta al encargado lo que no hay. No al final de la semana: ese día.',
+  'Y antes de empezar, una vuelta a <b>bebidas y postres</b>: son lo que más se olvida y lo que más cargos genera.'],
+  frase:['Si falta y nadie lo sabe, se sigue vendiendo.','Y entonces el problema ya no es que falte: es que lo hemos cobrado.']},
+ {k:'IMPORTANTE',t:'Empezar pronto marca el día',
+  p:['No hace falta cronómetro. Lo que hace falta es <b>arrancar las preparaciones a tiempo</b>.',
+  'Si los primeros pedidos salen tarde, se te acumulan los siguientes, y cuando se acumulan la plataforma <b>nos baja la visibilidad</b>. Menos visibilidad son menos pedidos al día siguiente.'],
+  dest:['Los primeros','son los que deciden cómo va el resto del turno']},
+ {k:'DELIVERY',t:'Cómo se monta la bolsa',pasos:[
+  '<em>NACHOS ABAJO</em> — el calor sube. Abajo se mantienen; arriba se enfrían y se ablandan',
+  '<em>SALSAS AL LADO</em> — nunca encima de los nachos. Con el movimiento revientan y lo empapan todo',
+  '<em>BEBIDA APARTE</em> — nunca en la misma bolsa que lo caliente',
+  '<em>BIEN GRAPADO</em> — la bolsa se cierra grapada, no doblada'],
+  p:['Se monta en la <b>zona de empaquetamiento</b>, no en cualquier hueco que quede libre.']},
+ {k:'DELIVERY',t:'Los que más nos fallan',pasos:[
+  '<em>COMBOS</em> — se repasan enteros, pieza a pieza. Son los que más personalizaciones pierden',
+  '<em>COCA-COLA ZERO</em> — la bebida que más se olvida de toda la carta',
+  '<em>POSTRES</em> — Kinder y Lotus se cambian constantemente. Mira la etiqueta',
+  '<em>NACHOS GUADALUPE</em> — pico, queso y cantidad estándar. Topping aparte en delivery',
+  '<em>LADY COCHINITA</em> — la cochinita va desmenuzada, nunca en trozos',
+  '<em>DOÑA DOLORES</em> — ojo con el especiado, es la queja fija de ese burrito'],
+  p:['No es una lista al azar: son los productos con más incidencias reales de los últimos meses.']},
+ {k:'DELIVERY',t:'El burrito, antes de envolver',
+  p:['<b>Caliente</b>, con el <b>queso fundido</b> y la <b>lechuga fina</b>.',
+  'Y confirmar <b>cuál es cada uno</b> antes de envolverlos. Dos burritos envueltos iguales son dos burritos que nadie distingue después.'],
+  frase:['Envuelto y sin marcar, ya no sabes cuál es.','Se marca antes, no después.']}],
+ test:[
+ {tipo:'opt',q:'¿Dónde van los nachos en la bolsa?',
+  op:[['Arriba, para que no se aplasten',0],['Abajo, el calor sube',1],['Da igual si va grapada',0]],
+  ex:'Abajo. El calor sube, así que abajo se mantienen calientes; arriba se enfrían y se ablandan.'},
+ {tipo:'opt',q:'¿Y las salsas?',
+  op:[['Encima de los nachos, que cunde',0],['Al lado, nunca encima',1],['Dentro del envoltorio del burrito',0]],
+  ex:'Al lado. Encima de los nachos revientan con el movimiento y empapan todo el pedido.'},
+ {tipo:'opt',q:'El ticket pone «sin cebolla». ¿Qué haces además de montarlo así?',
+  op:[['Leerlo en alto para que lo oiga el compañero y marcarlo con rotulador',1],['Apuntarlo en un papel',0],['Nada más, con montarlo bien basta',0]],
+  ex:'En alto y marcado. Montas tú pero empaqueta otro: si no lo dices, solo lo sabe una persona.'},
+ {tipo:'opt',q:'Abres una bolsa de ingrediente y huele raro, pero está en fecha. ¿Qué haces?',
+  op:[['Usarla, la fecha manda',0],['No usarla y avisar al encargado',1],['Usar solo la parte que tenga buena pinta',0]],
+  ex:'No se usa. Tenemos tres casos de clientes que enfermaron. La fecha no es lo único que cuenta.'},
+ {tipo:'opt',q:'Falta un ingrediente de un producto. ¿Qué haces?',
+  op:[['Poner otro parecido y no decir nada',0],['Avisar al encargado',1],['Mandarlo sin ese ingrediente',0]],
+  ex:'Avisar. No se inventan ingredientes: el cliente pidió una cosa concreta y pagó por ella.'},
+ {tipo:'opt',q:'¿Por qué importa arrancar pronto las preparaciones?',
+  op:[['Para salir antes del turno',0],['Porque si se acumulan pedidos la plataforma nos baja la visibilidad',1],['Porque lo pide el rider',0]],
+  ex:'Si los primeros salen tarde se acumulan los siguientes, y con pedidos acumulados la plataforma nos muestra menos. Menos visibilidad, menos pedidos mañana.'},
+ {tipo:'opt',q:'¿Con qué hay que tener más cuidado al repasar?',
+  op:[['Con los combos, pieza a pieza',1],['Con las servilletas',0],['Con el orden de los tickets',0]],
+  ex:'Los combos. Son los que más personalizaciones pierden de toda la carta.'}]},
 /* ===== LO QUE NO PUEDE VOLVER A PASAR — va el primero a proposito ===== */
 {id:'ev1',pub:1,base:1,cat:'pedido',t:'Lo que no puede volver a pasar',corto:'No repetir',min:7,fr:'Cada 3 semanas',roles:['empleado','encargado'],crit:1,
  ficha:{lleva:['La comida sale caliente','Las notas se leen','Los artículos se cuentan','Nada fuera de fecha'],
