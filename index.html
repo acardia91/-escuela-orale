@@ -730,6 +730,24 @@ input,textarea,select{font-family:inherit}
 .flo-r .n{flex:1;min-width:0;font-size:13px;line-height:1.35}
 .flo-r .v{font-family:'Archivo';font-variation-settings:'wght' 800;font-size:14px;flex-shrink:0}
 .flo-r .v.a{color:var(--ok)}.flo-r .v.m{color:var(--alerta)}.flo-r .v.b{color:var(--mal)}
+
+/* ===== Fecha de alta y novedades ===== */
+.nv{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;font-weight:600;
+ letter-spacing:.11em;text-transform:uppercase;padding:3px 7px;border-radius:var(--r2);
+ background:var(--vino);color:var(--hueso);white-space:nowrap;flex-shrink:0}
+.nv.vieja{background:none;border:1px solid var(--borde2);color:var(--gris2)}
+.mod .nv{margin-left:6px}
+.selm .nv{margin-left:auto;margin-right:6px}
+.fch{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--gris2)}
+.fch.nueva{color:var(--vino);font-weight:600}
+/* ===== Frase de bienvenida ===== */
+.frase-d{border-top:2px solid var(--tinta);border-bottom:1px solid var(--borde);
+ padding:14px 0 15px;margin:0 0 20px}
+.frase-d .fk{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.24em;
+ text-transform:uppercase;color:var(--gris2);margin-bottom:8px}
+.frase-d p{font-family:var(--display);font-weight:400;font-size:clamp(19px,5.4vw,24px);
+ line-height:1.14;letter-spacing:.008em;text-transform:uppercase;margin:0;text-wrap:balance}
+.frase-d p em{font-style:normal;color:var(--vino)}
 </style>
 </head>
 <body>
@@ -2023,8 +2041,9 @@ function tarjeta(m){const st=estadoMod(m,user),c=CAT[m.cat],h=(hechos[user.id]||
  return `<button class="mod ${st==='hecho'?'hecho':''}" style="--col:var(${c.c})" onclick="abrirMod('${m.id}')">
  ${imgs[m.id]?`<div class="ic th"><img src="${imgs[m.id]}" alt=""></div>`:`<div class="ic"><svg viewBox="0 0 24 24">${c.ic}</svg></div>`}
  <div class="mod-b"><div class="mod-h"><strong>${m.t}</strong>
+ ${esReciente(m)?`<span class="nv">Nuevo</span>`:''}
  <span class="pl ${pl.cls}">${pl.txt}</span></div>
- <div class="mt"><em>${m.min} min</em><em>${m.test.length} preguntas</em><em>${m.fr}</em></div>
+ <div class="mt"><em>${m.min} min</em><em>${m.test.length} preguntas</em>${altas[m.id]?`<em>${textoAlta(m.id)}</em>`:`<em>${m.fr}</em>`}</div>
  ${h!==undefined?`<div class="res ${h<60?'mal':'ok'}">${h}% de acierto${h<60?' · conviene repetirlo':''}</div>`:''}</div>
  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:.28;flex-shrink:0;align-self:center"><path d="M9 18l6-6-6-6"/></svg></button>`}
 
@@ -2113,9 +2132,14 @@ function vParaTi(){const mios=modsDe(user);
     se sacan del resto de listas para no verlos dos veces */
  const base=mios.filter(m=>m.base&&(h[m.id]===undefined||h[m.id]<60)&&!enQuin(m));
  const enBase=m=>base.indexOf(m)>=0;
- const rep=mios.filter(m=>estadoMod(m,user)==='repetir'&&!enQuin(m)&&!enBase(m));
- const nue=mios.filter(m=>estadoMod(m,user)==='nuevo'&&!enQuin(m)&&!enBase(m));
- const pen=mios.filter(m=>estadoMod(m,user)==='pendiente'&&!enQuin(m)&&!m.nuevo&&!enBase(m));
+ /* abierto al equipo hace poco y todavia sin superar: eso es una novedad
+    de verdad, no un pendiente mas */
+ const recientes=mios.filter(m=>esReciente(m)&&(h[m.id]===undefined||h[m.id]<60)&&!enQuin(m)&&!enBase(m))
+  .sort((a,b)=>(altas[b.id]||'').localeCompare(altas[a.id]||''));
+ const enNuevo=m=>recientes.indexOf(m)>=0;
+ const rep=mios.filter(m=>estadoMod(m,user)==='repetir'&&!enQuin(m)&&!enBase(m)&&!enNuevo(m));
+ const nue=mios.filter(m=>estadoMod(m,user)==='nuevo'&&!enQuin(m)&&!enBase(m)&&!enNuevo(m));
+ const pen=mios.filter(m=>estadoMod(m,user)==='pendiente'&&!enQuin(m)&&!m.nuevo&&!enBase(m)&&!enNuevo(m));
  const hec=mios.filter(m=>estadoMod(m,user)==='hecho'&&!enQuin(m));
  const ks=Object.keys(h);
  const media=ks.length?Math.round(ks.reduce((s,k)=>s+h[k],0)/ks.length):null;
@@ -2128,6 +2152,7 @@ function vParaTi(){const mios=modsDe(user);
  const est=qpct===100?'hecha':dias<=2?'urg':'';
  const circ=2*Math.PI*26;
  document.getElementById('app').innerHTML=`
+ ${bloqueFrase()}
  ${filaHoy(mios,h)}
  ${vistaGuia(ks.length)}
  <div class="quin ${est}">
@@ -2148,6 +2173,7 @@ function vParaTi(){const mios=modsDe(user);
   <div class="m3 ${crit?'mal':'ok'}"><b>${crit}</b><small>críticos pendientes</small></div>
   <div class="m3"><b>${ks.length}/${mios.length}</b><small>módulos hechos</small></div>
  </div>
+ ${recientes.length?`<p class="eye">Nuevo para ti <b>${recientes.length===1?'se ha añadido uno':'se han añadido '+recientes.length}</b></p>${recientes.map(tarjeta).join('')}`:''}
  ${base.length?`<p class="eye">Empieza por aquí <b>${base.length===1?'es la base de todo':'son la base de todo'}</b></p>${base.map(tarjeta).join('')}`:''}
  ${nuevos.length?`<p class="eye">Protocolo de producto nuevo <b>léelo antes de montarlo</b></p>
   ${nuevos.map(m=>protoCard(m,h[m.id])).join('')}`:''}
@@ -2263,6 +2289,7 @@ let bloques={},bloqSel=[],bloqQuien=null;
 /* Una persona puede cubrir varios locales. 'local' sigue siendo el suyo
    de referencia; 'locales' son todos en los que trabaja. */
 let locales={};
+let altas={};    /* {moduloId:'AAAA-MM-DD'} cuando se abrio al equipo */
 let basicos=[];  /* lo que ve un empleado que no es encargado */
 let uso={};   /* {empleado:{v:visitas,s:segundos,u:ultima,d:{AAAA-MM-DD:segundos}}} */
 function localesDe(e){const l=locales[e.id];return (l&&l.length)?l:[e.loc]}
@@ -2272,6 +2299,67 @@ function trabajaEn(e,loc){return localesDe(e).indexOf(loc)>=0}
 let modsPorLocal={};
 /* Filas crudas de escuela_resultados, para las estadísticas por fecha */
 let RESULTADOS=[];
+
+/* ===== Cuándo se abrió cada protocolo al equipo =====
+   La fecha que importa no es cuándo se escribió, sino cuándo lo vio el
+   equipo por primera vez. Se sella al publicarlo y ya no se mueve:
+   despublicar y volver a publicar no lo convierte en nuevo otra vez. */
+const DIAS_NUEVO=14;
+function sellaAlta(id){if(!altas[id]){altas[id]=new Date().toISOString().slice(0,10);return true}return false}
+function diasDesde(iso){if(!iso)return null;
+ const d=new Date(iso+'T00:00:00'),h=new Date();h.setHours(0,0,0,0);
+ return Math.round((h-d)/86400000)}
+function esReciente(m){const d=diasDesde(altas[m.id]);return d!==null&&d<=DIAS_NUEVO}
+const MESES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function fechaCorta(iso){if(!iso)return '';const d=new Date(iso+'T00:00:00');
+ return `${d.getDate()} ${MESES[d.getMonth()]}`}
+function textoAlta(id){const d=diasDesde(altas[id]);
+ if(d===null)return 'sin fecha';
+ if(d===0)return 'añadido hoy';
+ if(d===1)return 'añadido ayer';
+ if(d<=DIAS_NUEVO)return `añadido hace ${d} días`;
+ return `añadido el ${fechaCorta(altas[id])}`}
+
+
+/* ===== Frase al entrar =====
+   Del oficio, no de taza de desayuno: hablan de repetir bien, del turno
+   y del cliente que no vuelve. Se evita repetir la ultima vista. */
+const FRASES=[
+ ['La consistencia no es cocinar bien un día.','Es cocinar igual <em>todos los días</em>.'],
+ ['Nadie nota el pedido perfecto.','Todos notan <em>el que falla</em>.'],
+ ['El cliente no sabe si había prisa.','Solo sabe <em>cómo le llegó</em>.'],
+ ['Treinta segundos de más en la bolsa','valen menos que <em>un cliente que no vuelve</em>.'],
+ ['Lo que sale por esa puerta','lleva <em>tu nombre</em>, aunque no lo ponga.'],
+ ['Hacerlo bien con prisa es el oficio.','Hacerlo bien sin prisa <em>lo hace cualquiera</em>.'],
+ ['Un burrito es una receta.','Dos mil burritos iguales son <em>una marca</em>.'],
+ ['La calidad es lo que haces','cuando <em>no te está mirando nadie</em>.'],
+ ['El que empaqueta es el último','que puede <em>arreglar el fallo</em>.'],
+ ['No competimos con el de al lado.','Competimos con <em>lo bien que salió ayer</em>.'],
+ ['Preguntar no es no saber.','Es <em>no querer equivocarse</em>.'],
+ ['Una alergia no es una manía.','Es <em>lo único que no se perdona</em>.'],
+ ['El primer pedido marca el turno.','Los demás <em>solo lo siguen</em>.'],
+ ['Cuatro locales, una sola forma.','Eso es <em>lo que estamos construyendo</em>.'],
+ ['Si dudas de un ingrediente,','ya tienes <em>la respuesta</em>.'],
+ ['Cada reseña la escribió alguien','que <em>pagó por esto</em>.'],
+ ['Lo barato no es el plato que tiras.','Es <em>el que no tuviste que tirar</em>.'],
+ ['Avisar a tiempo no es dar problemas.','Es <em>evitarlos</em>.'],
+ ['El que lo hace rápido y mal','lo hace <em>dos veces</em>.'],
+ ['No hay turnos pequeños.','Hay clientes que <em>vienen una sola vez</em>.'],
+ ['Un equipo bueno no es el que no falla.','Es el que <em>se avisa antes de fallar</em>.'],
+ ['Lo que no se dice en alto','solo <em>lo sabe uno</em>.'],
+ ['El estándar no te quita margen.','Te quita <em>las discusiones</em>.'],
+ ['Hoy puedes dejar el local','mejor <em>de como lo encontraste</em>.']
+];
+function fraseDeHoy(){
+ let ult=-1; try{ult=parseInt(localStorage.getItem('frase-ult'),10)}catch(e){}
+ let i=Math.floor(Math.random()*FRASES.length);
+ if(FRASES.length>1&&i===ult)i=(i+1)%FRASES.length;
+ try{localStorage.setItem('frase-ult',i)}catch(e){}
+ return FRASES[i]}
+function bloqueFrase(){const f=fraseDeHoy();
+ return `<div class="frase-d"><div class="fk">${saludo()}</div>
+ <p>${f[0]}<br>${f[1]}</p></div>`}
+
 function modsDe(e){
  /* 'solo' limita un modulo a personas concretas: no lo ve nadie mas */
  const suyo=m=>m.pub&&m.roles.includes(e.rol)&&(!m.solo||m.solo.includes(e.id));
@@ -2765,7 +2853,9 @@ function pubTodos(valor,cat){
  const afecta=MOD.filter(m=>!cat||m.cat===cat);
  const antes=afecta.filter(m=>!!m.pub===!!valor).length;
  if(antes===afecta.length)return toast(valor?'Ya estaban todos visibles':'Ya estaban todos ocultos');
- afecta.forEach(m=>m.pub=valor?1:0);
+ let sellados=false;
+ afecta.forEach(m=>{m.pub=valor?1:0;if(m.pub&&sellaAlta(m.id))sellados=true});
+ if(sellados)saveConfig('altas',altas);
  /* un modulo oculto no puede seguir siendo el foco de la quincena */
  const fuera=QUIN.mods.filter(id=>!MOD.find(m=>m.id===id&&m.pub));
  if(fuera.length){QUIN.mods=QUIN.mods.filter(id=>!fuera.includes(id));
@@ -2882,7 +2972,9 @@ function dirMods(){
    return `<button class="selm" aria-pressed="${!!m.pub}" ${esDir?`onclick="togPub('${m.id}')"`:'disabled style="cursor:default;opacity:.92"'}>
    <div class="cb"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
    <div class="b"><strong>${m.t}</strong>
-   <small>${m.slides.length} pantallas · ${m.test.length} preguntas · ${m.fr}${m.crit?' · crítico':''}${md!==null?` · media ${md}%`:''}</small></div>
+   <small>${m.slides.length} pantallas · ${m.test.length} preguntas${m.crit?' · crítico':''}${md!==null?` · media ${md}%`:''}</small>
+   ${m.pub?`<small class="fch ${esReciente(m)?'nueva':''}">${textoAlta(m.id)}</small>`:''}</div>
+   ${m.pub&&esReciente(m)?`<span class="nv">Nuevo</span>`:''}
    <span class="pl ${m.pub?'pl-hecho':'pl-neu'}">${m.pub?'Visible':'Oculto'}</span></button>`}).join('')}`}).join('')}
  <div class="pie">${esDir?`<strong>Cómo empezar.</strong> Publica 3 o 4 para la primera quincena, los más críticos.
  Cuando el equipo los tenga, publicas los siguientes. Un módulo publicado y no hecho pesa más que uno oculto.`
@@ -2924,6 +3016,7 @@ function basicosTodos(){
 
 function togPub(id){const m=MOD.find(x=>x.id===id);
  m.pub=m.pub?0:1;
+ if(m.pub&&sellaAlta(id))saveConfig('altas',altas);
  let quinCambio=false;
  if(!m.pub){const i=QUIN.mods.indexOf(id);if(i>=0){QUIN.mods.splice(i,1);quinCambio=true}}
  saveConfig('publicados',MOD.filter(m=>m.pub).map(m=>m.id));
@@ -3270,6 +3363,13 @@ async function init(){
 
   if(cfg.porlocal&&typeof cfg.porlocal==='object')modsPorLocal=cfg.porlocal;
   else faltantes.push(saveConfig('porlocal',{}));
+
+  if(cfg.altas&&typeof cfg.altas==='object')altas=cfg.altas;
+  else faltantes.push(saveConfig('altas',{}));
+  /* un publicado sin fecha es de antes de que esto existiera: se sella
+     hoy no, sino sin fecha, para no inventar una novedad que no lo es */
+  {let nuevos=false;MOD.forEach(m=>{if(m.pub&&!(m.id in altas)){altas[m.id]='';nuevos=true}});
+   if(nuevos)faltantes.push(saveConfig('altas',altas))}
 
   if(Array.isArray(cfg.basicos))basicos=cfg.basicos;
   else faltantes.push(saveConfig('basicos',[]));
