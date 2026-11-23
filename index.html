@@ -748,6 +748,12 @@ input,textarea,select{font-family:inherit}
 .frase-d p{font-family:var(--display);font-weight:400;font-size:clamp(19px,5.4vw,24px);
  line-height:1.14;letter-spacing:.008em;text-transform:uppercase;margin:0;text-wrap:balance}
 .frase-d p em{font-style:normal;color:var(--vino)}
+
+/* Aviso de modo sin red */
+.sinred{border:1px solid var(--alerta);border-left:4px solid var(--alerta);background:var(--papel);
+ padding:12px 14px;margin:0 0 16px;border-radius:var(--r)}
+.sinred strong{display:block;font-size:13.5px;font-variation-settings:'wght' 650;color:var(--alerta);margin-bottom:4px}
+.sinred p{font-size:12.5px;line-height:1.45;color:var(--gris);margin:0}
 </style>
 </head>
 <body>
@@ -756,7 +762,7 @@ input,textarea,select{font-family:inherit}
  <div class="spin"></div>
  <div id="loadMsg">Cargando datos…</div>
  <div id="loadErr">
-  <p>No se ha podido conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.</p>
+  <p>No se ha podido conectar con el servidor y en este móvil no hay copia guardada.<br>Si tienes internet, el fallo es nuestro: avisa a Ale.</p>
   <button onclick="location.reload()">Reintentar</button>
  </div>
 </div>
@@ -803,7 +809,7 @@ function usoCorta(){
  return seg>0&&seg<1800?seg:Math.min(seg,1800)}
 
 async function usoVuelca(id,forzar){
- if(!id)return;
+ if(!id||modoSinRed)return;
  if(usoIni!==null){usoPend+=usoCorta();usoIni=Date.now()}
  if(!usoPend&&!forzar)return;
  const seg=usoPend; usoPend=0;
@@ -835,7 +841,45 @@ const fmtDur=sg=>{const m=Math.round((sg||0)/60);
  if(m<60)return m+' min';
  const h=Math.floor(m/60),r=m%60;return r?`${h} h ${r} min`:`${h} h`};
 
+
+/* ===== Copia en el movil de lo ultimo que cargo bien =====
+   Noviembre de 2026: el proyecto de Supabase desaparecio y el equipo se
+   quedo tres semanas sin poder abrir un protocolo, con la app entera
+   dentro del telefono. Los protocolos viven en el codigo, asi que lo
+   unico que faltaba eran los datos. Ahora se guardan al cargar y, si el
+   servidor no responde, se entra igual en modo lectura. */
+const CACHE_K='orale-cache-v1';
+let modoSinRed=false, fechaCache=null;
+
+function guardaCache(emp,cfg,res){
+ try{localStorage.setItem(CACHE_K,JSON.stringify({
+  v:1,cuando:new Date().toISOString(),emp,cfg,res:res.slice(-400)}))}catch(e){}}
+
+function leeCache(){
+ try{const c=JSON.parse(localStorage.getItem(CACHE_K)||'null');
+  return (c&&c.v===1&&Array.isArray(c.emp)&&c.emp.length)?c:null}catch(e){return null}}
+
+/* Un test hecho sin red no se pierde: se guarda y se manda al volver. */
+const COLA_K='orale-cola-v1';
+function colaLee(){try{return JSON.parse(localStorage.getItem(COLA_K)||'[]')}catch(e){return []}}
+function colaGuarda(f){try{localStorage.setItem(COLA_K,JSON.stringify(f))}catch(e){}}
+function colaMete(fila){const c=colaLee();c.push(fila);colaGuarda(c)}
+async function colaVacia(){
+ const c=colaLee(); if(!c.length)return 0;
+ const {error}=await db.from('escuela_resultados').insert(c);
+ if(error){console.error(error);return 0}
+ colaGuarda([]); return c.length}
+
+function avisoSinRed(){
+ const d=fechaCache?new Date(fechaCache):null;
+ const cuando=d?`${d.getDate()} ${MESES[d.getMonth()]}`:'la última vez';
+ return `<div class="sinred">
+  <strong>Sin conexión con el servidor</strong>
+  <p>Puedes leer los protocolos. Lo que hagas se guarda en el móvil y se envía solo cuando vuelva.
+  Los datos son los de ${cuando}.</p></div>`}
+
 function saveConfig(clave,valor){
+ if(modoSinRed){toast('Sin conexión: este cambio no se ha guardado');return Promise.resolve()}
  return db.from('escuela_config').upsert({clave,valor,actualizado_en:new Date().toISOString()}).then(({error})=>{
   if(error){console.error(error);toast('Cambio guardado en el dispositivo, pero no en el servidor')}})}
 
@@ -2152,6 +2196,7 @@ function vParaTi(){const mios=modsDe(user);
  const est=qpct===100?'hecha':dias<=2?'urg':'';
  const circ=2*Math.PI*26;
  document.getElementById('app').innerHTML=`
+ ${modoSinRed?avisoSinRed():''}
  ${bloqueFrase()}
  ${filaHoy(mios,h)}
  ${vistaGuia(ks.length)}
@@ -2498,8 +2543,9 @@ function guardarMarca(){if(!marcSel.length&&!marcArea)return toast('Selecciona m
  cerrarSheet();toast(`Marcado a ${e.n}`);setTimeout(pintar,300)}
 
 function vTodo(){const h=hechos[user.id]||{};
+ const mios=modsDe(user);
  const grupos=Object.keys(CAT).map(k=>{
-  const ms=MOD.filter(m=>m.pub&&m.cat===k&&m.roles.includes(user.rol));
+  const ms=mios.filter(m=>m.cat===k);
   if(!ms.length)return null;
   const ok=ms.filter(m=>h[m.id]!==undefined&&h[m.id]>=60);
   const pend=ms.filter(m=>h[m.id]===undefined||h[m.id]<60);
@@ -2521,13 +2567,16 @@ function vTodo(){const h=hechos[user.id]||{};
  <div class="pie"><strong>El área con menos porcentaje es por donde empezar.</strong> Aparece la primera.</div>`}
 
 function verGrupo(k){const c=CAT[k],h=hechos[user.id]||{};
- const ms=ordenar(MOD.filter(m=>m.pub&&m.cat===k&&m.roles.includes(user.rol)));
+ const ms=ordenar(modsDe(user).filter(m=>m.cat===k));
  abrirSheet(`<div class="sh-top" style="background:var(${c.c})">
  <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Áreas</button>
  <h2>${c.n}</h2><p>${ms.length} módulo${ms.length!==1?'s':''} en tu puesto</p></div>
  <div style="padding:16px 16px 0">${ms.map(tarjeta).join('')}</div>`,c.c)}
 
 function abrirMod(id){const m=MOD.find(x=>x.id===id);
+ /* ultimo cerrojo: una vista mal filtrada no debe poder abrir un
+    protocolo que no es de esa persona */
+ if(m&&user&&!esDir&&!modsDe(user).some(x=>x.id===m.id))return toast('Ese protocolo no está asignado a ti');
  P={m,fase:'s',i:0,q:0,ac:0,marks:[],ord:[],res:null,fallos:[]};
  pPlay();document.getElementById('play').classList.add('on');bloquearFondo()}
 function cerrarPlay(){document.getElementById('play').classList.remove('on');P=null;liberarFondo();pintar()}
@@ -2653,12 +2702,17 @@ async function guardarMod(){if(window._guardando)return;window._guardando=true;
  if(!hechos[user.id])hechos[user.id]={};hechos[user.id][P.m.id]=pct;
  if(asign[user.id]){const i=asign[user.id].indexOf(P.m.id);if(i>=0){asign[user.id].splice(i,1);saveConfig('asign',asign)}}
  const t=P.m.t,tot=P.m.test.length,ac=P.ac,fallos=P.fallos;
- const {error}=await db.from('escuela_resultados').insert({
-  empleado_id:user.id,modulo_id:P.m.id,porcentaje:pct,aciertos:ac,total:tot,fallos,
-  creado_en:new Date().toISOString()});
+ const fila={empleado_id:user.id,modulo_id:P.m.id,porcentaje:pct,aciertos:ac,total:tot,fallos,
+  creado_en:new Date().toISOString()};
+ /* sin red no se intenta: se encola y se manda al volver la conexion */
+ let error=null;
+ if(modoSinRed){colaMete(fila)}
+ else{const r=await db.from('escuela_resultados').insert(fila);error=r.error;
+  if(error)colaMete(fila)}
  cerrarPlay();
  window._guardando=false;
- if(error){console.error(error);toast('Resultado guardado en el dispositivo, pero no en el servidor')}
+ if(modoSinRed)toast('Guardado en el móvil. Se enviará cuando vuelva la conexión')
+ else if(error){console.error(error);toast('Guardado en el móvil. Se enviará cuando vuelva la conexión')}
  else toast(pct>=80?`${t} completado · ${pct}%`:pct>=60?`Guardado con ${pct}%. Repasa lo fallado`:`${pct}%. Queda marcado para repetir`)}
 
 
@@ -2759,6 +2813,7 @@ function dirEquipo(){
  const mg=media.length?Math.round(media.reduce((s,f)=>s+f.media,0)/media.length):0;
  const critTot=filas.reduce((s,f)=>s+f.crit,0);
  document.getElementById('app').innerHTML=`
+ ${modoSinRed?avisoSinRed():''}
  <div class="kpis"><div class="kpi ${mg>=80?'ok':mg>=60?'':'mal'}"><b>${mg}%</b><small>media del equipo</small></div>
  <div class="kpi ${critTot?'mal':'ok'}"><b>${critTot}</b><small>críticos sin superar</small></div>
  <div class="kpi"><b>${MOD.filter(m=>m.pub).length}</b><small>módulos publicados</small></div></div>
@@ -3141,6 +3196,7 @@ function dirQuin(){
   return {l,ok:es.filter(c=>c.pct===100).length,tot:es.length}});
  if(!selMods.length)selMods=[...QUIN.mods];
  document.getElementById('app').innerHTML=`
+ ${modoSinRed?avisoSinRed():''}
  <div class="quin ${alDia===cumpl.length?'hecha':dias<=2?'urg':''}">
   <div class="qk"><span>Quincena en curso</span><span class="qd">${dias>0?`${dias} día${dias!==1?'s':''}`:'Vencida'}</span></div>
   <h2>${QUIN.n}</h2>
@@ -3322,6 +3378,78 @@ function toast(m){const t=document.getElementById('toast');
  t.classList.add('on');clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove('on'),2600)}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){cerrarPlay();cerrarSheet()}});
 
+/* Aplica a la app un juego de datos, venga del servidor o de la copia
+   local. Sin red no se intenta sembrar lo que falte: escribir con el
+   servidor caido solo encadena esperas de ocho segundos. */
+function aplicaDatos(empRows,cfg,resRows,online){
+ EMP=(empRows||[]).map(e=>({id:e.id,n:e.nombre,rol:e.rol,pin:e.pin,loc:e.local}));
+
+ RESULTADOS=resRows||[];
+ hechos={};
+ RESULTADOS.slice().sort((a,b)=>new Date(a.creado_en)-new Date(b.creado_en)).forEach(r=>{
+  if(!hechos[r.empleado_id])hechos[r.empleado_id]={};
+  hechos[r.empleado_id][r.modulo_id]=r.porcentaje});
+
+ const faltantes=[];
+ const push=pr=>{if(online)faltantes.push(pr)};
+  if(cfg.quincena){QUIN={...cfg.quincena,fin:new Date(cfg.quincena.fin)}}
+  else push(saveConfig('quincena',{...QUIN,fin:QUIN.fin.toISOString()}));
+
+  if(cfg.publicados){const pubs=cfg.publicados;MOD.forEach(m=>m.pub=pubs.includes(m.id)?1:0)}
+  else push(saveConfig('publicados',MOD.filter(m=>m.pub).map(m=>m.id)));
+
+  if(cfg.asign&&typeof cfg.asign==='object')asign=cfg.asign;
+  else push(saveConfig('asign',{}));
+
+  if(cfg.evaluaciones&&typeof cfg.evaluaciones==='object')evaluaciones=cfg.evaluaciones;
+  else push(saveConfig('evaluaciones',{}));
+
+  if(cfg.bloques&&typeof cfg.bloques==='object')bloques=cfg.bloques;
+  else push(saveConfig('bloques',{}));
+
+  if(cfg.locales&&typeof cfg.locales==='object')locales=cfg.locales;
+  else push(saveConfig('locales',{}));
+
+  if(cfg.porlocal&&typeof cfg.porlocal==='object')modsPorLocal=cfg.porlocal;
+  else push(saveConfig('porlocal',{}));
+
+  if(cfg.altas&&typeof cfg.altas==='object')altas=cfg.altas;
+  else push(saveConfig('altas',{}));
+  /* un publicado sin fecha es de antes de que esto existiera: se sella
+     hoy no, sino sin fecha, para no inventar una novedad que no lo es */
+  {let nuevos=false;MOD.forEach(m=>{if(m.pub&&!(m.id in altas)){altas[m.id]='';nuevos=true}});
+   if(nuevos)push(saveConfig('altas',altas))}
+
+  if(Array.isArray(cfg.basicos))basicos=cfg.basicos;
+  else push(saveConfig('basicos',[]));
+
+  if(cfg.uso&&typeof cfg.uso==='object')uso=cfg.uso;
+  else push(saveConfig('uso',{}));
+
+  if(cfg.marcados)marcados=cfg.marcados;
+  else push(saveConfig('marcados',marcados));
+
+  if(cfg.imgs&&typeof cfg.imgs==='object')imgs=cfg.imgs;
+  else push(saveConfig('imgs',{}));
+
+  if(Array.isArray(cfg.nuevos)){MOD.forEach(m=>m.nuevo=cfg.nuevos.includes(m.id)?1:0)}
+  else push(saveConfig('nuevos',MOD.filter(m=>m.nuevo).map(m=>m.id)));
+
+  if(cfg.resenas)RESE=cfg.resenas;
+  else push(saveConfig('resenas',RESE));
+
+  if(cfg.mejoras)MEJ=cfg.mejoras;
+  else push(saveConfig('mejoras',MEJ));
+
+  if(cfg.recomendaciones)RECO=cfg.recomendaciones;
+  else push(saveConfig('recomendaciones',RECO));
+ return faltantes}
+
+function entraEnLaApp(){
+ document.getElementById('loading').style.display='none';
+ document.getElementById('login').style.display='block';
+ pLogin()}
+
 async function init(){
  try{
   const [empRes,cfgRes,resRes]=await Promise.all([
@@ -3333,75 +3461,26 @@ async function init(){
   if(cfgRes.error)throw cfgRes.error;
   if(resRes.error)throw resRes.error;
 
-  EMP=empRes.data.map(e=>({id:e.id,n:e.nombre,rol:e.rol,pin:e.pin,loc:e.local}));
-
-  RESULTADOS=resRes.data||[];
-  resRes.data.slice().sort((a,b)=>new Date(a.creado_en)-new Date(b.creado_en)).forEach(r=>{
-   if(!hechos[r.empleado_id])hechos[r.empleado_id]={};
-   hechos[r.empleado_id][r.modulo_id]=r.porcentaje});
-
   const cfg={};(cfgRes.data||[]).forEach(c=>cfg[c.clave]=c.valor);
-  const faltantes=[];
-
-  if(cfg.quincena){QUIN={...cfg.quincena,fin:new Date(cfg.quincena.fin)}}
-  else faltantes.push(saveConfig('quincena',{...QUIN,fin:QUIN.fin.toISOString()}));
-
-  if(cfg.publicados){const pubs=cfg.publicados;MOD.forEach(m=>m.pub=pubs.includes(m.id)?1:0)}
-  else faltantes.push(saveConfig('publicados',MOD.filter(m=>m.pub).map(m=>m.id)));
-
-  if(cfg.asign&&typeof cfg.asign==='object')asign=cfg.asign;
-  else faltantes.push(saveConfig('asign',{}));
-
-  if(cfg.evaluaciones&&typeof cfg.evaluaciones==='object')evaluaciones=cfg.evaluaciones;
-  else faltantes.push(saveConfig('evaluaciones',{}));
-
-  if(cfg.bloques&&typeof cfg.bloques==='object')bloques=cfg.bloques;
-  else faltantes.push(saveConfig('bloques',{}));
-
-  if(cfg.locales&&typeof cfg.locales==='object')locales=cfg.locales;
-  else faltantes.push(saveConfig('locales',{}));
-
-  if(cfg.porlocal&&typeof cfg.porlocal==='object')modsPorLocal=cfg.porlocal;
-  else faltantes.push(saveConfig('porlocal',{}));
-
-  if(cfg.altas&&typeof cfg.altas==='object')altas=cfg.altas;
-  else faltantes.push(saveConfig('altas',{}));
-  /* un publicado sin fecha es de antes de que esto existiera: se sella
-     hoy no, sino sin fecha, para no inventar una novedad que no lo es */
-  {let nuevos=false;MOD.forEach(m=>{if(m.pub&&!(m.id in altas)){altas[m.id]='';nuevos=true}});
-   if(nuevos)faltantes.push(saveConfig('altas',altas))}
-
-  if(Array.isArray(cfg.basicos))basicos=cfg.basicos;
-  else faltantes.push(saveConfig('basicos',[]));
-
-  if(cfg.uso&&typeof cfg.uso==='object')uso=cfg.uso;
-  else faltantes.push(saveConfig('uso',{}));
-
-  if(cfg.marcados)marcados=cfg.marcados;
-  else faltantes.push(saveConfig('marcados',marcados));
-
-  if(cfg.imgs&&typeof cfg.imgs==='object')imgs=cfg.imgs;
-  else faltantes.push(saveConfig('imgs',{}));
-
-  if(Array.isArray(cfg.nuevos)){MOD.forEach(m=>m.nuevo=cfg.nuevos.includes(m.id)?1:0)}
-  else faltantes.push(saveConfig('nuevos',MOD.filter(m=>m.nuevo).map(m=>m.id)));
-
-  if(cfg.resenas)RESE=cfg.resenas;
-  else faltantes.push(saveConfig('resenas',RESE));
-
-  if(cfg.mejoras)MEJ=cfg.mejoras;
-  else faltantes.push(saveConfig('mejoras',MEJ));
-
-  if(cfg.recomendaciones)RECO=cfg.recomendaciones;
-  else faltantes.push(saveConfig('recomendaciones',RECO));
+  const faltantes=aplicaDatos(empRes.data,cfg,resRes.data,true);
+  modoSinRed=false;
+  guardaCache(empRes.data||[],cfg,resRes.data||[]);
 
   await Promise.all(faltantes);
-
-  document.getElementById('loading').style.display='none';
-  document.getElementById('login').style.display='block';
-  pLogin();
+  const enviados=await colaVacia();
+  entraEnLaApp();
+  if(enviados)setTimeout(()=>toast(`${enviados} resultado${enviados>1?'s':''} pendiente${enviados>1?'s':''} ya en el servidor`),900);
  }catch(err){
   console.error(err);
+  /* El servidor no responde. Si hay copia, se entra igual: los
+     protocolos estan en el codigo y se pueden leer sin red. */
+  const c=leeCache();
+  if(c){
+   modoSinRed=true; fechaCache=c.cuando;
+   aplicaDatos(c.emp,c.cfg||{},c.res||[],false);
+   entraEnLaApp();
+   return;
+  }
   document.getElementById('loadMsg').style.display='none';
   document.querySelector('#loading .spin').style.display='none';
   document.getElementById('loadErr').style.display='block';
