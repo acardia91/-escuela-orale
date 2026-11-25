@@ -2063,7 +2063,7 @@ const QHIST=[
  {n:'Quincena 0 · Bienvenida',mods:['m1'],cerrada:1}
 ];
 
-let locSel=null,empSel=null,pin='',user=null,esDir=false,tab='ti',P=null,hechos={},asign={},selMods=[];
+let locSel=null,empSel=null,pin='',user=null,esDir=false,esSuper=false,tab='ti',P=null,hechos={},asign={},selMods=[];
 let imgs={}; /* foto por módulo (id → dataURL), la sube Dirección */
 const ICO_FOTO='<rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1.2-2h5.6L16 5"/>';
 const ICO_ALER='<path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.5"/>';
@@ -2187,11 +2187,12 @@ function tec(n){if(pin.length>=4)return;pin+=n;pintaDots();
  document.querySelectorAll('.dot').forEach(d=>d.classList.add('err'));
  setTimeout(()=>{pin='';document.getElementById('pw').classList.remove('shake');pintaDots()},550)}},160)}}
 
-function entrar(e){user=e;esDir=false;usoArranca(e.id);
+function entrar(e){user=e;esDir=false;esSuper=esSuperv(e);usoArranca(e.id);
  document.getElementById('login').style.display='none';document.getElementById('top').style.display='block';
  document.getElementById('app').style.display='block';
  document.getElementById('wi').textContent=e.n.slice(0,2).toUpperCase();
- document.getElementById('wn').textContent=e.n;document.getElementById('wr').textContent=`${e.rol} · ${localesDe(e).join(' · ')}`;
+ document.getElementById('wn').textContent=e.n;
+ document.getElementById('wr').textContent=esSuper?'encargado superior · los cuatro locales':`${e.rol} · ${localesDe(e).join(' · ')}`;
  if(!hechos[e.id])hechos[e.id]={};
  document.getElementById('tabs').innerHTML=`<button class="tab" data-t="ti" aria-pressed="true" onclick="sTab('ti')">Para ti</button>
  ${e.rol==='encargado'?`<button class="tab" data-t="eqp" aria-pressed="false" onclick="sTab('eqp')">Equipo</button>
@@ -2210,7 +2211,7 @@ function entrarDir(){esDir=true;user={n:'Dirección',rol:'dirección',loc:'Los c
  <button class="tab" data-t="env" aria-pressed="false" onclick="sTab('env')">Reseñas</button>`;
  tab='quin';pintar()}
 function salir(){if(user&&user.id)usoPara(user.id);
- user=null;empSel=null;pin='';locSel=null;esDir=false;
+ user=null;empSel=null;pin='';locSel=null;esDir=false;esSuper=false;
  document.getElementById('login').style.display='block';document.getElementById('top').style.display='none';
  document.getElementById('app').style.display='none';pLogin()}
 /* Bloqueo del fondo mientras hay una capa abierta (visor o panel).
@@ -2426,8 +2427,9 @@ function vParaTi(){const mios=modsDe(user);
 /* ENCARGADO: mi equipo */
 function vMiEquipo(){
  /* Solo la gente de sus locales: un encargado de San Luis no tiene por que
-    estar mirando como va el equipo de Tomares. */
- const misLocales=localesDe(user);
+    estar mirando como va el equipo de Tomares. El encargado superior es la
+    excepcion: le toca justo eso, mirar los cuatro. */
+ const misLocales=esSuper?LOCALES.slice():localesDe(user);
  const mios=EMP.filter(e=>e.id!==user.id&&misLocales.some(l=>trabajaEn(e,l)));
  const fil=mios.map(e=>{const h=hechos[e.id]||{};
   const qm=MOD.filter(m=>m.pub&&QUIN.mods.includes(m.id)&&m.roles.includes(e.rol));
@@ -2445,27 +2447,31 @@ function vMiEquipo(){
  const dias=diasRest();
  document.getElementById('app').innerHTML=`
  <div class="quin ${alDia===fil.length?'hecha':dias<=2?'urg':''}">
-  <div class="qk"><span>Tu equipo · ${misLocales.join(' · ')}</span>
+  <div class="qk"><span>${esSuper?'Toda la plantilla · los cuatro locales':'Tu equipo · '+misLocales.join(' · ')}</span>
    <span class="qd">${dias>0?`${dias} día${dias!==1?'s':''}`:'Fuera de plazo'}</span></div>
   <h2>${alDia} de ${fil.length} al día</h2>
   <div class="qrow"><div class="qi"><strong>${QUIN.n}</strong>
   <span>${alDia===fil.length?'Todo el equipo la ha completado.':'Habla en privado con quien falta, como marca la guía.'}</span></div></div></div>
+ ${esSuper?`<div class="bulk"><button onclick="panelEnvio()">Enviar o reenviar protocolos a varias personas</button></div>`:''}
  ${panelRecos(mios)}
- <p class="eye">Dónde flojea tu local</p>
+ <p class="eye">${esSuper?'Dónde flojea cada local':'Dónde flojea tu local'}</p>
  ${panelFlojea(misLocales)}
- <p class="eye">Tu gente</p>
+ <p class="eye">${esSuper?'Toda la plantilla':'Tu gente'}</p>
  ${(()=>{const ya=new Set();return misLocales.map(l=>{
   const es=fil.filter(f=>trabajaEn(f.e,l)&&!ya.has(f.e.id));
   es.forEach(f=>ya.add(f.e.id));
   if(!es.length)return '';
   return `<p class="eye">${l} <b>${es.filter(f=>f.pct===100).length} de ${es.length} al día</b></p>
-  ${es.map(f=>`<button class="eq-r" onclick="marcarA('${f.e.id}')">
+  ${es.map(f=>`<button class="eq-r" onclick="${esSuper?'verPersona':'marcarA'}('${f.e.id}')">
    <div class="i ${f.pct===100?'ok':f.pct>0?'med':'no'}">${f.e.n.slice(0,2).toUpperCase()}</div>
    <div class="b"><strong>${f.e.n}</strong><small>${(()=>{const otros=localesDe(f.e).filter(x=>misLocales.includes(x));return otros.length>1?otros.join(' · ')+' · ':''})()}${f.ok} de ${f.tot} de la quincena · ${f.supTot} de ${f.totTot} protocolos${f.media!==null?` · media ${f.media}%`:''}${f.nm?` · ${f.nm} marcado${f.nm>1?'s':''}`:''}</small>
    <div class="per-bar"><i class="${f.totTot&&f.supTot/f.totTot>=.75?'':f.totTot&&f.supTot/f.totTot>=.4?'m':'b'}" style="width:${f.totTot?Math.round(f.supTot/f.totTot*100):0}%"></i></div></div>
    <span class="st ${f.pct===100?'ok':f.pct>0?'med':'no'}">${f.pct===100?'Al día':f.pct>0?'A medias':'Sin empezar'}</span></button>`).join('')}`}).join('')})()}
- <div class="pie"><strong>Ves a la gente de tus locales.</strong> La barra es el total de protocolos superados; la etiqueta de la derecha, solo los de esta quincena.
- Toca a alguien para marcarle módulos o un área, y recuerda: si alguien falla, se corrige en privado, nunca delante de todos.</div>`}
+ <div class="pie">${esSuper?`<strong>Ves a toda la plantilla, de los cuatro locales.</strong> La barra es el total de protocolos superados; la etiqueta de la derecha, solo los de esta quincena.
+ Toca a alguien para ver protocolo por protocolo qué lleva hecho y reenviarle lo que le falte. Arriba tienes el envío a varias personas de golpe.`
+ :`<strong>Ves a la gente de tus locales.</strong> La barra es el total de protocolos superados; la etiqueta de la derecha, solo los de esta quincena.
+ Toca a alguien para marcarle módulos o un área.`}
+ Y recuerda: si alguien falla, se corrige en privado, nunca delante de todos.</div>`}
 
 /* Marcar módulos o áreas, con nota */
 /* EVALUACIÓN DE DESEMPEÑO: la pone dirección o el encargado, no el test.
@@ -2503,6 +2509,54 @@ let basicos=[];  /* lo que ve un empleado que no es encargado */
 let uso={};   /* {empleado:{v:visitas,s:segundos,u:ultima,d:{AAAA-MM-DD:segundos}}} */
 function localesDe(e){const l=locales[e.id];return (l&&l.length)?l:[e.loc]}
 function trabajaEn(e,loc){return localesDe(e).indexOf(loc)>=0}
+/* ENCARGADO SUPERIOR. Un encargado al que direccion le abre el alcance a los
+   cuatro locales: supervisa a toda la plantilla y le puede reenviar
+   protocolos a cualquiera. Lo que NO hereda es lo de direccion: ni publica
+   ni oculta modulos, ni cambia roles, ni toca resenas. */
+let supers=['jesus'];
+function esSuperv(e){return !!e&&e.rol==='encargado'&&supers.indexOf(e.id)>=0}
+
+/* REGISTRO DE LO QUE HACE UN ENCARGADO. Hasta ahora un envio no dejaba
+   rastro de quien lo mandaba, asi que direccion no podia ver si el
+   encargado esta insistiendo o no. Se guardan las ultimas 300 acciones.
+   Direccion no se registra a si misma: no tiene id. */
+let acciones=[];
+function logAcc(t,aQuien,mods){
+ if(!user||!user.id)return;
+ acciones.push({q:user.id,n:user.n,t,a:(aQuien||[]).slice(0,30),m:(mods||[]).slice(0,30),f:Date.now()});
+ if(acciones.length>300)acciones=acciones.slice(-300);
+ saveConfig('acciones',acciones)}
+
+function nombreDe(id){const e=EMP.find(x=>x.id===id);return e?e.n:id}
+function cuando(ms){const d=new Date(ms),h=new Date();
+ const hoy=d.toDateString()===h.toDateString();
+ const ayer=d.toDateString()===new Date(h.getTime()-864e5).toDateString();
+ const hm=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+ return hoy?`hoy ${hm}`:ayer?`ayer ${hm}`:`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${hm}`}
+const ACC_T={envio:'Envió',repetir:'Mandó repetir',marca:'Marcó',eval:'Evaluó a'};
+function filaAcc(a){
+ const quien=a.a.length===1?nombreDe(a.a[0]):`${a.a.length} personas`;
+ const qu=a.m.map(id=>{const m=MOD.find(x=>x.id===id);return m?m.corto||m.t:id});
+ return `<div class="det"><div class="dr"><strong>${a.n} · ${ACC_T[a.t]||a.t} ${quien}</strong>
+  <span class="p ${a.t==='repetir'?'m':'a'}">${cuando(a.f)}</span></div>
+  <small>${qu.length?qu.join(' · '):'sin protocolo'}</small></div>`}
+
+/* Panel para direccion: que esta haciendo cada encargado. */
+function panelAcciones(){
+ const jefes=EMP.filter(e=>e.rol==='encargado');
+ const ult=acciones.slice().reverse();
+ const resumen=jefes.map(e=>{
+  const suyas=acciones.filter(a=>a.q===e.id);
+  const semana=suyas.filter(a=>a.f>Date.now()-7*864e5).length;
+  return {e,tot:suyas.length,semana,ultima:suyas.length?suyas[suyas.length-1].f:null}})
+  .sort((a,b)=>b.semana-a.semana);
+ return `<p class="eye">Qué hacen los encargados <b>esta semana</b></p>
+ ${resumen.map(r=>`<div class="det"><div class="dr">
+   <strong>${r.e.n}${supers.indexOf(r.e.id)>=0?' · superior':''}</strong>
+   <span class="p ${r.semana>=3?'a':r.semana>0?'m':'b'}">${r.semana}</span></div>
+   <small>${r.ultima?`${r.tot} acción${r.tot!==1?'es':''} en total · última ${cuando(r.ultima)}`:'todavía no ha enviado ni marcado nada'}</small></div>`).join('')}
+ ${ult.length?`<p class="eye">Lo último que han hecho</p>${ult.slice(0,12).map(filaAcc).join('')}`
+  :`<div class="det"><small style="margin:0">Aún no hay movimientos registrados.</small></div>`}`}
 /* Módulos activos por local: cada local arrastra problemas distintos
    según sus reseñas, así que no todos ven lo mismo. */
 let modsPorLocal={};
@@ -2648,6 +2702,7 @@ function guardarEval(){
  if(!evaluaciones[evalQuien])evaluaciones[evalQuien]=[];
  evaluaciones[evalQuien].push(ev);
  saveConfig('evaluaciones',evaluaciones);
+ logAcc('eval',[evalQuien],[]);
  cerrarSheet();toast(`Evaluación guardada para ${e.n}`);setTimeout(pintar,300)}
 
 function marcarA(id){marcSel=[];marcArea=null;marcQuien=id;
@@ -2704,6 +2759,7 @@ function guardarMarca(){if(!marcSel.length&&!marcArea)return toast('Selecciona m
   if(ex>=0)marcados[marcQuien][ex]=nuevo;else marcados[marcQuien].push(nuevo)});
  const e=EMP.find(x=>x.id===marcQuien),n=marcSel.length+(marcArea?1:0);
  saveConfig('marcados',marcados);
+ logAcc('marca',[marcQuien],marcSel);
  cerrarSheet();toast(`Marcado a ${e.n}`);setTimeout(pintar,300)}
 
 function vTodo(){const h=hechos[user.id]||{};
@@ -2982,6 +3038,7 @@ function dirEquipo(){
  <div class="kpi ${critTot?'mal':'ok'}"><b>${critTot}</b><small>críticos sin superar</small></div>
  <div class="kpi"><b>${MOD.filter(m=>m.pub).length}</b><small>módulos publicados</small></div></div>
  <div class="bulk"><button onclick="panelEnvio()">Enviar protocolos a varias personas</button></div>
+ ${panelAcciones()}
  ${panelRecos(EMP)}
  <p class="eye">Dónde flojea cada local</p>
  ${panelFlojea(LOCALES)}
@@ -3031,6 +3088,10 @@ function verPersona(id){const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
   return `<div class="det"><div class="dr"><strong>${m.t}${m.crit?' ·':''}</strong>
   <span class="p ${v===undefined?'b':v>=80?'a':v>=60?'m':'b'}">${v===undefined?'sin hacer':v+'%'}</span></div>
   <small>${CAT[m.cat].n}${m.crit?' · crítico':''}${v!==undefined&&v<60?' · conviene repetirlo':''}</small></div>`}).join('')}
+ ${e.rol==='encargado'?(()=>{const suyas=acciones.filter(a=>a.q===id).slice().reverse();
+  return `<p class="eye">Lo que hace como encargado${supers.indexOf(id)>=0?' superior':''} <b>${suyas.length} acción${suyas.length!==1?'es':''}</b></p>
+  ${suyas.length?suyas.slice(0,10).map(filaAcc).join('')
+   :'<div class="det"><small style="margin:0">Todavía no ha enviado ni marcado nada a nadie.</small></div>'}`})():''}
  <p class="eye">Enviarle módulos</p>
  <div class="chips">${mios.map(m=>
   `<button class="chip" data-m="${m.id}" aria-pressed="false" onclick="this.setAttribute('aria-pressed',this.getAttribute('aria-pressed')==='true'?'false':'true')">${m.t}</button>`).join('')}</div>
@@ -3038,7 +3099,9 @@ function verPersona(id){const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
  <button class="ed-add" style="margin-top:8px;background:var(--azul)" onclick="cerrarSheet();setTimeout(()=>evaluarA('${id}'),300)">Evaluar desempeño</button>
  <button class="ed-add" style="margin-top:8px" onclick="cerrarSheet();setTimeout(()=>bloquesA('${id}'),300)">Bloques a mejorar${(bloques[id]||[]).length?` · ${(bloques[id]||[]).length}`:''}</button>
  ${esDir?`<button class="rol-sw" aria-pressed="${e.rol==='encargado'}" onclick="togRol('${id}',this)">
-  <span class="t"><strong>Encargado</strong><small>Ve a la gente de sus locales, dónde flojea cada uno, y puede enviarles protocolos y pedir que los repitan.</small></span><i></i></button>`:''}
+  <span class="t"><strong>Encargado</strong><small>Ve a la gente de sus locales, dónde flojea cada uno, y puede enviarles protocolos y pedir que los repitan.</small></span><i></i></button>
+ ${e.rol==='encargado'?`<button class="rol-sw" aria-pressed="${supers.indexOf(id)>=0}" onclick="togSuper('${id}',this)">
+  <span class="t"><strong>Encargado superior</strong><small>Supervisa a toda la plantilla de los cuatro locales, no solo a la suya, y le puede reenviar protocolos a cualquiera. Seguirá sin poder publicar módulos ni cambiar roles.</small></span><i></i></button>`:''}`:''}
  </div><div class="pub"><button class="pub-b" onclick="enviarA('${id}')">Enviar seleccionados</button>
  <small>Le aparecerán como nuevos la próxima vez que entre</small></div>`,'--tinta')}
 
@@ -3053,16 +3116,29 @@ async function togRol(id,b){
  if(error){console.error(error);b.setAttribute('aria-pressed',e.rol==='encargado');
   return toast('No se ha podido cambiar el rol en el servidor')}
  e.rol=nuevo;
+ /* quien deja de ser encargado no puede seguir siendo encargado superior */
+ if(nuevo==='empleado'&&supers.indexOf(id)>=0){supers=supers.filter(x=>x!==id);saveConfig('supers',supers)}
  toast(nuevo==='encargado'?`${e.n} ya es encargado. Lo verá al volver a entrar`
   :`${e.n} vuelve a ser empleado`);
  const sh=document.getElementById('sheet');
  if(sh&&sh.classList.contains('on')){const p=sh.querySelector('.sh-top p');if(p)p.textContent=`${nuevo} · ${localesDe(e).join(' · ')}`}}
+
+/* Direccion abre o cierra el alcance de los cuatro locales a un encargado. */
+function togSuper(id,b){
+ const e=EMP.find(x=>x.id===id); if(!e)return;
+ const dentro=supers.indexOf(id)>=0;
+ supers=dentro?supers.filter(x=>x!==id):supers.concat(id);
+ b.setAttribute('aria-pressed',dentro?'false':'true');
+ saveConfig('supers',supers);
+ toast(dentro?`${e.n} vuelve a ver solo sus locales`
+  :`${e.n} ya supervisa los cuatro locales. Lo verá al volver a entrar`)}
 
 function enviarA(id){const sel=[...document.querySelectorAll('.chips .chip[aria-pressed="true"]')].map(c=>c.dataset.m);
  if(!sel.length)return toast('No has seleccionado ninguno');
  if(!asign[id])asign[id]=[];
  sel.forEach(m=>{if(!asign[id].includes(m))asign[id].push(m);if(hechos[id])delete hechos[id][m]});
  saveConfig('asign',asign);
+ logAcc('repetir',[id],sel);
  const e=EMP.find(x=>x.id===id);
  cerrarSheet();toast(`${sel.length} módulo${sel.length>1?'s':''} enviado${sel.length>1?'s':''} a ${e.n}`);setTimeout(pintar,300)}
 
@@ -3089,19 +3165,20 @@ let envMods=[],envQuien=[],envRepe=false,envGente=[];
 function panelEnvio(){
  envMods=[];envQuien=[];envRepe=false;
  const pub=MOD.filter(m=>m.pub);
- /* direccion llega a todo el mundo; un encargado, solo a su gente */
- const misL=esDir?LOCALES:localesDe(user);
+ /* direccion y el encargado superior llegan a todo el mundo; un encargado
+    normal, solo a su gente */
+ const misL=(esDir||esSuper)?LOCALES:localesDe(user);
  const gente=esDir?EMP:EMP.filter(e=>e.id!==user.id&&misL.some(l=>trabajaEn(e,l)));
  envGente=gente;
  abrirSheet(`<div class="sh-top" style="background:var(--tinta)">
  <button class="sh-x" onclick="cerrarSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Equipo</button>
- <h2>Enviar protocolos</h2><p>${esDir?'A varias personas de una vez':'A la gente de '+misL.join(' · ')}</p></div>
+ <h2>Enviar protocolos</h2><p>${esDir?'A varias personas de una vez':esSuper?'A quien quieras, de los cuatro locales':'A la gente de '+misL.join(' · ')}</p></div>
  <div style="padding:16px 16px 0">
  <p class="eye">Qué envías <b id="env-n">ninguno</b></p>
  <div class="chips">${pub.map(m=>`<button class="chip" onclick="envTogM('${m.id}',this)" aria-pressed="false">${m.t}</button>`).join('')}</div>
  <p class="eye">A quién <b id="env-q">nadie</b></p>
  <div class="bulk" style="margin-bottom:9px">
-  <button onclick="envTodos()">${esDir?'Todo el equipo':'Toda tu gente'}</button>
+  <button onclick="envTodos()">${(esDir||esSuper)?'Todo el equipo':'Toda tu gente'}</button>
   ${misL.map(l=>`<button onclick="envLocal('${l.replace(/'/g,"\\'")}')">${l}</button>`).join('')}
  </div>
  <div class="quien">${gente.map(e=>`<button class="qp" aria-pressed="false" data-e="${e.id}" onclick="envTogQ('${e.id}',this)">
@@ -3145,6 +3222,7 @@ function envEnviar(){
    tocados++})});
  if(!tocados)return toast('Nadie de los elegidos puede ver esos protocolos');
  saveConfig('asign',asign);
+ logAcc(envRepe?'repetir':'envio',envQuien,envMods);
  cerrarSheet();
  toast(`${envMods.length} ${envMods.length===1?'protocolo enviado':'protocolos enviados'} a ${envQuien.length} ${envQuien.length===1?'persona':'personas'}${envRepe?' · para repetir':''}`);
  setTimeout(pintar,300)}
@@ -3154,7 +3232,7 @@ function envEnviar(){
    asignado: si no le toca, no es que lo deba. */
 function quienHizo(m){
  const activos=EMP.filter(e=>e.activo!==false);
- const suyos=esDir?activos:activos.filter(e=>localesDe(user).some(l=>trabajaEn(e,l)));
+ const suyos=(esDir||esSuper)?activos:activos.filter(e=>localesDe(user).some(l=>trabajaEn(e,l)));
  const gente=suyos.filter(e=>modsDe(e).some(x=>x.id===m.id));
  if(!gente.length)return '';
  const con=gente.filter(e=>hechos[e.id]&&hechos[e.id][m.id]!==undefined);
@@ -3591,6 +3669,14 @@ function aplicaDatos(empRows,cfg,resRows,online){
 
   if(cfg.locales&&typeof cfg.locales==='object')locales=cfg.locales;
   else push(saveConfig('locales',{}));
+
+  /* Si la clave no existe todavia, se siembra con el valor del codigo
+     (Jesus) en vez de dejarlo vacio. */
+  if(Array.isArray(cfg.supers))supers=cfg.supers;
+  else push(saveConfig('supers',supers));
+
+  if(Array.isArray(cfg.acciones))acciones=cfg.acciones;
+  else push(saveConfig('acciones',[]));
 
   if(cfg.porlocal&&typeof cfg.porlocal==='object')modsPorLocal=cfg.porlocal;
   else push(saveConfig('porlocal',{}));
