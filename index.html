@@ -2521,6 +2521,32 @@ function esSuperv(e){return !!e&&e.rol==='encargado'&&supers.indexOf(e.id)>=0}
    encargado esta insistiendo o no. Se guardan las ultimas 300 acciones.
    Direccion no se registra a si misma: no tiene id. */
 let acciones=[];
+
+/* AVISO POR EMAIL (Brevo). Las direcciones las rellena direccion en la ficha
+   de cada persona; 'avisoCopia' son las de direccion, que reciben un resumen
+   de lo que manda cada encargado. La clave de Brevo no esta aqui: el envio
+   lo hace /api/avisos en el servidor, porque esta pagina la puede leer
+   cualquiera. Si el correo falla no pasa nada grave: el protocolo ya esta
+   asignado y guardado antes de llamar a esto. */
+let emails={},avisoCopia=[];
+function avisarPorEmail(ids,modIds,repetir){
+ const dest=(ids||[]).map(i=>{const e=EMP.find(x=>x.id===i),c=(emails[i]||'').trim();
+  return (e&&c)?{nombre:e.n,email:c}:null}).filter(Boolean);
+ const copia=avisoCopia.map(c=>(c||'').trim()).filter(Boolean);
+ const prot=(modIds||[]).map(id=>{const m=MOD.find(x=>x.id===id);return m?m.t:null}).filter(Boolean);
+ if(!prot.length||(!dest.length&&!copia.length))return;
+ fetch('/api/avisos',{method:'POST',headers:{'content-type':'application/json'},
+  body:JSON.stringify({quien:(user&&user.n)||'Dirección',protocolos:prot,
+   destinatarios:dest,copia,repetir:!!repetir})})
+ .then(r=>r.json().catch(()=>({})).then(j=>({ok:r.ok,j})))
+ .then(({ok,j})=>{
+  if(ok&&(j.enviados||j.copias)){
+   const n=(j.enviados||0)+(j.copias||0);
+   toast(`Aviso por email a ${n} ${n===1?'dirección':'direcciones'}`)}
+  else if(j&&j.error==='sin_configurar')toast('Enviado. El correo aún no está configurado')
+  else toast('Enviado, pero el aviso por email no ha salido')})
+ .catch(()=>toast('Enviado, pero el aviso por email no ha salido'))}
+
 function logAcc(t,aQuien,mods){
  if(!user||!user.id)return;
  acciones.push({q:user.id,n:user.n,t,a:(aQuien||[]).slice(0,30),m:(mods||[]).slice(0,30),f:Date.now()});
@@ -2540,6 +2566,37 @@ function filaAcc(a){
  return `<div class="det"><div class="dr"><strong>${a.n} · ${ACC_T[a.t]||a.t} ${quien}</strong>
   <span class="p ${a.t==='repetir'?'m':'a'}">${cuando(a.f)}</span></div>
   <small>${qu.length?qu.join(' · '):'sin protocolo'}</small></div>`}
+
+/* Guardar el correo de una persona. En blanco = no se le avisa. */
+function guardarEmail(id,v){
+ const c=(v||'').trim().toLowerCase();
+ if(c&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c))return toast('Ese correo no tiene buena pinta');
+ const e=EMP.find(x=>x.id===id);
+ if(c)emails[id]=c;else delete emails[id];
+ saveConfig('emails',emails);
+ toast(c?`Correo guardado para ${e.n}`:`${e.n} se queda sin correo`)}
+
+function guardarCopia(v){
+ const l=(v||'').split(/[,;]+/).map(x=>x.trim().toLowerCase()).filter(Boolean);
+ const mala=l.find(x=>!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(x));
+ if(mala)return toast(`Esta dirección no vale: ${mala}`);
+ avisoCopia=l.slice(0,6);saveConfig('avisocopia',avisoCopia);
+ toast(avisoCopia.length?`${avisoCopia.length} en copia`:'Nadie en copia');setTimeout(pintar,300)}
+
+/* Quien tiene correo y quien recibe la copia. Sin correo la plataforma
+   funciona igual: lo unico que no sale es el aviso. */
+function panelAvisos(){
+ const act=EMP.filter(e=>e.activo!==false);
+ const con=act.filter(e=>(emails[e.id]||'').trim());
+ return `<p class="eye">Avisos por email <b>${con.length} de ${act.length} con correo</b></p>
+ <div class="det"><div class="dr"><strong>Copia para dirección</strong>
+  <span class="p ${avisoCopia.length?'a':'b'}">${avisoCopia.length||'ninguna'}</span></div>
+  <small>${avisoCopia.length?avisoCopia.join(' · '):'Nadie recibe el resumen de lo que mandan los encargados'}</small></div>
+ <div class="f-c"><label>Direcciones en copia, separadas por comas</label>
+  <input type="text" id="av-copia" placeholder="rafa@ejemplo.com, ale@ejemplo.com" value="${avisoCopia.join(', ').replace(/"/g,'&quot;')}" onchange="guardarCopia(this.value)"></div>
+ <div class="pie" style="margin-top:0">${con.length
+  ?`Cuando tú o un encargado abráis o mandéis repetir un protocolo, les llega un correo con el nombre del protocolo y un botón para entrar. A las direcciones de arriba les llega el resumen de quién ha mandado qué.`
+  :`<strong>Todavía no hay ningún correo guardado.</strong> El de cada persona se pone en su ficha, tocándola en la lista de abajo. Sin correo no se le avisa, y el resto funciona igual que siempre.`}</div>`}
 
 /* Panel para direccion: que esta haciendo cada encargado. */
 function panelAcciones(){
@@ -3039,6 +3096,7 @@ function dirEquipo(){
  <div class="kpi"><b>${MOD.filter(m=>m.pub).length}</b><small>módulos publicados</small></div></div>
  <div class="bulk"><button onclick="panelEnvio()">Enviar protocolos a varias personas</button></div>
  ${panelAcciones()}
+ ${panelAvisos()}
  ${panelRecos(EMP)}
  <p class="eye">Dónde flojea cada local</p>
  ${panelFlojea(LOCALES)}
@@ -3098,6 +3156,9 @@ function verPersona(id){const e=EMP.find(x=>x.id===id),h=hechos[id]||{};
  <button class="ed-add" style="margin-top:14px;background:var(--vino)" onclick="cerrarSheet();setTimeout(()=>marcarA('${id}'),300)">Marcar con nota</button>
  <button class="ed-add" style="margin-top:8px;background:var(--azul)" onclick="cerrarSheet();setTimeout(()=>evaluarA('${id}'),300)">Evaluar desempeño</button>
  <button class="ed-add" style="margin-top:8px" onclick="cerrarSheet();setTimeout(()=>bloquesA('${id}'),300)">Bloques a mejorar${(bloques[id]||[]).length?` · ${(bloques[id]||[]).length}`:''}</button>
+ ${esDir?`<p class="eye">Aviso por email</p>
+ <div class="f-c"><label>Correo de ${e.n}</label>
+  <input type="email" id="em-${id}" placeholder="sin correo · no se le avisa" value="${(emails[id]||'').replace(/"/g,'&quot;')}" onchange="guardarEmail('${id}',this.value)"></div>`:''}
  ${esDir?`<button class="rol-sw" aria-pressed="${e.rol==='encargado'}" onclick="togRol('${id}',this)">
   <span class="t"><strong>Encargado</strong><small>Ve a la gente de sus locales, dónde flojea cada uno, y puede enviarles protocolos y pedir que los repitan.</small></span><i></i></button>
  ${e.rol==='encargado'?`<button class="rol-sw" aria-pressed="${supers.indexOf(id)>=0}" onclick="togSuper('${id}',this)">
@@ -3139,6 +3200,7 @@ function enviarA(id){const sel=[...document.querySelectorAll('.chips .chip[aria-
  sel.forEach(m=>{if(!asign[id].includes(m))asign[id].push(m);if(hechos[id])delete hechos[id][m]});
  saveConfig('asign',asign);
  logAcc('repetir',[id],sel);
+ avisarPorEmail([id],sel,true);
  const e=EMP.find(x=>x.id===id);
  cerrarSheet();toast(`${sel.length} módulo${sel.length>1?'s':''} enviado${sel.length>1?'s':''} a ${e.n}`);setTimeout(pintar,300)}
 
@@ -3223,6 +3285,7 @@ function envEnviar(){
  if(!tocados)return toast('Nadie de los elegidos puede ver esos protocolos');
  saveConfig('asign',asign);
  logAcc(envRepe?'repetir':'envio',envQuien,envMods);
+ avisarPorEmail(envQuien,envMods,envRepe);
  cerrarSheet();
  toast(`${envMods.length} ${envMods.length===1?'protocolo enviado':'protocolos enviados'} a ${envQuien.length} ${envQuien.length===1?'persona':'personas'}${envRepe?' · para repetir':''}`);
  setTimeout(pintar,300)}
@@ -3677,6 +3740,12 @@ function aplicaDatos(empRows,cfg,resRows,online){
 
   if(Array.isArray(cfg.acciones))acciones=cfg.acciones;
   else push(saveConfig('acciones',[]));
+
+  if(cfg.emails&&typeof cfg.emails==='object')emails=cfg.emails;
+  else push(saveConfig('emails',{}));
+
+  if(Array.isArray(cfg.avisocopia))avisoCopia=cfg.avisocopia;
+  else push(saveConfig('avisocopia',[]));
 
   if(cfg.porlocal&&typeof cfg.porlocal==='object')modsPorLocal=cfg.porlocal;
   else push(saveConfig('porlocal',{}));
